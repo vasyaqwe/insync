@@ -1,0 +1,12 @@
+{
+   "header": {
+      "button": "Get started"
+   },
+   "landing-page": {
+      "hero": {
+         "title": "Your workspace is <br /> <span class='text-primary'>always</span> in sync.",
+         "description": "insync allows teams to organize their workspace and always be up-to-date. <span class='underline'>With AI's help</span>.",
+         "button": "Try it now"
+      }
+   }
+}
