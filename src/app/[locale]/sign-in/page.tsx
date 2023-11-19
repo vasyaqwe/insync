@@ -10,8 +10,8 @@ export default function Page({
    unstable_setRequestLocale(locale)
 
    return (
-      <div className="grid h-screen place-content-center">
-         <SignIn />
+      <div className="grid h-[calc(100svh-var(--header-height))] place-content-center">
+         <SignIn signUpUrl={`${locale}/sign-up`} />
       </div>
    )
 }

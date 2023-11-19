@@ -1,10 +1,12 @@
 import { Link } from "@/components/link"
 import { Button } from "@/components/ui/button"
+import { currentUser } from "@clerk/nextjs"
 import { ArrowUpRight } from "lucide-react"
-import { useTranslations } from "next-intl"
+import { getTranslations } from "next-intl/server"
 
-export default function Home() {
-   const t = useTranslations("landing-page")
+export default async function Home() {
+   const t = await getTranslations("landing-page")
+   const user = await currentUser()
 
    return (
       <>
@@ -34,7 +36,7 @@ export default function Home() {
                className="text-center"
                asChild
             >
-               <Link href={"/sign-up"}>
+               <Link href={user ? "/dashboard" : "/sign-up"}>
                   {t("hero.button")}
                   <ArrowUpRight />
                </Link>

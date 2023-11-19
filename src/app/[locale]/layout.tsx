@@ -1,6 +1,6 @@
 import "@/styles/globals.css"
 
-import { ClerkProvider } from "@clerk/nextjs"
+import { ClerkProvider, currentUser } from "@clerk/nextjs"
 import { GeistSans } from "geist/font/sans"
 import { cookies, headers } from "next/headers"
 import { Toaster } from "sonner"
@@ -21,7 +21,7 @@ export function generateStaticParams() {
    return locales.map((locale) => ({ locale }))
 }
 
-export default function RootLayout({
+export default async function RootLayout({
    children,
    params: { locale },
 }: {
@@ -34,22 +34,30 @@ export default function RootLayout({
       const headersList = headers()
       const language = headersList.get("Accept-Language")?.slice(0, 2)
 
+      const prevUrl = locale
+      //if locale is invalid, it becomes the url
+
       if (locales.some((l) => l === language)) {
-         return redirect(`/${language}/${locale}`)
+         return redirect(`/${language}/${prevUrl}`)
       }
 
-      return redirect(`/${defaultLocale}/${locale}`)
+      return redirect(`/${defaultLocale}/${prevUrl}`)
    }
+
+   const user = await currentUser()
 
    // Enable static rendering
    unstable_setRequestLocale(locale)
 
    return (
-      <html lang={locale}>
+      <html
+         lang={locale}
+         className="[--header-height:75px]"
+      >
          <body className={`grainy-bg font-primary ${GeistSans.variable}`}>
             <ClerkProvider>
                <TRPCReactProvider cookies={cookies().toString()}>
-                  <Header />
+                  <Header user={user} />
                   <main>
                      {children}
                      <Toaster

@@ -1,8 +1,6 @@
 {
    "header": {
-      "hero": {
-         "button": "Розпочати"
-      }
+      "button": "Розпочати"
    },
    "landing-page": {
       "hero": {
