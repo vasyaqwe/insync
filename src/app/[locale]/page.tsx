@@ -1,5 +1,5 @@
-import { Link } from "@/components/link"
 import { Button } from "@/components/ui/button"
+import { Link } from "@/navigation"
 import { currentUser } from "@clerk/nextjs"
 import { ArrowUpRight } from "lucide-react"
 import { getTranslations } from "next-intl/server"

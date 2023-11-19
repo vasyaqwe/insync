@@ -1,4 +1,9 @@
 {
+   "account-menu": {
+      "item1": "Dashboard",
+      "item2": "Settings",
+      "item3": "Sign out"
+   },
    "header": {
       "button": "Get started"
    },

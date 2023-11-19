@@ -2,6 +2,11 @@ import { defaultLocale, getLocaleOrDefault, locales } from "@/navigation"
 import { authMiddleware } from "@clerk/nextjs"
 import createMiddleware from "next-intl/middleware"
 
+// const intlMiddlewareForUnauthorizedUsers = createMiddleware({
+//    locales,
+//    defaultLocale,
+// })
+
 const intlMiddleware = createMiddleware({
    locales,
    defaultLocale,
@@ -25,7 +30,6 @@ export default authMiddleware({
       "/:locale/sign-in",
       "/:locale/sign-up",
       "/api/webhook",
-      "/",
    ],
 })
 

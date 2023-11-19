@@ -11,7 +11,7 @@ export default function Page({
 
    return (
       <div className="grid h-[calc(100svh-var(--header-height))] place-content-center">
-         <SignIn signUpUrl={`${locale}/sign-up`} />
+         <SignIn />
       </div>
    )
 }

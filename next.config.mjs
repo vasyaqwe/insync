@@ -8,6 +8,16 @@ import withNextIntl from "next-intl/plugin"
 const withNextIntlInstance = withNextIntl()
 
 /** @type {import("next").NextConfig} */
-const config = withNextIntlInstance({})
+const config = withNextIntlInstance({
+   images: {
+      remotePatterns: [
+         {
+            protocol: "https",
+            hostname: "img.clerk.com",
+            port: "",
+         },
+      ],
+   },
+})
 
 export default config
