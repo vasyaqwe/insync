@@ -11,7 +11,13 @@ export default function Page({
 
    return (
       <div className="grid h-[calc(100svh-var(--header-height))] place-content-center">
-         <SignIn />
+         <SignIn
+            appearance={{
+               variables: {
+                  colorPrimary: "hsl(221.2 83.2% 53.3%)",
+               },
+            }}
+         />
       </div>
    )
 }

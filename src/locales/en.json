@@ -1,4 +1,15 @@
 {
+   "landing-page": {
+      "hero": {
+         "title": "Your workspace is <br /> <span class='text-primary'>always</span> in sync.",
+         "description": "insync allows teams to organize their workspace and always be up-to-date. <span class='underline'>With AI's help</span>.",
+         "button": "Try it now"
+      }
+   },
+   "error-messages": {
+      "required": "Required",
+      "maxLimit": "Maximum length is {limit} characters"
+   },
    "account-menu": {
       "item1": "Dashboard",
       "item2": "Settings",
@@ -7,11 +18,17 @@
    "header": {
       "button": "Get started"
    },
-   "landing-page": {
-      "hero": {
-         "title": "Your workspace is <br /> <span class='text-primary'>always</span> in sync.",
-         "description": "insync allows teams to organize their workspace and always be up-to-date. <span class='underline'>With AI's help</span>.",
-         "button": "Try it now"
-      }
+   "sidebar": {
+      "title": "Organizations"
+   },
+   "create-community": {
+      "success": "Organization created",
+      "error": "Couldn't create organization, something went wrong",
+      "title": "New organization",
+      "name": "Give your organization a name",
+      "namePlaceholder": "My organization",
+      "invite": "Invite people by email (this can be done later)",
+      "create": "Create",
+      "email-hint": "Keep typing a correct email..."
    }
 }

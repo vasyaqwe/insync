@@ -2,11 +2,6 @@ import { defaultLocale, getLocaleOrDefault, locales } from "@/navigation"
 import { authMiddleware } from "@clerk/nextjs"
 import createMiddleware from "next-intl/middleware"
 
-// const intlMiddlewareForUnauthorizedUsers = createMiddleware({
-//    locales,
-//    defaultLocale,
-// })
-
 const intlMiddleware = createMiddleware({
    locales,
    defaultLocale,
@@ -34,6 +29,10 @@ export default authMiddleware({
 })
 
 export const config = {
-   // Match only internationalized pathnames
-   matcher: ["/", "/(uk|en)/:path*"],
+   matcher: [
+      "/(uk|en)/:path*",
+      // "/((?!.+\\.[\\w]+$|_next).*)",
+      "/",
+      // "/(api|trpc)(.*)",
+   ],
 }

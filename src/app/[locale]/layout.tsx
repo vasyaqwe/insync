@@ -10,7 +10,10 @@ import { defaultLocale, locales } from "@/navigation"
 import { redirect } from "next/navigation"
 import { metadataConfig } from "@/config"
 import { NextIntlClientProvider } from "next-intl"
-import { pick } from "@/lib/utils"
+import { cn, pick } from "@/lib/utils"
+import { Inter } from "next/font/google"
+
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 
 export const metadata = metadataConfig
 
@@ -49,12 +52,17 @@ export default async function RootLayout({
 
    return (
       <html lang={locale}>
-         <body className={`grainy-bg font-primary ${GeistSans.variable}`}>
+         <body
+            className={cn(
+               `grainy-bg`,
+               locale === "uk" ? "font-primary-uk" : "font-primary-en",
+               GeistSans.variable,
+               inter.variable
+            )}
+         >
             <ClerkProvider
-               afterSignInUrl={`/${locale}/dashboard`}
-               afterSignUpUrl={`/${locale}/dashboard`}
-               signUpUrl={`${locale}/sign-up`}
-               signInUrl={`${locale}/sign-in`}
+               signUpUrl={`/${locale}/sign-up`}
+               signInUrl={`/${locale}/sign-in`}
             >
                <NextIntlClientProvider
                   messages={pick(messages, ["account-menu", "header"])}

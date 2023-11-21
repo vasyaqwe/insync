@@ -10,14 +10,77 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
+model User {
+    id           String    @id @default(uuid())
+    imageUrl     String?
+    birthday     DateTime
+    lastSignInAt DateTime?
+    username     String?
+    firstName    String
+    lastName     String
+    email        String
+
+    organizations Organization[] @relation("OrganizationMembers")
+    boards        Board[]        @relation("BoardMembers")
+
+    lists                           List[]
+    cards                           Card[]
+    auditLogs                       AuditLog[]
+    cardComments                    CardComment[]
+    sentOrganizationInvitations     OrganizationInvitation[] @relation("InvitedUser")
+    receivedOrganizationInvitations OrganizationInvitation[] @relation("InvitationSender")
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Organization {
+    id   String @id @default(uuid())
+    name String
+
+    auditLogs AuditLog[]
+    boards    Board[]
+    members   User[]     @relation("OrganizationMembers")
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    invitations OrganizationInvitation[]
+}
+
+enum INVITATION_STATUS {
+    PENDING
+    DECLINED
+    ACCEPTED
+}
+
+model OrganizationInvitation {
+    id String @id @default(uuid())
+
+    invitedUser   User   @relation("InvitedUser", fields: [invitedUserId], references: [id])
+    invitedUserId String
+
+    invitationSender   User   @relation("InvitationSender", fields: [invitationSenderId], references: [id])
+    invitationSenderId String
+
+    organization   Organization @relation(fields: [organizationId], references: [id])
+    organizationId String
+
+    status INVITATION_STATUS
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
 model Board {
     id    String @id @default(uuid())
     title String
 
+    organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
     organizationId String
-    userIds        String[]
 
-    lists List[]
+    lists   List[]
+    members User[] @relation("BoardMembers")
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -28,7 +91,9 @@ model List {
     title String
     order Int
 
-    userId  String
+    authorId String
+    author   User   @relation(fields: [authorId], references: [id])
+
     boardId String
     board   Board  @relation(fields: [boardId], references: [id], onDelete: Cascade)
 
@@ -46,7 +111,9 @@ model Card {
     order       Int
     description String? @db.Text
 
-    userId String
+    authorId String
+    author   User   @relation(fields: [authorId], references: [id])
+
     listId String
     list   List   @relation(fields: [listId], references: [id], onDelete: Cascade)
 
@@ -54,6 +121,17 @@ model Card {
     updatedAt DateTime @updatedAt
 
     @@index([listId])
+}
+
+model CardComment {
+    id      String  @id @default(uuid())
+    content String? @db.Text
+
+    authorId String
+    author   User   @relation(fields: [authorId], references: [id])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }
 
 enum ACTION {
@@ -69,15 +147,18 @@ enum ENTITY_TYPE {
 }
 
 model AuditLog {
-    id             String      @id @default(uuid())
+    id String @id @default(uuid())
+
+    action      ACTION
+    entityId    String
+    entityType  ENTITY_TYPE
+    entityTitle String
+
+    organization   Organization @relation(fields: [organizationId], references: [id])
     organizationId String
-    action         ACTION
-    entityId       String
-    entityType     ENTITY_TYPE
-    entityTitle    String
-    userId         String
-    userImage      String
-    userName       String
+
+    user   User   @relation(fields: [userId], references: [id])
+    userId String
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

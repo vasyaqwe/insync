@@ -6,8 +6,14 @@ import { type AvatarProps } from "@radix-ui/react-avatar"
 import { cn } from "@/lib/utils"
 import { type User } from "@clerk/nextjs/server"
 
+type DeepPartial<T> = T extends object
+   ? {
+        [P in keyof T]?: DeepPartial<T[P]>
+     }
+   : T
+
 type UserAvatarProps = {
-   user: User
+   user: DeepPartial<User>
    showActiveIndicator?: boolean
 } & AvatarProps
 
@@ -23,7 +29,8 @@ export function UserAvatar({ user, className, ...props }: UserAvatarProps) {
       <Avatar
          {...props}
          className={cn(
-            "h-[var(--avatar-size)] w-[var(--avatar-size)]",
+            "h-[var(--avatar-size)] w-[var(--avatar-size)] border",
+            user.imageUrl ? "border-transparent" : "border-muted-foreground/75",
             className
          )}
       >
@@ -32,13 +39,15 @@ export function UserAvatar({ user, className, ...props }: UserAvatarProps) {
                width={size}
                height={size}
                src={user.imageUrl}
-               alt={user.firstName + " " + user.lastName ?? "user's avatar"}
+               alt={`${user.firstName}'s avatar` ?? "user's avatar"}
                referrerPolicy="no-referrer"
-               className="w-full rounded-full object-cover"
+               className={cn("w-full rounded-full object-cover")}
             />
          ) : (
             <AvatarFallback className="text-[calc(var(--avatar-size)/2.5)]">
-               {user.firstName ? user.firstName[0] : "U"}
+               {user.emailAddresses?.[0]
+                  ? user.emailAddresses[0].emailAddress?.[0]?.toUpperCase()
+                  : "U"}
             </AvatarFallback>
          )}
       </Avatar>

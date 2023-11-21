@@ -31,7 +31,7 @@ export function AccountMenu({ user }: AccountMenuProps) {
             align="end"
             className="px-3 pb-2"
          >
-            <div className="p-1">
+            <div className="px-1.5 py-1">
                <p className="font-medium">
                   {user.firstName} {user.lastName}
                </p>

@@ -26,6 +26,9 @@ import {
  * These allow you to access things when processing a request, like the database, the session, etc.
  */
 
+interface AuthContext {
+   auth: SignedInAuthObject | SignedOutAuthObject
+}
 interface CreateContextOptions {
    headers: Headers
 }
@@ -41,10 +44,14 @@ interface CreateContextOptions {
  * @see https://create.t3.gg/en/usage/trpc#-serverapitrpcts
  */
 
-export const createInnerTRPCContext = ({ headers }: CreateContextOptions) => {
+export const createInnerTRPCContext = ({
+   headers,
+   auth,
+}: CreateContextOptions & AuthContext) => {
    return {
       headers: headers,
       db,
+      auth,
    }
 }
 
@@ -54,14 +61,15 @@ export const createInnerTRPCContext = ({ headers }: CreateContextOptions) => {
  *
  * @see https://trpc.io/docs/context
  */
-export const createTRPCContext = (opts: { req: NextRequest }) => {
+export const createTRPCContext = (opts: {
+   req: NextRequest
+   auth: AuthContext
+}) => {
    // Fetch stuff that depends on the request
-   // console.log(
-   //    "============================================>",
-   //    getAuth(opts.req)
-   // )
+
    return createInnerTRPCContext({
       headers: opts.req.headers,
+      auth: getAuth(opts.req),
    })
 }
 
@@ -88,8 +96,14 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
 })
 
 const isAuthed = t.middleware(({ next, ctx }) => {
+   if (!ctx.auth.userId) {
+      throw new TRPCError({ code: "UNAUTHORIZED" })
+   }
+
    return next({
-      ctx: ctx,
+      ctx: {
+         auth: ctx.auth,
+      },
    })
 })
 

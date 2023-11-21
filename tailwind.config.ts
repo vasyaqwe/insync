@@ -15,9 +15,14 @@ module.exports = {
             "2xl": "1400px",
          },
       },
+
       extend: {
+         fontSize: {
+            sm: "0.925rem",
+         },
          fontFamily: {
-            primary: "var(--font-geist-sans)",
+            "primary-en": "var(--font-geist-sans)",
+            "primary-uk": "var(--font-inter)",
          },
          colors: {
             border: "hsl(var(--border))",
