@@ -11,14 +11,12 @@ datasource db {
 }
 
 model User {
-    id           String    @id @default(uuid())
-    imageUrl     String?
-    birthday     DateTime
-    lastSignInAt DateTime?
-    username     String?
-    firstName    String
-    lastName     String
-    email        String
+    id         String  @id @default(uuid())
+    externalId String  @unique
+    imageUrl   String?
+    firstName  String
+    lastName   String
+    email      String
 
     organizations Organization[] @relation("OrganizationMembers")
     boards        Board[]        @relation("BoardMembers")
