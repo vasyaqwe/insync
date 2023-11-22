@@ -45,20 +45,20 @@ dependencies:
     specifier: ^4.32.6
     version: 4.32.6(react-dom@18.2.0)(react@18.2.0)
   '@trpc/client':
-    specifier: ^10.37.1
-    version: 10.37.1(@trpc/server@10.37.1)
+    specifier: ^10.44.0
+    version: 10.44.0(@trpc/server@10.44.0)
   '@trpc/next':
-    specifier: ^10.37.1
-    version: 10.37.1(@tanstack/react-query@4.32.6)(@trpc/client@10.37.1)(@trpc/react-query@10.37.1)(@trpc/server@10.37.1)(next@14.0.3)(react-dom@18.2.0)(react@18.2.0)
+    specifier: ^10.44.0
+    version: 10.44.0(@tanstack/react-query@4.32.6)(@trpc/client@10.44.0)(@trpc/react-query@10.44.0)(@trpc/server@10.44.0)(next@14.0.3)(react-dom@18.2.0)(react@18.2.0)
   '@trpc/react-query':
-    specifier: ^10.37.1
-    version: 10.37.1(@tanstack/react-query@4.32.6)(@trpc/client@10.37.1)(@trpc/server@10.37.1)(react-dom@18.2.0)(react@18.2.0)
+    specifier: ^10.44.0
+    version: 10.44.0(@tanstack/react-query@4.32.6)(@trpc/client@10.44.0)(@trpc/server@10.44.0)(react-dom@18.2.0)(react@18.2.0)
   '@trpc/server':
-    specifier: ^10.37.1
-    version: 10.37.1
+    specifier: ^10.44.0
+    version: 10.44.0
   '@uploadthing/react':
-    specifier: ^6.0.0
-    version: 6.0.0(next@14.0.3)(react@18.2.0)(uploadthing@6.0.1)
+    specifier: ^6.0.1
+    version: 6.0.1(next@14.0.3)(react@18.2.0)(uploadthing@6.0.1)
   ai:
     specifier: ^2.2.23
     version: 2.2.23(react@18.2.0)(solid-js@1.8.5)(svelte@4.2.3)(vue@3.3.8)
@@ -1554,53 +1554,54 @@ packages:
       use-sync-external-store: 1.2.0(react@18.2.0)
     dev: false
 
-  /@trpc/client@10.37.1(@trpc/server@10.37.1):
-    resolution: {integrity: sha512-OSblNfeI0Z9ERn3usgLV2x63CwwPoNOHf1FQK85cOT7F8MNaWyEHoEv7tHUwNGJwyzKXmpU+ockZ0movzX3D0g==}
+  /@trpc/client@10.44.0(@trpc/server@10.44.0):
+    resolution: {integrity: sha512-6PAL5rXMGTMlsKKGW9aBsij8XFBbLUbOCJ7jNVX3IripGqiQG3b/VJyTsHRWkss/oaz/sZMOn62amhfev1UVfg==}
     peerDependencies:
-      '@trpc/server': 10.37.1
+      '@trpc/server': 10.44.0
     dependencies:
-      '@trpc/server': 10.37.1
+      '@trpc/server': 10.44.0
     dev: false
 
-  /@trpc/next@10.37.1(@tanstack/react-query@4.32.6)(@trpc/client@10.37.1)(@trpc/react-query@10.37.1)(@trpc/server@10.37.1)(next@14.0.3)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-0KEgr09mBfao56lkj7ZBfVOY86d3+bDH1o0zJkDHSH60Dp/hIJ7wLCnZJIhePlZxEwknCQjVeLsTy4Pqlu8NyQ==}
+  /@trpc/next@10.44.0(@tanstack/react-query@4.32.6)(@trpc/client@10.44.0)(@trpc/react-query@10.44.0)(@trpc/server@10.44.0)(next@14.0.3)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-C4eKsSWdH0rUu0a0kUl+OC8RcI7DCsl3YZgXfKdPOEzRQ/njIgWWAouETRikzeHjulVN4/yz3ekcTyibfDNpKA==}
     peerDependencies:
       '@tanstack/react-query': ^4.18.0
-      '@trpc/client': 10.37.1
-      '@trpc/react-query': 10.37.1
-      '@trpc/server': 10.37.1
+      '@trpc/client': 10.44.0
+      '@trpc/react-query': 10.44.0
+      '@trpc/server': 10.44.0
       next: '*'
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
     dependencies:
       '@tanstack/react-query': 4.32.6(react-dom@18.2.0)(react@18.2.0)
-      '@trpc/client': 10.37.1(@trpc/server@10.37.1)
-      '@trpc/react-query': 10.37.1(@tanstack/react-query@4.32.6)(@trpc/client@10.37.1)(@trpc/server@10.37.1)(react-dom@18.2.0)(react@18.2.0)
-      '@trpc/server': 10.37.1
+      '@trpc/client': 10.44.0(@trpc/server@10.44.0)
+      '@trpc/react-query': 10.44.0(@tanstack/react-query@4.32.6)(@trpc/client@10.44.0)(@trpc/server@10.44.0)(react-dom@18.2.0)(react@18.2.0)
+      '@trpc/server': 10.44.0
       next: 14.0.3(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
       react-ssr-prepass: 1.5.0(react@18.2.0)
     dev: false
 
-  /@trpc/react-query@10.37.1(@tanstack/react-query@4.32.6)(@trpc/client@10.37.1)(@trpc/server@10.37.1)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-TbOOPp0fZVaKfaeEyDoV8QeTHW1vgPTbfOs0uSQ4AzBXqXPu+9v1B44z8GGRJSdUxuOX9pG/6Ap5Kx8PQ3eF+Q==}
+  /@trpc/react-query@10.44.0(@tanstack/react-query@4.32.6)(@trpc/client@10.44.0)(@trpc/server@10.44.0)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-0l9mar1kSamm/sePnHOuhX8v9LFQbgpVJ2U2s/hWnScNexBFzV03SpCjLAkXtiIapw5lkIG0QlveZXu4G86Xnw==}
     peerDependencies:
       '@tanstack/react-query': ^4.18.0
-      '@trpc/client': 10.37.1
-      '@trpc/server': 10.37.1
+      '@trpc/client': 10.44.0
+      '@trpc/server': 10.44.0
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
     dependencies:
       '@tanstack/react-query': 4.32.6(react-dom@18.2.0)(react@18.2.0)
-      '@trpc/client': 10.37.1(@trpc/server@10.37.1)
-      '@trpc/server': 10.37.1
+      '@trpc/client': 10.44.0(@trpc/server@10.44.0)
+      '@trpc/server': 10.44.0
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
-  /@trpc/server@10.37.1:
-    resolution: {integrity: sha512-r3VeA319/braYMBIzj+XLgLKQ9lJSVglvPvP9HUv4kr5w6Y5grQMxMcExhTiZWltE9bnSJHKtBBzHafOo7KC8A==}
+  /@trpc/server@10.44.0:
+    resolution: {integrity: sha512-QBq/FnjyU6a7CAl9p2dv6kApn2i8MFuPt8uVLyGr0oa2aFv31rHaX0m+ibdsviE/3fOJIC8EUOfMYOJma5uK2w==}
+    engines: {node: '>=18.0.0'}
     dev: false
 
   /@types/body-parser@1.19.5:
@@ -1883,8 +1884,8 @@ packages:
     resolution: {integrity: sha512-ZUo1JHOPPMZDsUw1mOhhVDIvJGlsjj6T0xJ/YJtulyJwL43S9B5pxg1cHcRuTEgjaxj7B55jiqQ6r9mDrrjH9A==}
     dev: false
 
-  /@uploadthing/react@6.0.0(next@14.0.3)(react@18.2.0)(uploadthing@6.0.1):
-    resolution: {integrity: sha512-s+6crwgoXRY9opip7S3g6iV1dIR2uMedXjlfQfMRM6GkVUmwHp8hkjtutpcnsdm37SukjubWuaAlqbUAmxYB5g==}
+  /@uploadthing/react@6.0.1(next@14.0.3)(react@18.2.0)(uploadthing@6.0.1):
+    resolution: {integrity: sha512-IJHAdEYV66QXvd3/GMQaWr7ZJncZAVWvBhxg9UhE/b3qn651aJWnHBPgo2Q7W9R4t3ITua+/5cN7n0EpP00dhg==}
     peerDependencies:
       next: 14.0.1
       react: ^17.0.2 || ^18.0.0
@@ -1893,7 +1894,7 @@ packages:
       next:
         optional: true
     dependencies:
-      '@uploadthing/shared': 6.0.0(@uploadthing/mime-types@0.2.2)
+      '@uploadthing/shared': 6.0.2
       attr-accept: 2.2.2
       file-selector: 0.6.0
       next: 14.0.3(react-dom@18.2.0)(react@18.2.0)
@@ -1913,6 +1914,15 @@ packages:
         optional: true
     dependencies:
       '@uploadthing/mime-types': 0.2.2
+    dev: false
+
+  /@uploadthing/shared@6.0.2:
+    resolution: {integrity: sha512-yFOhvzBG8VB2qmEGWDuW/tV/ZcfRZ4a6rX7i9/ZS3IqHA0FO7CKa8yitltAl3yRdSI9it88iMEQg7Ah/ve8D4A==}
+    peerDependencies:
+      '@uploadthing/mime-types': ^0.2.2
+    peerDependenciesMeta:
+      '@uploadthing/mime-types':
+        optional: true
     dev: false
 
   /@vue/compiler-core@3.3.8:

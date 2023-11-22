@@ -55,6 +55,8 @@ enum INVITATION_STATUS {
 model OrganizationInvitation {
     id String @id @default(uuid())
 
+    token String @unique
+
     invitedUser   User   @relation("InvitedUser", fields: [invitedUserId], references: [id])
     invitedUserId String
 
@@ -66,6 +68,7 @@ model OrganizationInvitation {
 
     status INVITATION_STATUS
 
+    expiresAt DateTime
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }

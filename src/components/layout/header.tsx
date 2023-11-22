@@ -31,7 +31,7 @@ export function Header({ user }: { user: User | null | undefined }) {
                   className="text-center"
                   asChild
                >
-                  <Link href={user ? "/dashboard" : "/sign-up"}>
+                  <Link href={user ? "/dashboard" : "/sign-in"}>
                      {t("button")}
                      <ArrowUpRight />
                   </Link>

@@ -10,14 +10,12 @@ export default function Page({
    unstable_setRequestLocale(locale)
 
    return (
-      <div className="grid h-[calc(100svh-var(--header-height))] place-content-center">
-         <SignUp
-            appearance={{
-               variables: {
-                  colorPrimary: "hsl(221.2 83.2% 53.3%)",
-               },
-            }}
-         />
-      </div>
+      <SignUp
+         appearance={{
+            variables: {
+               colorPrimary: "hsl(221.2 83.2% 53.3%)",
+            },
+         }}
+      />
    )
 }

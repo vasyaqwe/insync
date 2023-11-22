@@ -21,6 +21,8 @@ export function generateStaticParams() {
    return locales.map((locale) => ({ locale }))
 }
 
+export const dynamic = "force-dynami"
+
 export default async function RootLayout({
    children,
    params: { locale },
@@ -60,14 +62,11 @@ export default async function RootLayout({
                inter.variable
             )}
          >
-            <ClerkProvider
-               signUpUrl={`/${locale}/sign-up`}
-               signInUrl={`/${locale}/sign-in`}
-            >
+            <ClerkProvider>
                <NextIntlClientProvider
                   messages={pick(messages, ["account-menu", "header"])}
                >
-                  <Header user={JSON.parse(JSON.stringify(user))} />
+                  <Header user={structuredClone(user)} />
                </NextIntlClientProvider>
                <main>{children}</main>
             </ClerkProvider>
