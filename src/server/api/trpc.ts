@@ -11,7 +11,7 @@ import superjson from "superjson"
 import { ZodError } from "zod"
 
 import { db } from "@/server/db"
-import { auth } from "@clerk/nextjs"
+import { auth, clerkClient } from "@clerk/nextjs"
 
 /**
  * 1. CONTEXT
@@ -27,6 +27,11 @@ import { auth } from "@clerk/nextjs"
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
    const session = auth()
+   const user = session.userId
+      ? await clerkClient.users.getUser(session.userId)
+      : null
+
+   session.user = user
 
    return {
       db,
@@ -78,8 +83,7 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
 
    return next({
       ctx: {
-         // infers the `session` as non-nullable
-         session: { ...ctx.session, user: ctx.session.user },
+         session: ctx.session,
       },
    })
 })

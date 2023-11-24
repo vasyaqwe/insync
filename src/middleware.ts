@@ -9,7 +9,7 @@ const intlMiddleware = createMiddleware({
 
 export default authMiddleware({
    afterAuth: (auth, req) => {
-      if (req.url.includes("/api/trpc/")) return
+      if (req.url.includes("/api/")) return
 
       if (auth.userId ?? auth.isPublicRoute) return
 
@@ -18,7 +18,7 @@ export default authMiddleware({
       return Response.redirect(req.nextUrl)
    },
    beforeAuth(req) {
-      if (req.url.includes("/api/trpc/")) return
+      if (req.url.includes("/api/")) return
 
       return intlMiddleware(req)
    },

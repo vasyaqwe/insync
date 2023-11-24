@@ -25,8 +25,8 @@ model User {
     cards                           Card[]
     auditLogs                       AuditLog[]
     cardComments                    CardComment[]
-    sentOrganizationInvitations     OrganizationInvitation[] @relation("InvitedUser")
-    receivedOrganizationInvitations OrganizationInvitation[] @relation("InvitationSender")
+    sentOrganizationInvitations     OrganizationInvitation[] @relation("InvitationSender")
+    receivedOrganizationInvitations OrganizationInvitation[] @relation("InvitedUser")
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -57,8 +57,9 @@ model OrganizationInvitation {
 
     token String @unique
 
-    invitedUser   User   @relation("InvitedUser", fields: [invitedUserId], references: [id])
-    invitedUserId String
+    invitedUser      User?   @relation("InvitedUser", fields: [invitedUserId], references: [id])
+    invitedUserId    String?
+    invitedUserEmail String? @unique
 
     invitationSender   User   @relation("InvitationSender", fields: [invitationSenderId], references: [id])
     invitationSenderId String

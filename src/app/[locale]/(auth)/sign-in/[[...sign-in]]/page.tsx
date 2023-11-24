@@ -11,6 +11,7 @@ export default function Page({
 
    return (
       <SignIn
+         signUpUrl={`/${locale}/sign-up`}
          appearance={{
             variables: {
                colorPrimary: "hsl(221.2 83.2% 53.3%)",

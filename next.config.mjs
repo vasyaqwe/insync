@@ -16,6 +16,11 @@ const config = withNextIntlInstance({
             hostname: "img.clerk.com",
             port: "",
          },
+         {
+            protocol: "https",
+            hostname: "images.clerk.dev",
+            port: "",
+         },
       ],
    },
 })

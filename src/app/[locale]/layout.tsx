@@ -62,7 +62,10 @@ export default async function RootLayout({
                inter.variable
             )}
          >
-            <ClerkProvider>
+            <ClerkProvider
+               afterSignInUrl={`/${locale}/dashboard`}
+               afterSignUpUrl={`/${locale}/dashboard`}
+            >
                <NextIntlClientProvider
                   messages={pick(messages, ["account-menu", "header"])}
                >

@@ -31,7 +31,7 @@ export default async function RootLayout({
             </div>
             <Toaster
                richColors
-               style={{ font: "inherit" }}
+               style={{ font: "inherit", fontSize: 15 }}
             />
          </TRPCReactProvider>
       </>

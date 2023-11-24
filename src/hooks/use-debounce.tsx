@@ -7,12 +7,12 @@ type UseDebounceArgs<T extends string> = {
 
 export function useDebounce<T extends string>({
    value,
-   delay,
+   delay = 500,
 }: UseDebounceArgs<T>): T {
    const [debouncedValue, setDebouncedValue] = useState<T>(value)
 
    useEffect(() => {
-      const timer = setTimeout(() => setDebouncedValue(value), 500)
+      const timer = setTimeout(() => setDebouncedValue(value), delay)
 
       return () => {
          clearTimeout(timer)

@@ -12,13 +12,10 @@ import { ErrorMessage, Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Loading } from "@/components/ui/loading"
 import { useFormValidation } from "@/hooks/use-form-validation"
-import { useOrganizationList } from "@clerk/nextjs"
-import { useMutation } from "@tanstack/react-query"
 import { Check, PlusIcon } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
-import { z } from "zod"
 import {
    Command,
    CommandGroup,
@@ -29,36 +26,25 @@ import {
 import { api } from "@/trpc/react"
 import { useDebounce } from "@/hooks/use-debounce"
 import { UserAvatar } from "@/components/ui/user-avatar"
-import { type User } from "@clerk/nextjs/server"
 import { cn, isEmail } from "@/lib/utils"
 import { Skeleton } from "@/components/ui/skeleton"
-
-type UserItemUser = Pick<User, "id"> & {
-   email: string
-} & Partial<Pick<User, "firstName" | "lastName" | "imageUrl">>
-
-const NAME_CHARS_LIMIT = 32
-const GUEST_USER_ID = "guestId"
-
-const createOrganizationSchema = z.object({
-   name: z
-      .string()
-      .min(1, { message: "required" })
-      .max(NAME_CHARS_LIMIT, { message: "maxLimit" }),
-})
+import {
+   GUEST_USER_ID,
+   type InvitedUser,
+   NAME_CHARS_LIMIT,
+   createOrganizationSchema,
+} from "@/lib/validations/organization"
 
 export function CreateOrganizationDialog() {
    const t = useTranslations("create-community")
    const [open, setOpen] = useState(false)
    const [query, setQuery] = useState("")
    const [isQueryFullEmail, setIsQueryFullEmail] = useState(true)
-   const [selectedUsers, setSelectedUsers] = useState<UserItemUser[]>([])
+   const [selectedUsers, setSelectedUsers] = useState<InvitedUser[]>([])
    const debouncedInput = useDebounce<string>({
       value: query,
       delay: 400,
    })
-
-   const { createOrganization } = useOrganizationList()
 
    const [formData, setFormData] = useState({
       name: "",
@@ -85,12 +71,7 @@ export function CreateOrganizationDialog() {
       setFormData((prev) => ({ ...prev, [name]: value }))
    }
 
-   const { mutate: onSubmit, isLoading } = useMutation({
-      mutationFn: async () => {
-         if (createOrganization) {
-            await createOrganization({ name: formData.name })
-         }
-      },
+   const { mutate: onSubmit, isLoading } = api.organization.create.useMutation({
       onSuccess: () => {
          setOpen(false)
          setFormData({ name: "" })
@@ -104,13 +85,17 @@ export function CreateOrganizationDialog() {
    })
 
    const { safeOnSubmit, errors } = useFormValidation({
-      onSubmit: () => onSubmit(),
+      onSubmit: () =>
+         onSubmit({
+            name: formData.name,
+            invitedUsers: selectedUsers,
+         }),
       formData,
       zodSchema: createOrganizationSchema,
    })
 
-   function onUserSelect(user: UserItemUser) {
-      if (isEmail(user.email)) {
+   function onUserSelect(user: InvitedUser) {
+      if (isEmail(user?.email ?? "")) {
          setIsQueryFullEmail(true)
          if (selectedUsers.some((u) => u.email === user.email)) {
             setSelectedUsers((prev) =>
@@ -128,10 +113,10 @@ export function CreateOrganizationDialog() {
    const filteredSelectedUsers =
       query.length > 0
          ? selectedUsers?.filter(
-              (u) =>
+              (user) =>
                  !searchResults?.some(
-                    (user) => user.emailAddresses[0]?.emailAddress === u.email
-                 ) && u.email !== query
+                    (searchedUser) => searchedUser.email === user.email
+                 ) && user.email !== query
            )
          : selectedUsers
 
@@ -195,7 +180,7 @@ export function CreateOrganizationDialog() {
                   filter={(value, search) => {
                      if (
                         value.includes(search) ||
-                        selectedUsers.some((u) => u.email.includes(value))
+                        selectedUsers.some((u) => u.email?.includes(value))
                      )
                         return 1
                      return 0
@@ -217,30 +202,23 @@ export function CreateOrganizationDialog() {
                   {
                      <CommandList>
                         <CommandGroup>
-                           {query.length > 0 && (
-                              <UserItem
-                                 user={{
-                                    id: GUEST_USER_ID,
-                                    email: query,
-                                 }}
-                                 isQueryFullEmail={isQueryFullEmail}
-                                 onSelect={onUserSelect}
-                                 selectedUsers={selectedUsers}
-                              />
-                           )}
+                           {query.length > 0 &&
+                              searchResults?.some((u) => u.email !== query) && (
+                                 <UserItem
+                                    user={{
+                                       id: GUEST_USER_ID,
+                                       email: query,
+                                    }}
+                                    isQueryFullEmail={isQueryFullEmail}
+                                    onSelect={onUserSelect}
+                                    selectedUsers={selectedUsers}
+                                 />
+                              )}
                            {!isFetching &&
                               searchResults?.map((user) => (
                                  <UserItem
-                                    key={user.emailAddresses[0]?.emailAddress}
-                                    user={{
-                                       id: user.id,
-                                       firstName: user.firstName ?? "",
-                                       lastName: user.lastName ?? "",
-                                       imageUrl: user.imageUrl,
-                                       email:
-                                          user.emailAddresses[0]
-                                             ?.emailAddress ?? "",
-                                    }}
+                                    key={user.email}
+                                    user={user}
                                     onSelect={onUserSelect}
                                     selectedUsers={selectedUsers}
                                  />
@@ -275,20 +253,18 @@ export function CreateOrganizationDialog() {
                      </p>
                   ) : (
                      <div className="flex items-center pl-3">
-                        {selectedUsers.map((user, idx) => (
+                        {selectedUsers.map((user) => (
                            <UserAvatar
                               className="-ml-3"
-                              user={{
-                                 ...user,
-                                 emailAddresses: [{ emailAddress: user.email }],
-                              }}
-                              key={idx}
+                              user={user}
+                              key={user.email}
                            />
                         ))}
                      </div>
                   )}
                   <Button disabled={isLoading}>
-                     {isLoading ? <Loading /> : t("create")}
+                     {t("create")}
+                     {isLoading && <Loading />}
                   </Button>
                </div>
             </form>
@@ -303,9 +279,9 @@ function UserItem({
    onSelect,
    isQueryFullEmail = true,
 }: {
-   user: UserItemUser
-   selectedUsers: UserItemUser[]
-   onSelect: (user: UserItemUser) => void
+   user: InvitedUser
+   selectedUsers: InvitedUser[]
+   onSelect: (user: InvitedUser) => void
    isQueryFullEmail?: boolean
 }) {
    const t = useTranslations("create-community")
@@ -315,13 +291,7 @@ function UserItem({
          value={user.email}
          onSelect={() => onSelect(user)}
       >
-         <UserAvatar
-            user={{
-               imageUrl: user.imageUrl,
-               firstName: user.firstName,
-               emailAddresses: [{ emailAddress: user.email }],
-            }}
-         />
+         <UserAvatar user={user} />
          <div className="w-full">
             <p className="truncate">
                {user.firstName} {user.lastName}{" "}
@@ -331,7 +301,7 @@ function UserItem({
                <span
                   className={cn(
                      "ml-auto whitespace-nowrap text-xs font-medium text-primary",
-                     isEmail(user.email)
+                     isEmail(user?.email ?? "")
                         ? "hidden"
                         : isQueryFullEmail
                         ? "invisible"
