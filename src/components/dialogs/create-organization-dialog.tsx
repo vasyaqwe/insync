@@ -256,7 +256,11 @@ export function CreateOrganizationDialog() {
                         {selectedUsers.map((user) => (
                            <UserAvatar
                               className="-ml-3"
-                              user={user}
+                              user={{
+                                 emailAddresses: [{ emailAddress: user.email }],
+                                 firstName: user.firstName,
+                                 imageUrl: user?.imageUrl ?? "",
+                              }}
                               key={user.email}
                            />
                         ))}
@@ -291,7 +295,13 @@ function UserItem({
          value={user.email}
          onSelect={() => onSelect(user)}
       >
-         <UserAvatar user={user} />
+         <UserAvatar
+            user={{
+               emailAddresses: [{ emailAddress: user.email }],
+               firstName: user.firstName,
+               imageUrl: user?.imageUrl ?? "",
+            }}
+         />
          <div className="w-full">
             <p className="truncate">
                {user.firstName} {user.lastName}{" "}
