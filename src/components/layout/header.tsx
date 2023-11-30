@@ -3,35 +3,36 @@
 import { AccountMenu } from "@/components/account-menu"
 import { Button } from "@/components/ui/button"
 import { Link, usePathname } from "@/navigation"
-import { type User } from "@clerk/nextjs/server"
+import { useUser } from "@clerk/nextjs"
 import logo from "@public/logo.svg"
 import { ArrowUpRight } from "lucide-react"
 import { useTranslations } from "next-intl"
 import Image from "next/image"
 
-export function Header({ user }: { user: User | null | undefined }) {
+export function Header() {
    const t = useTranslations("header")
    const pathname = usePathname()
+   const { isSignedIn } = useUser()
 
    return pathname.includes("invite") ? null : (
       <header className="flex h-[var(--header-height)] items-center bg-background/50 py-2 shadow-sm backdrop-blur-md">
          <div className="container flex items-center justify-between">
-            <Link href={"/"}>
+            <Link href={isSignedIn ? "/dashboard" : "/"}>
                <Image
                   src={logo}
                   alt="insync."
                />
             </Link>
 
-            {user && pathname !== "/" ? (
-               <AccountMenu user={user} />
+            {isSignedIn && pathname !== "/" ? (
+               <AccountMenu />
             ) : (
                <Button
                   size={"sm"}
                   className="text-center"
                   asChild
                >
-                  <Link href={user ? "/dashboard" : "/sign-in"}>
+                  <Link href={isSignedIn ? "/dashboard" : "/sign-in"}>
                      {t("button")}
                      <ArrowUpRight />
                   </Link>

@@ -7,18 +7,16 @@ import {
    DropdownMenuSeparator,
    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { type User } from "@clerk/nextjs/server"
 import { UserAvatar } from "@/components/ui/user-avatar"
-import { useClerk } from "@clerk/nextjs"
+import { useClerk, useUser } from "@clerk/nextjs"
 import { Link, useRouter } from "@/navigation"
 import { useTranslations } from "next-intl"
+import { useGlobalStore } from "@/stores/use-global-store"
 
-type AccountMenuProps = {
-   user: User
-}
-
-export function AccountMenu({ user }: AccountMenuProps) {
+export function AccountMenu() {
    const { signOut } = useClerk()
+   const { openDialog } = useGlobalStore()
+   const { user } = useUser()
    const t = useTranslations("account-menu")
    const router = useRouter()
 
@@ -27,8 +25,8 @@ export function AccountMenu({ user }: AccountMenuProps) {
          <DropdownMenuTrigger className="rounded-full transition-opacity hover:opacity-75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ">
             <UserAvatar
                user={{
-                  email: user.emailAddresses[0]?.emailAddress,
-                  firstName: user.firstName ?? undefined,
+                  email: user?.emailAddresses[0]?.emailAddress,
+                  firstName: user?.firstName ?? undefined,
                   imageUrl: user?.imageUrl ?? undefined,
                }}
             />
@@ -39,10 +37,10 @@ export function AccountMenu({ user }: AccountMenuProps) {
          >
             <div className="px-1.5 py-1">
                <p className="font-medium">
-                  {user.firstName} {user.lastName}
+                  {user?.firstName} {user?.lastName}
                </p>
                <p className="truncate text-sm text-foreground/60">
-                  {user.emailAddresses[0]?.emailAddress}
+                  {user?.emailAddresses[0]?.emailAddress}
                </p>
             </div>
             <DropdownMenuSeparator />
@@ -51,8 +49,12 @@ export function AccountMenu({ user }: AccountMenuProps) {
                <Link href={"/dashboard"}>{t("item1")}</Link>
             </DropdownMenuItem>
 
+            <DropdownMenuItem onClick={() => openDialog("createOrganization")}>
+               {t("item2")}
+            </DropdownMenuItem>
+
             <DropdownMenuItem asChild>
-               <Link href={"/settings"}>{t("item2")}</Link>
+               <Link href={"/settings"}>{t("item3")}</Link>
             </DropdownMenuItem>
 
             <DropdownMenuSeparator />
@@ -62,7 +64,7 @@ export function AccountMenu({ user }: AccountMenuProps) {
                   await signOut(() => router.push("/"))
                }}
             >
-               {t("item3")}
+               {t("item4")}
             </DropdownMenuItem>
          </DropdownMenuContent>
       </DropdownMenu>

@@ -31,13 +31,14 @@ export function Sidebar({ organizations }: { organizations: Organization[] }) {
          className="max-w-xs"
       >
          <aside>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between border-b-2 border-dotted pb-3">
                <p className="text-lg font-medium">{t("title")}</p>
                <CreateOrganizationDialog />
             </div>
             {organizations.length > 0 && (
                <Accordion
-                  type="single"
+                  defaultValue={["f4386d73-0a4c-42d1-ad3b-8474222fe93d"]}
+                  type="multiple"
                   className="mt-3"
                >
                   {organizations.map((org) => {
@@ -47,7 +48,11 @@ export function Sidebar({ organizations }: { organizations: Organization[] }) {
                            key={org.id}
                            value={org.id}
                         >
-                           <AccordionTrigger className="rounded-lg p-3 hover:bg-accent hover:no-underline">
+                           <AccordionTrigger
+                              className={
+                                 "rounded-lg p-3 hover:bg-primary/10 hover:no-underline"
+                              }
+                           >
                               <div className="flex items-center gap-2">
                                  <ColorAvatar color={org.color} />
                                  {org.name}

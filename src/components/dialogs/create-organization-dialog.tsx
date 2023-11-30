@@ -35,11 +35,12 @@ import {
    createOrganizationSchema,
 } from "@/lib/validations/organization"
 import { useRouter } from "@/navigation"
+import { useGlobalStore } from "@/stores/use-global-store"
 
 export function CreateOrganizationDialog() {
    const t = useTranslations("create-community")
    const router = useRouter()
-   const [open, setOpen] = useState(false)
+   const { dialogs, closeDialog, openDialog } = useGlobalStore()
    const [query, setQuery] = useState("")
    const [isQueryFullEmail, setIsQueryFullEmail] = useState(true)
    const [selectedUsers, setSelectedUsers] = useState<InvitedUser[]>([])
@@ -72,7 +73,7 @@ export function CreateOrganizationDialog() {
 
    const { mutate: onSubmit, isLoading } = api.organization.create.useMutation({
       onSuccess: (res) => {
-         setOpen(false)
+         closeDialog("createOrganization")
          setFormData({ name: "" })
          setSelectedUsers([])
          setQuery("")
@@ -125,8 +126,14 @@ export function CreateOrganizationDialog() {
 
    return (
       <Dialog
-         open={open}
-         onOpenChange={setOpen}
+         open={dialogs.createOrganization}
+         onOpenChange={(open) => {
+            if (!open) {
+               closeDialog("createOrganization")
+            } else {
+               openDialog("createOrganization")
+            }
+         }}
       >
          <DialogTrigger asChild>
             <Button

@@ -3,7 +3,7 @@ import { UserAvatar } from "@/components/ui/user-avatar"
 import { pick } from "@/lib/utils"
 import { Link } from "@/navigation"
 import { db } from "@/server/db"
-import { SignIn, currentUser } from "@clerk/nextjs"
+import { currentUser } from "@clerk/nextjs"
 import logo from "@public/logo-large.svg"
 import { NextIntlClientProvider } from "next-intl"
 import { getMessages, getTranslations } from "next-intl/server"
@@ -32,8 +32,9 @@ export default async function Page({
       !invitation ||
       (invitation.invitedUserEmail !== user?.emailAddresses[0]?.emailAddress &&
          user)
-   )
+   ) {
       redirect("/dashboard")
+   }
 
    const organizationName = invitation.organization.name
    const messages = (await getMessages()) as Messages
@@ -80,20 +81,14 @@ export default async function Page({
             ></p>
          </div>
          <div className="mt-5 flex justify-center md:mt-8">
-            {user === null ? (
-               <SignIn
-                  afterSignInUrl={`/${locale}/invite/${invitation.token}`}
-                  afterSignUpUrl={`/${locale}/invite/${invitation.token}`}
+            <NextIntlClientProvider messages={pick(messages, ["invite"])}>
+               <InvitationActions
+                  locale={locale}
+                  invitationId={invitation.id}
+                  token={invitation.token}
+                  organizationId={invitation.organizationId}
                />
-            ) : (
-               <NextIntlClientProvider messages={pick(messages, ["invite"])}>
-                  <InvitationActions
-                     invitationId={invitation.id}
-                     token={invitation.token}
-                     organizationId={invitation.organizationId}
-                  />
-               </NextIntlClientProvider>
-            )}
+            </NextIntlClientProvider>
          </div>
       </div>
    )

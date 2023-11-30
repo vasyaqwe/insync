@@ -4,6 +4,7 @@ import { type NextRequest } from "next/server"
 
 export const locales = ["en", "uk"] as const
 export const defaultLocale = "en"
+export type Locale = (typeof locales)[number]
 
 export const { Link, redirect, usePathname, useRouter } =
    createSharedPathnamesNavigation({

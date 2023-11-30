@@ -20,8 +20,9 @@
    },
    "account-menu": {
       "item1": "Dashboard",
-      "item2": "Settings",
-      "item3": "Sign out"
+      "item2": "Create organization",
+      "item3": "Settings",
+      "item4": "Sign out"
    },
    "header": {
       "button": "Get started"
@@ -52,7 +53,7 @@
    "create-community": {
       "success": "Organization created",
       "error": "Couldn't create organization, something went wrong",
-      "title": "New organization",
+      "title": "Create organization",
       "name": "Give your organization a name",
       "name-placeholder": "My organization",
       "invite": "Invite people by email (this can be done later)",

@@ -1,6 +1,6 @@
 import "@/styles/globals.css"
 
-import { ClerkProvider, currentUser } from "@clerk/nextjs"
+import { ClerkProvider } from "@clerk/nextjs"
 import { GeistSans } from "geist/font/sans"
 
 import { Header } from "@/components/layout/header"
@@ -12,6 +12,7 @@ import { cn, pick } from "@/lib/utils"
 import { Inter } from "next/font/google"
 import { TRPCReactProvider } from "@/trpc/react"
 import { cookies } from "next/headers"
+import { Toaster } from "sonner"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 
@@ -28,7 +29,6 @@ export default async function RootLayout({
    children: React.ReactNode
    params: { locale: (typeof locales)[number] }
 }) {
-   const user = await currentUser()
    const messages = (await getMessages()) as Messages
 
    // Enable static rendering
@@ -49,9 +49,16 @@ export default async function RootLayout({
                   <NextIntlClientProvider
                      messages={pick(messages, ["account-menu", "header"])}
                   >
-                     <Header user={structuredClone(user)} />
+                     <Header />
                   </NextIntlClientProvider>
-                  <main>{children}</main>
+                  <main>
+                     {children}
+                     <Toaster
+                        richColors
+                        position="top-center"
+                        style={{ font: "inherit" }}
+                     />
+                  </main>
                </ClerkProvider>
             </TRPCReactProvider>
          </body>

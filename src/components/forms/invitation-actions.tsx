@@ -5,6 +5,7 @@ import { Loading } from "@/components/ui/loading"
 import { type AcceptOrganizationInvitationSchema } from "@/lib/validations/organization"
 import { useRouter } from "@/navigation"
 import { api } from "@/trpc/react"
+import { SignIn, SignedIn, SignedOut } from "@clerk/nextjs"
 import { useTranslations } from "next-intl"
 import { toast } from "sonner"
 
@@ -12,13 +13,14 @@ export function InvitationActions({
    invitationId,
    organizationId,
    token,
-}: AcceptOrganizationInvitationSchema) {
+   locale,
+}: AcceptOrganizationInvitationSchema & { locale: string }) {
    const t = useTranslations("invite")
    const router = useRouter()
 
    const { isLoading, mutate: onAccept } = api.organization.join.useMutation({
       onSuccess: () => {
-         router.push("/dashboard")
+         router.push(`/dashboard/${organizationId}`)
          router.refresh()
          toast.success(t("success-toast"))
       },
@@ -29,14 +31,29 @@ export function InvitationActions({
 
    return (
       <>
-         <Button
-            disabled={isLoading}
-            onClick={() => onAccept({ invitationId, organizationId, token })}
-            size={"lg"}
-         >
-            {t("accept")}
-            {isLoading && <Loading />}
-         </Button>
+         <SignedOut>
+            <SignIn
+               redirectUrl={`/${locale}/invite/${token}`}
+               appearance={{
+                  elements: {
+                     footer: "hidden",
+                  },
+                  variables: {
+                     colorPrimary: "hsl(221.2 83.2% 53.3%)",
+                  },
+               }}
+            />
+         </SignedOut>
+         <SignedIn>
+            <Button
+               disabled={isLoading}
+               onClick={() => onAccept({ invitationId, organizationId, token })}
+               size={"lg"}
+            >
+               {t("accept")}
+               {isLoading && <Loading />}
+            </Button>
+         </SignedIn>
       </>
    )
 }

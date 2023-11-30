@@ -1,5 +1,3 @@
-import { Toaster } from "sonner"
-
 import { Sidebar } from "@/components/layout/sidebar"
 import { NextIntlClientProvider } from "next-intl"
 import { pick } from "@/lib/utils"
@@ -39,10 +37,6 @@ export default async function RootLayout({
             </NextIntlClientProvider>
             {children}
          </div>
-         <Toaster
-            richColors
-            style={{ font: "inherit" }}
-         />
       </>
    )
 }
