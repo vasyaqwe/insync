@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import Image from "next/image"
 import { type AvatarProps } from "@radix-ui/react-avatar"
 import { cn } from "@/lib/utils"
-import { type User } from "@clerk/nextjs/server"
+import { type User } from "@prisma/client"
 
 type DeepPartial<T> = T extends object
    ? {
@@ -45,9 +45,7 @@ export function UserAvatar({ user, className, ...props }: UserAvatarProps) {
             />
          ) : (
             <AvatarFallback className="text-[calc(var(--avatar-size)/2.5)]">
-               {user.emailAddresses?.[0]
-                  ? user.emailAddresses[0].emailAddress?.[0]?.toUpperCase()
-                  : "U"}
+               {user.email?.[0]?.toUpperCase() ?? "U"}
             </AvatarFallback>
          )}
       </Avatar>

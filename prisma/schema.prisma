@@ -43,13 +43,9 @@ model Organization {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    invitations OrganizationInvitation[]
-}
+    color String
 
-enum INVITATION_STATUS {
-    PENDING
-    DECLINED
-    ACCEPTED
+    invitations OrganizationInvitation[]
 }
 
 model OrganizationInvitation {
@@ -61,15 +57,12 @@ model OrganizationInvitation {
     invitedUserId    String?
     invitedUserEmail String? @unique
 
-    invitationSender   User   @relation("InvitationSender", fields: [invitationSenderId], references: [id])
-    invitationSenderId String
+    sender   User   @relation("InvitationSender", fields: [senderId], references: [id])
+    senderId String
 
     organization   Organization @relation(fields: [organizationId], references: [id])
     organizationId String
 
-    status INVITATION_STATUS
-
-    expiresAt DateTime
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }

@@ -11,6 +11,8 @@ export default function Page({
 
    return (
       <SignIn
+         afterSignInUrl={`/${locale}/dashboard`}
+         afterSignUpUrl={`/${locale}/dashboard`}
          signUpUrl={`/${locale}/sign-up`}
          appearance={{
             variables: {

@@ -28,6 +28,7 @@ export default authMiddleware({
       "/:locale",
       "/:locale/sign-in",
       "/:locale/sign-up",
+      "/:locale/invite/:token",
       "/api/webhook/user",
    ],
 })

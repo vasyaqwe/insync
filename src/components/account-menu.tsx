@@ -25,7 +25,13 @@ export function AccountMenu({ user }: AccountMenuProps) {
    return (
       <DropdownMenu>
          <DropdownMenuTrigger className="rounded-full transition-opacity hover:opacity-75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ">
-            <UserAvatar user={user} />
+            <UserAvatar
+               user={{
+                  email: user.emailAddresses[0]?.emailAddress,
+                  firstName: user.firstName ?? undefined,
+                  imageUrl: user?.imageUrl ?? undefined,
+               }}
+            />
          </DropdownMenuTrigger>
          <DropdownMenuContent
             align="end"

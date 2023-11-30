@@ -27,15 +27,19 @@ import { auth, clerkClient } from "@clerk/nextjs"
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
    const session = auth()
-   const user = session.userId
+   const clerkUser = session.userId
       ? await clerkClient.users.getUser(session.userId)
       : null
 
-   session.user = user
+   const user = await db.user.findFirst({
+      where: {
+         externalId: clerkUser!.id,
+      },
+   })
 
    return {
       db,
-      session,
+      session: { ...session, user, userId: user?.id },
       ...opts,
    }
 }

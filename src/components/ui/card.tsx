@@ -12,7 +12,7 @@ export function Card({ asChild = false, className, ...props }: CardProps) {
 
    return (
       <Comp
-         className={cn("rounded-lg border bg-card p-2 md:p-4", className)}
+         className={cn("rounded-lg border bg-card p-4", className)}
          {...props}
       />
    )

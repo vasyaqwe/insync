@@ -6,9 +6,17 @@
          "button": "Try it now"
       }
    },
+   "invite": {
+      "title": "Join <span>{organizationName}</span> organization on insync.",
+      "description": "insync allows teams to organize their workspace and always be up-to-date. <br /> <span class='underline'>With AI's help</span>.",
+      "invited-you": "<strong>{name}</strong> invited you to collaborate in <strong>{organization}</strong> organization.",
+      "accept": "Accept invitation",
+      "success-toast": "Invitation accepted",
+      "error-toast": "Couldn't accept invitation, something went wrong"
+   },
    "error-messages": {
       "required": "Required",
-      "maxLimit": "Maximum length is {limit} characters"
+      "max-limit": "Maximum length is {limit} characters"
    },
    "account-menu": {
       "item1": "Dashboard",
@@ -19,14 +27,28 @@
       "button": "Get started"
    },
    "sidebar": {
-      "title": "Organizations"
+      "title": "Organizations",
+      "item1": "Boards",
+      "item2": "Activity",
+      "item3": "Settings",
+      "item4": "Billing"
+   },
+   "organization-settings": {
+      "title": "Settings",
+      "delete-title": "Delete organization",
+      "delete-subtitle": "Delete the entire organization including all associated data",
+      "delete-subtitle-2": "This action is permanent and cannot be reversed",
+      "delete-warning-1": "Are you sure you want to delete the <strong>{name}</strong> organization?",
+      "delete-warning-2": "This action will delete the organization and all associated data, and is irreversible.",
+      "success-toast": "Organization deleted",
+      "error-toast": "Couldn't delete organization, something went wrong"
    },
    "create-community": {
       "success": "Organization created",
       "error": "Couldn't create organization, something went wrong",
       "title": "New organization",
       "name": "Give your organization a name",
-      "namePlaceholder": "My organization",
+      "name-placeholder": "My organization",
       "invite": "Invite people by email (this can be done later)",
       "create": "Create",
       "email-hint": "Keep typing a correct email..."

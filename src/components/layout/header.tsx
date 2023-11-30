@@ -13,7 +13,7 @@ export function Header({ user }: { user: User | null | undefined }) {
    const t = useTranslations("header")
    const pathname = usePathname()
 
-   return (
+   return pathname.includes("invite") ? null : (
       <header className="flex h-[var(--header-height)] items-center bg-background/50 py-2 shadow-sm backdrop-blur-md">
          <div className="container flex items-center justify-between">
             <Link href={"/"}>

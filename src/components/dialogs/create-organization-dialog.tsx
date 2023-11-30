@@ -34,9 +34,11 @@ import {
    NAME_CHARS_LIMIT,
    createOrganizationSchema,
 } from "@/lib/validations/organization"
+import { useRouter } from "@/navigation"
 
 export function CreateOrganizationDialog() {
    const t = useTranslations("create-community")
+   const router = useRouter()
    const [open, setOpen] = useState(false)
    const [query, setQuery] = useState("")
    const [isQueryFullEmail, setIsQueryFullEmail] = useState(true)
@@ -50,14 +52,11 @@ export function CreateOrganizationDialog() {
       name: "",
    })
 
-   const {
-      refetch,
-      isFetching,
-      data: searchResults,
-   } = api.user.search.useQuery(
+   const { refetch, isFetching, data } = api.user.search.useQuery(
       { query },
       { enabled: false, keepPreviousData: query.length > 0 }
    )
+   const searchResults = data ?? []
 
    useEffect(() => {
       if (debouncedInput.length > 0) {
@@ -72,11 +71,13 @@ export function CreateOrganizationDialog() {
    }
 
    const { mutate: onSubmit, isLoading } = api.organization.create.useMutation({
-      onSuccess: () => {
+      onSuccess: (res) => {
          setOpen(false)
          setFormData({ name: "" })
          setSelectedUsers([])
          setQuery("")
+         router.push(`/dashboard/${res}`)
+         router.refresh()
          toast.success(t("success"))
       },
       onError: () => {
@@ -155,7 +156,7 @@ export function CreateOrganizationDialog() {
                   {t("name")}
                </Label>
                <Input
-                  placeholder={t("namePlaceholder")}
+                  placeholder={t("name-placeholder")}
                   invalid={errors.name}
                   name="name"
                   id="name"
@@ -203,7 +204,9 @@ export function CreateOrganizationDialog() {
                      <CommandList>
                         <CommandGroup>
                            {query.length > 0 &&
-                              searchResults?.some((u) => u.email !== query) && (
+                              !searchResults?.some(
+                                 (u) => u.email === query
+                              ) && (
                                  <UserItem
                                     user={{
                                        id: GUEST_USER_ID,
@@ -256,11 +259,7 @@ export function CreateOrganizationDialog() {
                         {selectedUsers.map((user) => (
                            <UserAvatar
                               className="-ml-3"
-                              user={{
-                                 emailAddresses: [{ emailAddress: user.email }],
-                                 firstName: user.firstName,
-                                 imageUrl: user?.imageUrl ?? "",
-                              }}
+                              user={user}
                               key={user.email}
                            />
                         ))}
@@ -295,13 +294,7 @@ function UserItem({
          value={user.email}
          onSelect={() => onSelect(user)}
       >
-         <UserAvatar
-            user={{
-               emailAddresses: [{ emailAddress: user.email }],
-               firstName: user.firstName,
-               imageUrl: user?.imageUrl ?? "",
-            }}
-         />
+         <UserAvatar user={user} />
          <div className="w-full">
             <p className="truncate">
                {user.firstName} {user.lastName}{" "}
