@@ -19,7 +19,7 @@ import { useTranslations } from "next-intl"
 import { useState } from "react"
 import { toast } from "sonner"
 
-export function DeleteOrganizationDialog({
+export function LeaveOrganizationDialog({
    organization,
 }: {
    organization: Pick<Organization, "name" | "id">
@@ -27,15 +27,18 @@ export function DeleteOrganizationDialog({
    const t = useTranslations("organization-settings")
    const router = useRouter()
    const [open, setOpen] = useState(false)
-   const { isLoading, mutate: onDelete } = api.organization.delete.useMutation({
-      onSuccess: () => {
+
+   const { isLoading, mutate: onLeave } = api.organization.leave.useMutation({
+      onSuccess: (organizationName) => {
          router.push("/dashboard")
          router.refresh()
-         toast.success(t("delete-success-toast"))
+         toast.success(
+            t.rich("leave-success-toast", { name: organizationName })
+         )
          setOpen(false)
       },
       onError: () => {
-         toast.error(t("delete-error-toast"))
+         toast.error(t("leave-error-toast"))
       },
    })
 
@@ -45,39 +48,39 @@ export function DeleteOrganizationDialog({
          onOpenChange={setOpen}
       >
          <Button
+            variant={"secondary"}
             className="w-fit"
-            variant={"destructive"}
             asChild
          >
-            <AlertDialogTrigger>{t("delete-title")}</AlertDialogTrigger>
+            <AlertDialogTrigger>{t("leave-title")}</AlertDialogTrigger>
          </Button>
          <AlertDialogContent>
             <AlertDialogHeader>
-               <AlertDialogTitle>{t("delete-title")}</AlertDialogTitle>
+               <AlertDialogTitle>{t("leave-title")}</AlertDialogTitle>
                <AlertDialogDescription asChild>
                   <div>
                      <p
                         dangerouslySetInnerHTML={{
-                           __html: t.markup("delete-warning-1", {
+                           __html: t.markup("leave-warning-1", {
                               name: organization?.name,
                               strong: (chunks) =>
                                  `<strong class="font-semibold">${chunks}</strong>`,
                            }),
                         }}
                      ></p>
-                     <p className="mt-2">{t("delete-warning-2")}</p>
+                     <p className="mt-2">{t("leave-warning-2")}</p>
                   </div>
                </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
                <AlertDialogCancel className="mr-auto">Cancel</AlertDialogCancel>
                <Button
+                  variant={"secondary"}
                   disabled={isLoading}
-                  onClick={() => onDelete({ organizationId: organization.id })}
+                  onClick={() => onLeave({ organizationId: organization.id })}
                   className="w-fit"
-                  variant={"destructive"}
                >
-                  {t("delete-title")}
+                  {t("leave-title")}
                   {isLoading && <Loading />}
                </Button>
             </AlertDialogFooter>

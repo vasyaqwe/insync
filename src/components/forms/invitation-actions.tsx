@@ -16,17 +16,16 @@ export function InvitationActions({
    const t = useTranslations("invite")
    const router = useRouter()
 
-   const { isLoading, mutate: onAccept } =
-      api.organization.acceptInvitation.useMutation({
-         onSuccess: () => {
-            router.push("/dashboard")
-            router.refresh()
-            toast.success(t("success-toast"))
-         },
-         onError: () => {
-            toast.error(t("error-toast"))
-         },
-      })
+   const { isLoading, mutate: onAccept } = api.organization.join.useMutation({
+      onSuccess: () => {
+         router.push("/dashboard")
+         router.refresh()
+         toast.success(t("success-toast"))
+      },
+      onError: () => {
+         toast.error(t("error-toast"))
+      },
+   })
 
    return (
       <>

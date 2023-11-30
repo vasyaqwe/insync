@@ -11,15 +11,15 @@ datasource db {
 }
 
 model User {
-    id         String  @id @default(uuid())
-    externalId String  @unique
-    imageUrl   String?
-    firstName  String
-    lastName   String
-    email      String
+    id        String  @id
+    imageUrl  String?
+    firstName String
+    lastName  String
+    email     String
 
-    organizations Organization[] @relation("OrganizationMembers")
-    boards        Board[]        @relation("BoardMembers")
+    createdOrganizations Organization[]
+    organizations        Organization[] @relation("OrganizationMembers")
+    boards               Board[]        @relation("BoardMembers")
 
     lists                           List[]
     cards                           Card[]
@@ -40,6 +40,9 @@ model Organization {
     boards    Board[]
     members   User[]     @relation("OrganizationMembers")
 
+    creatorId String
+    creator   User   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
@@ -53,14 +56,14 @@ model OrganizationInvitation {
 
     token String @unique
 
-    invitedUser      User?   @relation("InvitedUser", fields: [invitedUserId], references: [id])
+    invitedUser      User?   @relation("InvitedUser", fields: [invitedUserId], references: [id], onDelete: Cascade)
     invitedUserId    String?
     invitedUserEmail String? @unique
 
-    sender   User   @relation("InvitationSender", fields: [senderId], references: [id])
+    sender   User   @relation("InvitationSender", fields: [senderId], references: [id], onDelete: Cascade)
     senderId String
 
-    organization   Organization @relation(fields: [organizationId], references: [id])
+    organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
     organizationId String
 
     createdAt DateTime @default(now())
@@ -87,7 +90,7 @@ model List {
     order Int
 
     authorId String
-    author   User   @relation(fields: [authorId], references: [id])
+    author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
     boardId String
     board   Board  @relation(fields: [boardId], references: [id], onDelete: Cascade)
@@ -107,7 +110,7 @@ model Card {
     description String? @db.Text
 
     authorId String
-    author   User   @relation(fields: [authorId], references: [id])
+    author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
     listId String
     list   List   @relation(fields: [listId], references: [id], onDelete: Cascade)
@@ -123,7 +126,7 @@ model CardComment {
     content String? @db.Text
 
     authorId String
-    author   User   @relation(fields: [authorId], references: [id])
+    author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

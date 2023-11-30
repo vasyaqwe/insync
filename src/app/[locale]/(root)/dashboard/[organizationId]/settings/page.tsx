@@ -7,6 +7,8 @@ import { NextIntlClientProvider } from "next-intl"
 import { pick } from "@/lib/utils"
 import { notFound } from "next/navigation"
 import { DeleteOrganizationDialog } from "@/components/dialogs/delete-organization-dialog"
+import { LeaveOrganizationDialog } from "@/components/dialogs/leave-organization-dialog"
+import { currentUser } from "@clerk/nextjs"
 
 export default async function Page({
    params: { organizationId },
@@ -20,6 +22,7 @@ export default async function Page({
       select: {
          id: true,
          name: true,
+         creatorId: true,
       },
    })
 
@@ -27,6 +30,7 @@ export default async function Page({
 
    const t = await getTranslations("organization-settings")
    const messages = (await getMessages()) as Messages
+   const user = await currentUser()
 
    return (
       <div>
@@ -51,6 +55,21 @@ export default async function Page({
                <DeleteOrganizationDialog organization={organization} />
             </NextIntlClientProvider>
          </Card>
+         {user?.id === organization.creatorId && (
+            <Card className="mt-5 flex flex-col gap-4 lg:flex-row lg:justify-between lg:p-6">
+               <div>
+                  <p className="text-xl font-semibold">{t("leave-title")}</p>
+                  <p className="mt-2 text-sm text-foreground/75">
+                     {t("leave-subtitle")}
+                  </p>
+               </div>
+               <NextIntlClientProvider
+                  messages={pick(messages, ["organization-settings"])}
+               >
+                  <LeaveOrganizationDialog organization={organization} />
+               </NextIntlClientProvider>
+            </Card>
+         )}
       </div>
    )
 }

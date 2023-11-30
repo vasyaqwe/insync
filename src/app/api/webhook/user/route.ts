@@ -32,9 +32,9 @@ async function handler(request: Request) {
    const { id, ...attributes } = evt.data as any
    if (eventType === "user.created" || eventType === "user.updated") {
       await db.user.upsert({
-         where: { externalId: id as string },
+         where: { id: id as string },
          create: {
-            externalId: id as string,
+            id: id as string,
             firstName: attributes.first_name as string,
             lastName: attributes.last_name as string,
             email: attributes?.email_addresses?.[0]?.email_address as string,
@@ -51,7 +51,7 @@ async function handler(request: Request) {
       })
    } else if (eventType === "user.deleted") {
       await db.user.delete({
-         where: { externalId: id as string },
+         where: { id: id as string },
       })
    }
 

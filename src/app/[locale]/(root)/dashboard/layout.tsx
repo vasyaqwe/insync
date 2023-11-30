@@ -19,7 +19,7 @@ export default async function RootLayout({
       where: {
          members: {
             some: {
-               externalId: user?.id,
+               id: user?.id,
             },
          },
       },

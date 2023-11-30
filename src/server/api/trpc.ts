@@ -33,7 +33,7 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
 
    const user = await db.user.findFirst({
       where: {
-         externalId: clerkUser!.id,
+         id: clerkUser!.id,
       },
    })
 

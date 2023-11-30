@@ -8,7 +8,6 @@ export type InvitedUser = Partial<User> & { email: string; id: string }
 const invitedUserSchema: z.ZodType<InvitedUser> = z.object({
    createdAt: z.date().optional(),
    email: z.string(),
-   externalId: z.string().optional(),
    id: z.string(),
    firstName: z.string().optional(),
    lastName: z.string().optional(),
@@ -17,6 +16,9 @@ const invitedUserSchema: z.ZodType<InvitedUser> = z.object({
 })
 
 export const deleteOrganizationSchema = z.object({
+   organizationId: z.string(),
+})
+export const leaveOrganizationSchema = z.object({
    organizationId: z.string(),
 })
 

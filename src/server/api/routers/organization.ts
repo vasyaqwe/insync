@@ -3,6 +3,7 @@ import {
    acceptOrganizationInvitationSchema,
    createOrganizationSchema,
    deleteOrganizationSchema,
+   leaveOrganizationSchema,
 } from "@/lib/validations/organization"
 import { createTRPCRouter, privateProcedure } from "@/server/api/trpc"
 import { TRPCError } from "@trpc/server"
@@ -17,6 +18,7 @@ export const organizationRouter = createTRPCRouter({
                data: {
                   name,
                   color: generateRandomGradientColor(),
+                  creatorId: ctx.session.userId!,
                   members: {
                      connect: {
                         id: ctx.session.userId,
@@ -57,7 +59,25 @@ export const organizationRouter = createTRPCRouter({
          })
          return "OK"
       }),
-   acceptInvitation: privateProcedure
+   leave: privateProcedure
+      .input(leaveOrganizationSchema)
+      .mutation(async ({ ctx, input: { organizationId } }) => {
+         const leftOrganization = await ctx.db.organization.update({
+            where: {
+               id: organizationId,
+            },
+            data: {
+               members: {
+                  disconnect: {
+                     id: ctx.session.userId,
+                  },
+               },
+            },
+         })
+
+         return leftOrganization.name
+      }),
+   join: privateProcedure
       .input(acceptOrganizationInvitationSchema)
       .mutation(
          async ({ ctx, input: { invitationId, token, organizationId } }) => {
