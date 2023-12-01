@@ -28,6 +28,8 @@
       "button": "Get started"
    },
    "sidebar": {
+      "empty": "Pretty empty here. Create your first organization to start.",
+      "empty-button": "Create organization",
       "title": "Organizations",
       "item1": "Boards",
       "item2": "Activity",
@@ -58,6 +60,7 @@
       "name-placeholder": "My organization",
       "invite": "Invite people by email (this can be done later)",
       "create": "Create",
-      "email-hint": "Keep typing a correct email..."
+      "email-hint": "Keep typing a correct email...",
+      "email-error": "Oops.. That's your email"
    }
 }

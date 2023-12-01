@@ -8,6 +8,7 @@ import { api } from "@/trpc/react"
 import { SignIn, SignedIn, SignedOut } from "@clerk/nextjs"
 import { useTranslations } from "next-intl"
 import { toast } from "sonner"
+import { clerkAppearence } from "@/config"
 
 export function InvitationActions({
    invitationId,
@@ -35,11 +36,9 @@ export function InvitationActions({
             <SignIn
                redirectUrl={`/${locale}/invite/${token}`}
                appearance={{
+                  ...clerkAppearence,
                   elements: {
                      footer: "hidden",
-                  },
-                  variables: {
-                     colorPrimary: "hsl(221.2 83.2% 53.3%)",
                   },
                }}
             />

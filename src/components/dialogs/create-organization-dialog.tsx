@@ -6,13 +6,12 @@ import {
    DialogContent,
    DialogHeader,
    DialogTitle,
-   DialogTrigger,
 } from "@/components/ui/dialog"
 import { ErrorMessage, Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Loading } from "@/components/ui/loading"
 import { useFormValidation } from "@/hooks/use-form-validation"
-import { Check, PlusIcon } from "lucide-react"
+import { Check } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
@@ -36,13 +35,16 @@ import {
 } from "@/lib/validations/organization"
 import { useRouter } from "@/navigation"
 import { useGlobalStore } from "@/stores/use-global-store"
+import { useUser } from "@clerk/nextjs"
 
 export function CreateOrganizationDialog() {
    const t = useTranslations("create-community")
    const router = useRouter()
+   const { user } = useUser()
    const { dialogs, closeDialog, openDialog } = useGlobalStore()
    const [query, setQuery] = useState("")
-   const [isQueryFullEmail, setIsQueryFullEmail] = useState(true)
+   const [isEmailHintVisible, setIsEmailHintVisible] = useState(false)
+   const [emailHint, setEmailHint] = useState(t("email-hint"))
    const [selectedUsers, setSelectedUsers] = useState<InvitedUser[]>([])
    const debouncedInput = useDebounce<string>({
       value: query,
@@ -57,7 +59,10 @@ export function CreateOrganizationDialog() {
       { query },
       { enabled: false, keepPreviousData: query.length > 0 }
    )
-   const searchResults = data ?? []
+
+   const searchResults =
+      data?.filter((u) => u.email !== user?.emailAddresses[0]?.emailAddress) ??
+      []
 
    useEffect(() => {
       if (debouncedInput.length > 0) {
@@ -96,19 +101,26 @@ export function CreateOrganizationDialog() {
       zodSchema: createOrganizationSchema,
    })
 
-   function onUserSelect(user: InvitedUser) {
-      if (isEmail(user?.email ?? "")) {
-         setIsQueryFullEmail(true)
-         if (selectedUsers.some((u) => u.email === user.email)) {
+   function onUserSelect(selectedUser: InvitedUser) {
+      if (isEmail(selectedUser?.email ?? "")) {
+         setIsEmailHintVisible(false)
+
+         if (selectedUser.email === user?.emailAddresses[0]?.emailAddress) {
+            setIsEmailHintVisible(true)
+            return setEmailHint(t("email-error"))
+         }
+
+         if (selectedUsers.some((u) => u.email === selectedUser.email)) {
             setSelectedUsers((prev) =>
-               prev.filter((prevUser) => prevUser.email !== user.email)
+               prev.filter((prevUser) => prevUser.email !== selectedUser.email)
             )
          } else if (typeof user !== "string") {
-            setSelectedUsers((prev) => [...prev, user])
-            if (user.id === GUEST_USER_ID) setQuery("")
+            setSelectedUsers((prev) => [...prev, selectedUser])
+            if (selectedUser.id === GUEST_USER_ID) setQuery("")
          }
-      } else if (user.id === GUEST_USER_ID) {
-         setIsQueryFullEmail(false)
+      } else if (selectedUser.id === GUEST_USER_ID) {
+         setIsEmailHintVisible(true)
+         setEmailHint(t("email-hint"))
       }
    }
 
@@ -135,15 +147,6 @@ export function CreateOrganizationDialog() {
             }
          }}
       >
-         <DialogTrigger asChild>
-            <Button
-               aria-label={t("title")}
-               size={"icon"}
-               variant={"ghost"}
-            >
-               <PlusIcon />
-            </Button>
-         </DialogTrigger>
          <DialogContent className="items-center">
             <DialogHeader>
                <DialogTitle className="text-2xl font-semibold">
@@ -197,7 +200,12 @@ export function CreateOrganizationDialog() {
                >
                   <CommandInput
                      value={query}
-                     onValueChange={(val) => setQuery(val)}
+                     onValueChange={(val) => {
+                        setQuery(val)
+                        if (isEmail(val)) {
+                           setIsEmailHintVisible(false)
+                        }
+                     }}
                      name="invite"
                      id="invite"
                      placeholder="name@example.com"
@@ -215,11 +223,12 @@ export function CreateOrganizationDialog() {
                                  (u) => u.email === query
                               ) && (
                                  <UserItem
+                                    emailHint={emailHint}
                                     user={{
                                        id: GUEST_USER_ID,
                                        email: query,
                                     }}
-                                    isQueryFullEmail={isQueryFullEmail}
+                                    isEmailHintVisible={isEmailHintVisible}
                                     onSelect={onUserSelect}
                                     selectedUsers={selectedUsers}
                                  />
@@ -228,6 +237,7 @@ export function CreateOrganizationDialog() {
                               searchResults?.map((user) => (
                                  <UserItem
                                     key={user.email}
+                                    emailHint={emailHint}
                                     user={user}
                                     onSelect={onUserSelect}
                                     selectedUsers={selectedUsers}
@@ -237,6 +247,7 @@ export function CreateOrganizationDialog() {
                            {[...filteredSelectedUsers].reverse().map((user) => (
                               <UserItem
                                  key={user.email}
+                                 emailHint={emailHint}
                                  user={user}
                                  onSelect={onUserSelect}
                                  selectedUsers={selectedUsers}
@@ -287,14 +298,17 @@ function UserItem({
    user,
    selectedUsers,
    onSelect,
-   isQueryFullEmail = true,
+   isEmailHintVisible = false,
+   emailHint,
 }: {
    user: InvitedUser
    selectedUsers: InvitedUser[]
    onSelect: (user: InvitedUser) => void
-   isQueryFullEmail?: boolean
+   isEmailHintVisible?: boolean
+   emailHint: string
 }) {
-   const t = useTranslations("create-community")
+   const isSelected = selectedUsers.some((u) => u.email === user.email)
+
    return (
       <CommandItem
          className="flex items-center gap-2"
@@ -311,14 +325,14 @@ function UserItem({
                <span
                   className={cn(
                      "ml-auto whitespace-nowrap text-xs font-medium text-primary",
-                     isEmail(user?.email ?? "")
+                     isEmail(user?.email ?? "") && !isEmailHintVisible
                         ? "hidden"
-                        : isQueryFullEmail
+                        : !isEmailHintVisible
                         ? "invisible"
                         : ""
                   )}
                >
-                  {t("email-hint")}
+                  {emailHint}
                </span>
             </p>
          </div>
@@ -326,12 +340,11 @@ function UserItem({
          <span
             className={cn(
                "ml-auto grid h-6 w-6 flex-shrink-0 place-content-center rounded-full bg-primary",
-               !isQueryFullEmail
+               isEmailHintVisible
                   ? "hidden"
-                  : !selectedUsers.some((u) => u.email === user.email) &&
-                    isQueryFullEmail
-                  ? "invisible"
-                  : ""
+                  : isSelected && !isEmailHintVisible
+                  ? ""
+                  : "invisible"
             )}
          >
             <Check

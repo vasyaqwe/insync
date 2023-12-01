@@ -1,9 +1,10 @@
 import { Sidebar } from "@/components/layout/sidebar"
 import { NextIntlClientProvider } from "next-intl"
-import { pick } from "@/lib/utils"
+import { cn, pick } from "@/lib/utils"
 import { getMessages } from "next-intl/server"
 import { db } from "@/server/db"
 import { currentUser } from "@clerk/nextjs"
+import { CreateOrganizationDialog } from "@/components/dialogs/create-organization-dialog"
 
 export default async function RootLayout({
    children,
@@ -25,7 +26,14 @@ export default async function RootLayout({
 
    return (
       <>
-         <div className="container grid grid-cols-[320px,1fr] gap-10 py-16">
+         <div
+            className={cn(
+               "container  py-16",
+               organizations.length > 0
+                  ? "grid grid-cols-[320px,1fr] gap-10"
+                  : ""
+            )}
+         >
             <NextIntlClientProvider
                messages={pick(messages, [
                   "sidebar",
@@ -33,6 +41,7 @@ export default async function RootLayout({
                   "error-messages",
                ])}
             >
+               <CreateOrganizationDialog />
                <Sidebar organizations={organizations} />
             </NextIntlClientProvider>
             {children}
