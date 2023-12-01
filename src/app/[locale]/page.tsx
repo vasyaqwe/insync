@@ -2,9 +2,16 @@ import { Button } from "@/components/ui/button"
 import { Link } from "@/navigation"
 import { currentUser } from "@clerk/nextjs"
 import { ArrowUpRight } from "lucide-react"
-import { getTranslations } from "next-intl/server"
+import { getTranslations, unstable_setRequestLocale } from "next-intl/server"
 
-export default async function Home() {
+export default async function Home({
+   params: { locale },
+}: {
+   params: { locale: string }
+}) {
+   // Enable static rendering
+   unstable_setRequestLocale(locale)
+
    const t = await getTranslations("landing-page")
    const user = await currentUser()
 

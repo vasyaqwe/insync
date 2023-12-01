@@ -29,10 +29,10 @@ export default async function RootLayout({
    children: React.ReactNode
    params: { locale: (typeof locales)[number] }
 }) {
-   const messages = (await getMessages()) as Messages
-
    // Enable static rendering
    unstable_setRequestLocale(locale)
+
+   const messages = (await getMessages()) as Messages
 
    return (
       <html lang={locale}>

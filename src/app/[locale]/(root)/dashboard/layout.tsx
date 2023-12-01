@@ -25,27 +25,23 @@ export default async function RootLayout({
    })
 
    return (
-      <>
-         <div
-            className={cn(
-               "container  py-16",
-               organizations.length > 0
-                  ? "grid grid-cols-[320px,1fr] gap-10"
-                  : ""
-            )}
+      <div
+         className={cn(
+            "container  py-16",
+            organizations.length > 0 ? "grid grid-cols-[320px,1fr] gap-10" : ""
+         )}
+      >
+         <NextIntlClientProvider
+            messages={pick(messages, [
+               "sidebar",
+               "create-community",
+               "error-messages",
+            ])}
          >
-            <NextIntlClientProvider
-               messages={pick(messages, [
-                  "sidebar",
-                  "create-community",
-                  "error-messages",
-               ])}
-            >
-               <CreateOrganizationDialog />
-               <Sidebar organizations={organizations} />
-            </NextIntlClientProvider>
-            {children}
-         </div>
-      </>
+            <CreateOrganizationDialog />
+            <Sidebar organizations={organizations} />
+         </NextIntlClientProvider>
+         {children}
+      </div>
    )
 }
