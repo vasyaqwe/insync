@@ -1,5 +1,6 @@
 "use client"
 
+import { Hint } from "@/components/hint"
 import {
    Accordion,
    AccordionContent,
@@ -21,10 +22,15 @@ import {
    SettingsIcon,
 } from "lucide-react"
 import { useTranslations } from "next-intl"
+import { useShallow } from "zustand/react/shallow"
 
 export function Sidebar({ organizations }: { organizations: Organization[] }) {
    const t = useTranslations("sidebar")
-   const { openDialog } = useGlobalStore()
+   const { openDialog } = useGlobalStore(
+      useShallow((state) => ({
+         openDialog: state.openDialog,
+      }))
+   )
    const pathname = usePathname()
 
    return organizations.length < 1 ? (
@@ -46,14 +52,16 @@ export function Sidebar({ organizations }: { organizations: Organization[] }) {
          <aside>
             <div className="flex items-center justify-between border-b-2 border-dotted pb-3">
                <p className="text-lg font-medium">{t("title")}</p>
-               <Button
-                  onClick={() => openDialog("createOrganization")}
-                  aria-label={t("title")}
-                  size={"icon"}
-                  variant={"ghost"}
-               >
-                  <PlusIcon />
-               </Button>
+               <Hint content={t("empty-button")}>
+                  <Button
+                     onClick={() => openDialog("createOrganization")}
+                     aria-label={t("empty-button")}
+                     size={"icon"}
+                     variant={"ghost"}
+                  >
+                     <PlusIcon />
+                  </Button>
+               </Hint>
             </div>
             <Accordion
                defaultValue={["f4386d73-0a4c-42d1-ad3b-8474222fe93d"]}

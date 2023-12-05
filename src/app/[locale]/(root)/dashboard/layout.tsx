@@ -34,8 +34,9 @@ export default async function RootLayout({
          <NextIntlClientProvider
             messages={pick(messages, [
                "sidebar",
-               "create-community",
+               "create-organization",
                "error-messages",
+               "invite-command",
             ])}
          >
             <CreateOrganizationDialog />

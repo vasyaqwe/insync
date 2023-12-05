@@ -51,7 +51,7 @@ export default async function Page({
                   </p>
                </div>
                <NextIntlClientProvider
-                  messages={pick(messages, ["organization-settings"])}
+                  messages={pick(messages, ["organization-settings", "common"])}
                >
                   <DeleteOrganizationDialog organization={organization} />
                </NextIntlClientProvider>
@@ -66,7 +66,7 @@ export default async function Page({
                   </p>
                </div>
                <NextIntlClientProvider
-                  messages={pick(messages, ["organization-settings"])}
+                  messages={pick(messages, ["organization-settings", "common"])}
                >
                   <LeaveOrganizationDialog organization={organization} />
                </NextIntlClientProvider>

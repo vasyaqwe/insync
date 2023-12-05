@@ -12,10 +12,15 @@ import { useClerk, useUser } from "@clerk/nextjs"
 import { Link, useRouter } from "@/navigation"
 import { useTranslations } from "next-intl"
 import { useGlobalStore } from "@/stores/use-global-store"
+import { useShallow } from "zustand/react/shallow"
 
 export function AccountMenu() {
    const { signOut } = useClerk()
-   const { openDialog } = useGlobalStore()
+   const { openDialog } = useGlobalStore(
+      useShallow((state) => ({
+         openDialog: state.openDialog,
+      }))
+   )
    const { user } = useUser()
    const t = useTranslations("account-menu")
    const router = useRouter()

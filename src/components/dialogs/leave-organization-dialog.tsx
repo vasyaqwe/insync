@@ -25,6 +25,7 @@ export function LeaveOrganizationDialog({
    organization: Pick<Organization, "name" | "id">
 }) {
    const t = useTranslations("organization-settings")
+   const tCommon = useTranslations("common")
    const router = useRouter()
    const [open, setOpen] = useState(false)
 
@@ -73,7 +74,9 @@ export function LeaveOrganizationDialog({
                </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-               <AlertDialogCancel className="mr-auto">Cancel</AlertDialogCancel>
+               <AlertDialogCancel className="mr-auto">
+                  {tCommon("cancel")}
+               </AlertDialogCancel>
                <Button
                   variant={"secondary"}
                   disabled={isLoading}

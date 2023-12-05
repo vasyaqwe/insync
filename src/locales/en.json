@@ -6,6 +6,20 @@
          "button": "Try it now"
       }
    },
+   "common": {
+      "cancel": "Cancel"
+   },
+   "members": {
+      "tooltip": "View all members",
+      "title": "{name} members",
+      "invite": "Invite people",
+      "you": "You"
+   },
+   "invite-command": {
+      "empty": "Search results will appear here.",
+      "email-hint": "Keep typing a correct email...",
+      "email-error": "Oops.. That's your email"
+   },
    "invite": {
       "title": "Join <span>{organizationName}</span> organization on insync.",
       "description": "insync allows teams to organize their workspace and always be up-to-date. <br /> <span class='underline'>With AI's help</span>.",
@@ -28,7 +42,7 @@
       "button": "Get started"
    },
    "sidebar": {
-      "empty": "Pretty empty here. Create your first organization to start.",
+      "empty": "Pretty empty around here. Create your first organization to start.",
       "empty-button": "Create organization",
       "title": "Organizations",
       "item1": "Boards",
@@ -52,15 +66,13 @@
       "leave-success-toast": "You are no longer a member of {name}",
       "leave-error-toast": "Couldn't leave organization, something went wrong"
    },
-   "create-community": {
+   "create-organization": {
       "success": "Organization created",
       "error": "Couldn't create organization, something went wrong",
       "title": "Create organization",
       "name": "Give your organization a name",
       "name-placeholder": "My organization",
       "invite": "Invite people by email (this can be done later)",
-      "create": "Create",
-      "email-hint": "Keep typing a correct email...",
-      "email-error": "Oops.. That's your email"
+      "create": "Create"
    }
 }

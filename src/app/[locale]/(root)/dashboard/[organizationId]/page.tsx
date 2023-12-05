@@ -1,4 +1,8 @@
+import { Members } from "@/components/members"
+import { pick } from "@/lib/utils"
 import { db } from "@/server/db"
+import { NextIntlClientProvider } from "next-intl"
+import { getMessages } from "next-intl/server"
 import { notFound } from "next/navigation"
 
 export default async function Page({
@@ -13,10 +17,22 @@ export default async function Page({
       select: {
          id: true,
          name: true,
+         members: true,
       },
    })
 
    if (!organization) notFound()
 
-   return <></>
+   const messages = (await getMessages()) as Messages
+
+   return (
+      <div>
+         <NextIntlClientProvider messages={pick(messages, ["members"])}>
+            <Members
+               members={organization.members}
+               name={organization.name}
+            />
+         </NextIntlClientProvider>
+      </div>
+   )
 }

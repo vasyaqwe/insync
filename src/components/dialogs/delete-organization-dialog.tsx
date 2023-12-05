@@ -25,6 +25,7 @@ export function DeleteOrganizationDialog({
    organization: Pick<Organization, "name" | "id">
 }) {
    const t = useTranslations("organization-settings")
+   const tCommon = useTranslations("common")
    const router = useRouter()
    const [open, setOpen] = useState(false)
    const { isLoading, mutate: onDelete } = api.organization.delete.useMutation({
@@ -70,7 +71,9 @@ export function DeleteOrganizationDialog({
                </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-               <AlertDialogCancel className="mr-auto">Cancel</AlertDialogCancel>
+               <AlertDialogCancel className="mr-auto">
+                  {tCommon("cancel")}
+               </AlertDialogCancel>
                <Button
                   disabled={isLoading}
                   onClick={() => onDelete({ organizationId: organization.id })}
