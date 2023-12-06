@@ -11,9 +11,15 @@
    },
    "members": {
       "tooltip": "View all members",
-      "title": "{name} members",
+      "title-members": "{name} members",
+      "title-invite": "Invite people to {name}",
       "invite": "Invite people",
-      "you": "You"
+      "you": "You",
+      "send-invites": "Send invites",
+      "back": "Back to members",
+      "selected-users-empty": "Selected users will appear here.",
+      "success": "Invites are sent!",
+      "error": "Couldn't send invites, something went wrong"
    },
    "invite-command": {
       "empty": "Search results will appear here.",
@@ -73,6 +79,7 @@
       "name": "Give your organization a name",
       "name-placeholder": "My organization",
       "invite": "Invite people by email (this can be done later)",
-      "create": "Create"
+      "create": "Create",
+      "selected-users-empty": "Selected users will appear here."
    }
 }

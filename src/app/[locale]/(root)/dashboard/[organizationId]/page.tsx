@@ -27,10 +27,13 @@ export default async function Page({
 
    return (
       <div>
-         <NextIntlClientProvider messages={pick(messages, ["members"])}>
+         <NextIntlClientProvider
+            messages={pick(messages, ["members", "invite-command"])}
+         >
             <Members
                members={organization.members}
                name={organization.name}
+               entityId={organization.id}
             />
          </NextIntlClientProvider>
       </div>

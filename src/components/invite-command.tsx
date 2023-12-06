@@ -7,7 +7,13 @@ import {
    CommandItem,
    CommandList,
 } from "@/components/ui/command"
-import { type Dispatch, type SetStateAction, useEffect, useState } from "react"
+import {
+   type Dispatch,
+   type SetStateAction,
+   useEffect,
+   useState,
+   type HTMLAttributes,
+} from "react"
 import { GUEST_USER_ID, type InvitedUser } from "@/lib/validations/organization"
 import { cn, isEmail } from "@/lib/utils"
 import { useDebounce } from "@/hooks/use-debounce"
@@ -19,11 +25,13 @@ import { useTranslations } from "next-intl"
 type InviteCommandProps = {
    selectedUsers: InvitedUser[]
    setSelectedUsers: Dispatch<SetStateAction<InvitedUser[]>>
-}
+} & HTMLAttributes<HTMLDivElement>
 
 export function InviteCommand({
    selectedUsers,
    setSelectedUsers,
+   className,
+   ...props
 }: InviteCommandProps) {
    const t = useTranslations("invite-command")
    const { user } = useUser()
@@ -98,7 +106,8 @@ export function InviteCommand({
                return 1
             return 0
          }}
-         className="h-[355px] rounded-sm border shadow-sm"
+         className={cn("h-[355px] rounded-sm border shadow-sm", className)}
+         {...props}
       >
          <CommandInput
             value={query}

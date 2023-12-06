@@ -16,7 +16,7 @@ export function Hint({ children, content, ...props }: HintProps) {
             delayDuration={200}
             {...props}
          >
-            <TooltipTrigger>{children}</TooltipTrigger>
+            <TooltipTrigger asChild>{children}</TooltipTrigger>
             <TooltipContent className="break-words text-sm">
                {content}
             </TooltipContent>

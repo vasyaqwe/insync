@@ -15,6 +15,8 @@ const invitedUserSchema: z.ZodType<InvitedUser> = z.object({
    updatedAt: z.date().optional(),
 })
 
+const invitedUsersSchema = z.array(invitedUserSchema).default([])
+
 export const deleteOrganizationSchema = z.object({
    organizationId: z.string(),
 })
@@ -22,12 +24,17 @@ export const leaveOrganizationSchema = z.object({
    organizationId: z.string(),
 })
 
+export const inviteToOrganizationSchema = z.object({
+   organizationId: z.string(),
+   invitedUsers: invitedUsersSchema,
+})
+
 export const createOrganizationSchema = z.object({
    name: z
       .string()
       .min(1, { message: "required" })
       .max(NAME_CHARS_LIMIT, { message: "max-limit" }),
-   invitedUsers: z.array(invitedUserSchema).default([]),
+   invitedUsers: invitedUsersSchema,
 })
 
 export const acceptOrganizationInvitationSchema = z.object({

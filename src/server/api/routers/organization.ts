@@ -3,6 +3,7 @@ import {
    acceptOrganizationInvitationSchema,
    createOrganizationSchema,
    deleteOrganizationSchema,
+   inviteToOrganizationSchema,
    leaveOrganizationSchema,
 } from "@/lib/validations/organization"
 import { createTRPCRouter, privateProcedure } from "@/server/api/trpc"
@@ -48,6 +49,24 @@ export const organizationRouter = createTRPCRouter({
          })
 
          return createdOrganization.id
+      }),
+   invite: privateProcedure
+      .input(inviteToOrganizationSchema)
+      .mutation(async ({ ctx, input: { invitedUsers, organizationId } }) => {
+         for (const invitedUser of invitedUsers) {
+            await ctx.db.organizationInvitation.create({
+               data: {
+                  senderId: ctx.session.userId!,
+                  invitedUserEmail: invitedUser.email,
+                  invitedUserId:
+                     invitedUser.id === GUEST_USER_ID ? null : invitedUser.id,
+                  token: nanoid(),
+                  organizationId: organizationId,
+               },
+            })
+         }
+
+         return "OK"
       }),
    delete: privateProcedure
       .input(deleteOrganizationSchema)

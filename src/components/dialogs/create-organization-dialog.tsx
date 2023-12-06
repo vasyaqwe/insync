@@ -25,11 +25,19 @@ import {
 import { useRouter } from "@/navigation"
 import { useGlobalStore } from "@/stores/use-global-store"
 import { InviteCommand } from "@/components/invite-command"
+import { useShallow } from "zustand/react/shallow"
 
 export function CreateOrganizationDialog() {
    const t = useTranslations("create-organization")
    const router = useRouter()
-   const { dialogs, closeDialog, openDialog } = useGlobalStore()
+   const { dialogs, closeDialog, openDialog } = useGlobalStore(
+      useShallow((state) => ({
+         closeDialog: state.closeDialog,
+         openDialog: state.openDialog,
+         dialogs: state.dialogs,
+      }))
+   )
+
    const [selectedUsers, setSelectedUsers] = useState<InvitedUser[]>([])
 
    const [formData, setFormData] = useState({
@@ -124,7 +132,7 @@ export function CreateOrganizationDialog() {
                <div className="mt-5 flex items-center justify-between">
                   {selectedUsers.length < 1 ? (
                      <p className="text-sm text-foreground/75">
-                        Selected users will appear here.
+                        {t("selected-users-empty")}
                      </p>
                   ) : (
                      <div className="flex items-center pl-3">
