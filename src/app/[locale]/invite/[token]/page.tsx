@@ -40,12 +40,12 @@ export default async function Page({
    const messages = (await getMessages()) as Messages
 
    return (
-      <div className="px-6 text-center">
+      <div className="px-6 py-10 text-center">
          <Link href={"/"}>
             <Image
                src={logo}
                alt="insync."
-               className="mx-auto mt-10"
+               className="mx-auto "
             />
          </Link>
          <h1

@@ -28,8 +28,8 @@
    },
    "invite": {
       "title": "Приєднайтеся до організації <span>{organizationName}</span>.",
-      "description": "insync полегшує командам організовувати свій робочий простір і завжди бути в курсі подій. <span class='underline'>За допомоги штучного інтелекту</span>.",
-      "invited-you": "<strong>{name}</strong> invited you to collaborate in <strong>{organization}</strong> organization.",
+      "description": "insync полегшує командам організовувати свій робочий простір і завжди бути в курсі подій. <br /> <span class='underline'>За допомоги штучного інтелекту</span>.",
+      "invited-you": "<strong>{name}</strong> запрошує вас працювати разом у організації <strong>{organization}</strong>.",
       "accept": "Прийняти запрошення",
       "success-toast": "Запрошення прийнято",
       "error-toast": "Не вийшло прийняти запрошення, щось пішло не так"

@@ -1,3 +1,4 @@
+import { OrganizationInviteEmail } from "@/components/emails/organization-invite-email"
 import {
    GUEST_USER_ID,
    acceptOrganizationInvitationSchema,
@@ -6,7 +7,11 @@ import {
    inviteToOrganizationSchema,
    leaveOrganizationSchema,
 } from "@/lib/validations/organization"
-import { createTRPCRouter, privateProcedure } from "@/server/api/trpc"
+import {
+   type TRPCContext,
+   createTRPCRouter,
+   privateProcedure,
+} from "@/server/api/trpc"
 import { TRPCError } from "@trpc/server"
 import { nanoid } from "nanoid"
 
@@ -30,17 +35,29 @@ export const organizationRouter = createTRPCRouter({
 
             if (invitedUsers.length > 0) {
                for (const invitedUser of invitedUsers) {
-                  await tx.organizationInvitation.create({
-                     data: {
-                        senderId: ctx.session.userId!,
-                        invitedUserEmail: invitedUser.email,
-                        invitedUserId:
-                           invitedUser.id === GUEST_USER_ID
-                              ? null
-                              : invitedUser.id,
-                        token: nanoid(),
-                        organizationId: createdOrganization.id,
-                     },
+                  const createdInvitation =
+                     await tx.organizationInvitation.create({
+                        data: {
+                           senderId: ctx.session.userId!,
+                           invitedUserEmail: invitedUser.email,
+                           invitedUserId:
+                              invitedUser.id === GUEST_USER_ID
+                                 ? null
+                                 : invitedUser.id,
+                           token: nanoid(),
+                           organizationId: createdOrganization.id,
+                        },
+                     })
+
+                  await ctx.email.emails.send({
+                     from: "insync.",
+                     to: invitedUser.email,
+                     subject: `Invitation to join ${createdOrganization.name}`,
+                     react: OrganizationInviteEmail({
+                        organizationName: createdOrganization.name,
+                        sender: ctx.session.user!,
+                        token: createdInvitation.token,
+                     }),
                   })
                }
             }
@@ -52,22 +69,53 @@ export const organizationRouter = createTRPCRouter({
       }),
    invite: privateProcedure
       .input(inviteToOrganizationSchema)
-      .mutation(async ({ ctx, input: { invitedUsers, organizationId } }) => {
-         for (const invitedUser of invitedUsers) {
-            await ctx.db.organizationInvitation.create({
-               data: {
-                  senderId: ctx.session.userId!,
-                  invitedUserEmail: invitedUser.email,
-                  invitedUserId:
-                     invitedUser.id === GUEST_USER_ID ? null : invitedUser.id,
-                  token: nanoid(),
-                  organizationId: organizationId,
-               },
-            })
-         }
+      .mutation(
+         async ({
+            ctx,
+            input: { invitedUsers, organizationId, organizationName },
+         }) => {
+            for (const invitedUser of invitedUsers) {
+               const existingInvitation =
+                  await ctx.db.organizationInvitation.findFirst({
+                     where: {
+                        invitedUserEmail: invitedUser.email,
+                     },
+                  })
 
-         return "OK"
-      }),
+               if (existingInvitation) {
+                  await sendInviteEmail({
+                     ctx,
+                     invitedUserEmail: invitedUser.email,
+                     organizationName: organizationName,
+                     token: existingInvitation.token,
+                  })
+               } else {
+                  const createdInvitation =
+                     await ctx.db.organizationInvitation.create({
+                        data: {
+                           senderId: ctx.session.userId!,
+                           invitedUserEmail: invitedUser.email,
+                           invitedUserId:
+                              invitedUser.id === GUEST_USER_ID
+                                 ? null
+                                 : invitedUser.id,
+                           token: nanoid(),
+                           organizationId: organizationId,
+                        },
+                     })
+
+                  await sendInviteEmail({
+                     ctx,
+                     invitedUserEmail: invitedUser.email,
+                     organizationName: organizationName,
+                     token: createdInvitation.token,
+                  })
+               }
+            }
+
+            return "OK"
+         }
+      ),
    delete: privateProcedure
       .input(deleteOrganizationSchema)
       .mutation(async ({ ctx, input: { organizationId } }) => {
@@ -141,6 +189,29 @@ export const organizationRouter = createTRPCRouter({
          }
       ),
 })
+
+async function sendInviteEmail({
+   ctx,
+   invitedUserEmail,
+   organizationName,
+   token,
+}: {
+   ctx: TRPCContext
+   invitedUserEmail: string
+   organizationName: string
+   token: string
+}) {
+   await ctx.email.emails.send({
+      from: "insync. <vasylpolishchuk@vasyldev.cc>",
+      to: invitedUserEmail,
+      subject: `Invitation to join ${organizationName}`,
+      react: OrganizationInviteEmail({
+         organizationName,
+         sender: ctx.session.user!,
+         token,
+      }),
+   })
+}
 
 function generateRandomGradientColor() {
    const letters = "0123456789ABCDEF"

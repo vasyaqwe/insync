@@ -30,6 +30,7 @@ async function handler(request: Request) {
    const eventType: EventType = evt.type
    // eslint-disable-next-line @typescript-eslint/no-explicit-any
    const { id, ...attributes } = evt.data as any
+   console.log(attributes)
    if (eventType === "user.created" || eventType === "user.updated") {
       await db.user.upsert({
          where: { id: id as string },
@@ -38,7 +39,7 @@ async function handler(request: Request) {
             firstName: attributes.first_name as string,
             lastName: attributes.last_name as string,
             email: attributes?.email_addresses?.[0]?.email_address as string,
-            imageUrl: attributes.profile_image_url,
+            imageUrl: attributes.image_url,
             createdAt: new Date(attributes.created_at),
             updatedAt: new Date(attributes.updated_at),
          },
@@ -46,7 +47,7 @@ async function handler(request: Request) {
             firstName: attributes.first_name as string,
             lastName: attributes.last_name as string,
             email: attributes?.email_addresses?.[0]?.email_address as string,
-            imageUrl: attributes.profile_image_url,
+            imageUrl: attributes.image_url,
          },
       })
    } else if (eventType === "user.deleted") {

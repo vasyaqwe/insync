@@ -11,6 +11,7 @@ import superjson from "superjson"
 import { ZodError } from "zod"
 
 import { db } from "@/server/db"
+import { email } from "@/server/email"
 import { auth, clerkClient } from "@clerk/nextjs"
 
 /**
@@ -25,6 +26,8 @@ import { auth, clerkClient } from "@clerk/nextjs"
  *
  * @see https://trpc.io/docs/server/context
  */
+export type TRPCContext = Awaited<ReturnType<typeof createTRPCContext>>
+
 export const createTRPCContext = async (opts: { headers: Headers }) => {
    const session = auth()
    const clerkUser = session.userId
@@ -39,6 +42,7 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
 
    return {
       db,
+      email,
       session: { ...session, user, userId: user?.id },
       ...opts,
    }

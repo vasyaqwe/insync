@@ -26,6 +26,7 @@ export const leaveOrganizationSchema = z.object({
 
 export const inviteToOrganizationSchema = z.object({
    organizationId: z.string(),
+   organizationName: z.string(),
    invitedUsers: invitedUsersSchema,
 })
 

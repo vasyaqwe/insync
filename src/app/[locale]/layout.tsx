@@ -13,6 +13,7 @@ import { Inter } from "next/font/google"
 import { TRPCReactProvider } from "@/trpc/react"
 import { cookies } from "next/headers"
 import { Toaster } from "sonner"
+import { enUS, ukUA } from "@clerk/localizations"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 
@@ -45,7 +46,7 @@ export default async function RootLayout({
             )}
          >
             <TRPCReactProvider cookies={cookies().toString()}>
-               <ClerkProvider>
+               <ClerkProvider localization={locale === "uk" ? ukUA : enUS}>
                   <NextIntlClientProvider
                      messages={pick(messages, ["account-menu", "header"])}
                   >

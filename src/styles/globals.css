@@ -69,6 +69,12 @@
     max-width: fit-content;
 }
 
+@media (max-width: 450px) {
+    .cl-internal-17qh226 {
+        flex-direction: column;
+    }
+}
+
 @media (min-width: 450px) {
     .cl-internal-17ydaof {
         max-width: 100%;

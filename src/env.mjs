@@ -16,6 +16,7 @@ export const env = createEnv({
             "You forgot to change the default URL"
          ),
       WEBHOOK_SECRET: z.string(),
+      RESEND_API_KEY: z.string(),
       NODE_ENV: z
          .enum(["development", "test", "production"])
          .default("development"),
@@ -36,6 +37,7 @@ export const env = createEnv({
     * middlewares) or client-side so we need to destruct manually.
     */
    runtimeEnv: {
+      RESEND_API_KEY: process.env.RESEND_API_KEY,
       NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
          process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
       CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,

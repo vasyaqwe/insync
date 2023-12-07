@@ -175,6 +175,7 @@ export function Members({ members, name, entityId }: MembersProps) {
                      onClick={() =>
                         onSubmit({
                            organizationId: entityId,
+                           organizationName: name,
                            invitedUsers: selectedUsers,
                         })
                      }
