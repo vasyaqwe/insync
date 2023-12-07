@@ -17,34 +17,38 @@ import {
    CommandGroup,
    CommandItem,
    CommandList,
+   CommandInput,
 } from "@/components/ui/command"
 import { useUser } from "@clerk/nextjs"
 import { useState } from "react"
 import { InviteCommand } from "@/components/invite-command"
 import { type InvitedUser } from "@/lib/validations/organization"
-import { ArrowLeft, UserPlus } from "lucide-react"
+import { ArrowLeft, Check, UserPlus } from "lucide-react"
 import { api } from "@/trpc/react"
 import { toast } from "sonner"
 import { Loading } from "@/components/ui/loading"
+import { cn } from "@/lib/utils"
 
 type MembersProps = {
    members: User[]
    name: string
+   ownerId: string
    entityId: string
 }
 
-export function Members({ members, name, entityId }: MembersProps) {
+export function Members({ members, name, entityId, ownerId }: MembersProps) {
    const t = useTranslations("members")
    const [open, setOpen] = useState(false)
    const { user: currentUser } = useUser()
 
-   const [selectedUsers, setSelectedUsers] = useState<InvitedUser[]>([])
+   const [usersToInvite, setUsersToInvite] = useState<InvitedUser[]>([])
+   const [usersToKick, setUsersToKick] = useState<InvitedUser[]>([])
    const [tab, setTab] = useState<"invite" | "members">("members")
 
    const { mutate: onSubmit, isLoading } = api.organization.invite.useMutation({
       onSuccess: () => {
          setOpen(false)
-         setSelectedUsers([])
+         setUsersToInvite([])
          setTab("members")
          toast.success(t("success"))
       },
@@ -52,6 +56,16 @@ export function Members({ members, name, entityId }: MembersProps) {
          return toast.error(t("error"))
       },
    })
+
+   const onSelect = (user: InvitedUser) => {
+      if (user.id === currentUser?.id || user.id === ownerId) return
+
+      if (usersToKick.some((u) => u.id === user.id)) {
+         setUsersToKick((prev) => prev.filter((u) => u.id !== user.id))
+      } else {
+         setUsersToKick((prev) => [...prev, user])
+      }
+   }
 
    return (
       <Dialog
@@ -61,11 +75,12 @@ export function Members({ members, name, entityId }: MembersProps) {
          <Hint content={t("tooltip")}>
             <DialogTrigger asChild>
                <button className="flex items-center rounded-lg border bg-card px-2 py-1 transition-colors hover:bg-accent">
-                  {members.map((m) => (
+                  {members.map((m, idx, arr) => (
                      <UserAvatar
                         key={m.id}
+                        style={{ zIndex: arr.length - idx }}
                         className={
-                           "[--avatar-size:35px] [&:not(:first-child)]:-ml-1"
+                           "[--avatar-size:35px] [&:not(:first-child)]:-ml-3"
                         }
                         user={m}
                      />
@@ -78,7 +93,7 @@ export function Members({ members, name, entityId }: MembersProps) {
             onAnimationEndCapture={() => {
                setTab("members")
             }}
-            className="min-h-[400px]"
+            className="h-full max-h-[475px]"
          >
             <DialogHeader className="flex items-center gap-2">
                {tab === "invite" && (
@@ -97,9 +112,13 @@ export function Members({ members, name, entityId }: MembersProps) {
                <DialogTitle>{t.rich(`title-${tab}`, { name })}</DialogTitle>
             </DialogHeader>
             {tab === "members" ? (
-               <Command className="mt-5">
+               <Command className="mt-5 h-full rounded-sm border shadow-sm">
+                  <CommandInput
+                     autoFocus
+                     placeholder={t("search")}
+                  />
                   <CommandList>
-                     <CommandGroup className="p-0">
+                     <CommandGroup>
                         <CommandItem
                            onSelect={() => setTab("invite")}
                            className="flex items-center gap-2"
@@ -116,31 +135,39 @@ export function Members({ members, name, entityId }: MembersProps) {
                            <CommandItem
                               key={user.id}
                               className="flex items-center gap-2"
-                              value={user.email}
+                              value={`${user.email} ${user.firstName} ${user.lastName}`}
+                              onSelect={() => onSelect(user)}
                            >
                               <UserAvatar user={user} />
                               <div className="w-full">
                                  <p className="truncate">
                                     {user.firstName} {user.lastName}{" "}
-                                    {user.id === currentUser?.id
-                                       ? `(${t("you")})`
-                                       : ""}
+                                    <span className="opacity-70">
+                                       {user.id === currentUser?.id
+                                          ? `(${t("you")})`
+                                          : user.id === ownerId
+                                          ? `(${t("owner")})`
+                                          : ""}
+                                    </span>
                                  </p>
                                  <p className="line-clamp-1 flex w-full items-center break-all text-foreground/75">
                                     {user.email}
                                  </p>
                               </div>
 
-                              {/* <span
-                           className={cn(
-                              "ml-auto grid h-6 w-6 flex-shrink-0 place-content-center rounded-full bg-primary",
-                           )}
-                        >
-                           <Chec
-                              size={16}
-                              className="stroke-background"
-                           />
-                        </span> */}
+                              <span
+                                 className={cn(
+                                    "ml-auto grid h-6 w-6 flex-shrink-0 place-content-center rounded-full bg-primary",
+                                    !usersToKick.some((u) => u.id === user.id)
+                                       ? "invisible"
+                                       : ""
+                                 )}
+                              >
+                                 <Check
+                                    size={16}
+                                    className="stroke-background"
+                                 />
+                              </span>
                            </CommandItem>
                         ))}
                      </CommandGroup>
@@ -149,20 +176,20 @@ export function Members({ members, name, entityId }: MembersProps) {
             ) : (
                <InviteCommand
                   className="mt-5"
-                  setSelectedUsers={setSelectedUsers}
-                  selectedUsers={selectedUsers}
+                  setSelectedUsers={setUsersToInvite}
+                  selectedUsers={usersToInvite}
                />
             )}
 
             {tab === "invite" && (
                <div className="mt-5 flex items-center justify-between">
-                  {selectedUsers.length < 1 ? (
+                  {usersToInvite.length < 1 ? (
                      <p className="text-sm text-foreground/75">
                         {t("selected-users-empty")}
                      </p>
                   ) : (
                      <div className="flex items-center pl-3">
-                        {selectedUsers.map((user) => (
+                        {usersToInvite.map((user) => (
                            <UserAvatar
                               className="-ml-3"
                               user={user}
@@ -176,10 +203,10 @@ export function Members({ members, name, entityId }: MembersProps) {
                         onSubmit({
                            organizationId: entityId,
                            organizationName: name,
-                           invitedUsers: selectedUsers,
+                           invitedUsers: usersToInvite,
                         })
                      }
-                     disabled={selectedUsers.length < 1 || isLoading}
+                     disabled={usersToInvite.length < 1 || isLoading}
                   >
                      {t("send-invites")}
                      {isLoading && <Loading />}

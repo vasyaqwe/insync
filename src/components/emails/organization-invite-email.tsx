@@ -42,7 +42,7 @@ export function OrganizationInviteEmail({
             >
                <Container className="max-w-[600px] px-10 py-4">
                   <Img
-                     src={`https://insync-ai.vercel.app/static/logo.png`}
+                     src={`https://www.dl.dropboxusercontent.com/scl/fi/kq4y9sxqf8ldtreu1cky9/logo.png?rlkey=x9kgwl0vrbxzopuvi59lj59r4&dl=0`}
                      alt="insync."
                   />
                   <Section className="my-10">

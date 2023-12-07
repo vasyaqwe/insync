@@ -18,6 +18,7 @@ export default async function Page({
          id: true,
          name: true,
          members: true,
+         creatorId: true,
       },
    })
 
@@ -33,6 +34,7 @@ export default async function Page({
             <Members
                members={organization.members}
                name={organization.name}
+               ownerId={organization.creatorId}
                entityId={organization.id}
             />
          </NextIntlClientProvider>

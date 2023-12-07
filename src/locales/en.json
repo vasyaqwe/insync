@@ -15,11 +15,13 @@
       "title-invite": "Invite people to {name}",
       "invite": "Invite people",
       "you": "You",
+      "owner": "Owner",
       "send-invites": "Send invites",
       "back": "Back to members",
       "selected-users-empty": "Selected users will appear here.",
       "success": "Invites are sent!",
-      "error": "Couldn't send invites, something went wrong"
+      "error": "Couldn't send invites, something went wrong",
+      "search": "Search members..."
    },
    "invite-command": {
       "empty": "Search results will appear here.",

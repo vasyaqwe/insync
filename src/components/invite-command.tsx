@@ -110,6 +110,7 @@ export function InviteCommand({
          {...props}
       >
          <CommandInput
+            autoFocus
             value={query}
             onValueChange={(val) => {
                setQuery(val)
