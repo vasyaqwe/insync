@@ -17,9 +17,9 @@ model User {
     lastName  String
     email     String
 
-    createdOrganizations Organization[]
-    organizations        Organization[] @relation("OrganizationMembers")
-    boards               Board[]        @relation("BoardMembers")
+    ownedOrganizations Organization[]
+    organizations      Organization[] @relation("OrganizationMembers")
+    boards             Board[]        @relation("BoardMembers")
 
     lists                           List[]
     cards                           Card[]
@@ -40,8 +40,8 @@ model Organization {
     boards    Board[]
     members   User[]     @relation("OrganizationMembers")
 
-    creatorId String
-    creator   User   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+    ownerId String
+    owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

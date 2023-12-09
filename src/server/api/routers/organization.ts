@@ -5,6 +5,7 @@ import {
    createOrganizationSchema,
    deleteOrganizationSchema,
    inviteToOrganizationSchema,
+   kickOrganizationSchema,
    leaveOrganizationSchema,
 } from "@/lib/validations/organization"
 import {
@@ -24,7 +25,7 @@ export const organizationRouter = createTRPCRouter({
                data: {
                   name,
                   color: generateRandomGradientColor(),
-                  creatorId: ctx.session.userId!,
+                  ownerId: ctx.session.userId!,
                   members: {
                      connect: {
                         id: ctx.session.userId,
@@ -49,15 +50,11 @@ export const organizationRouter = createTRPCRouter({
                         },
                      })
 
-                  await ctx.email.emails.send({
-                     from: "insync.",
-                     to: invitedUser.email,
-                     subject: `Invitation to join ${createdOrganization.name}`,
-                     react: OrganizationInviteEmail({
-                        organizationName: createdOrganization.name,
-                        sender: ctx.session.user!,
-                        token: createdInvitation.token,
-                     }),
+                  await sendInviteEmail({
+                     ctx,
+                     invitedUserEmail: invitedUser.email,
+                     organizationName: createdOrganization.name,
+                     token: createdInvitation.token,
                   })
                }
             }
@@ -79,6 +76,9 @@ export const organizationRouter = createTRPCRouter({
                   await ctx.db.organizationInvitation.findFirst({
                      where: {
                         invitedUserEmail: invitedUser.email,
+                     },
+                     select: {
+                        token: true,
                      },
                   })
 
@@ -119,16 +119,63 @@ export const organizationRouter = createTRPCRouter({
    delete: privateProcedure
       .input(deleteOrganizationSchema)
       .mutation(async ({ ctx, input: { organizationId } }) => {
+         const organization = await ctx.db.organization.findFirst({
+            where: {
+               id: organizationId,
+            },
+            select: {
+               ownerId: true,
+            },
+         })
+
+         if (!organization) {
+            throw new TRPCError({
+               code: "BAD_REQUEST",
+               message: "Organization not found",
+            })
+         }
+
+         if (organization.ownerId !== ctx.session.userId) {
+            throw new TRPCError({
+               code: "BAD_REQUEST",
+               message: "Only organization owner can delete organization",
+            })
+         }
+
          await ctx.db.organization.delete({
             where: {
                id: organizationId,
             },
          })
+
          return "OK"
       }),
    leave: privateProcedure
       .input(leaveOrganizationSchema)
       .mutation(async ({ ctx, input: { organizationId } }) => {
+         const organization = await ctx.db.organization.findFirst({
+            where: {
+               id: organizationId,
+            },
+            select: {
+               ownerId: true,
+            },
+         })
+
+         if (!organization) {
+            throw new TRPCError({
+               code: "BAD_REQUEST",
+               message: "Organization not found",
+            })
+         }
+
+         if (organization.ownerId === ctx.session.userId) {
+            throw new TRPCError({
+               code: "BAD_REQUEST",
+               message: "Organization owner can't leave organization",
+            })
+         }
+
          const leftOrganization = await ctx.db.organization.update({
             where: {
                id: organizationId,
@@ -144,6 +191,45 @@ export const organizationRouter = createTRPCRouter({
 
          return leftOrganization.name
       }),
+   kick: privateProcedure
+      .input(kickOrganizationSchema)
+      .mutation(async ({ ctx, input: { organizationId, userIdsToKick } }) => {
+         const organization = await ctx.db.organization.findFirst({
+            where: {
+               id: organizationId,
+            },
+            select: {
+               ownerId: true,
+            },
+         })
+
+         if (!organization) {
+            throw new TRPCError({
+               code: "BAD_REQUEST",
+               message: "Organization not found",
+            })
+         }
+
+         if (organization.ownerId !== ctx.session.userId) {
+            throw new TRPCError({
+               code: "BAD_REQUEST",
+               message: "Only organization owner can kick others out",
+            })
+         }
+
+         await ctx.db.organization.update({
+            where: {
+               id: organizationId,
+            },
+            data: {
+               members: {
+                  disconnect: userIdsToKick.map((id) => ({ id })),
+               },
+            },
+         })
+
+         return "OK"
+      }),
    join: privateProcedure
       .input(acceptOrganizationInvitationSchema)
       .mutation(
@@ -151,6 +237,10 @@ export const organizationRouter = createTRPCRouter({
             const invitation = await ctx.db.organizationInvitation.findFirst({
                where: {
                   id: invitationId,
+               },
+               select: {
+                  invitedUserEmail: true,
+                  token: true,
                },
             })
 
@@ -201,7 +291,7 @@ async function sendInviteEmail({
    organizationName: string
    token: string
 }) {
-   await ctx.email.emails.send({
+   const res = await ctx.email.emails.send({
       from: "insync. <vasylpolishchuk@vasyldev.cc>",
       to: invitedUserEmail,
       subject: `Invitation to join ${organizationName}`,
@@ -211,6 +301,7 @@ async function sendInviteEmail({
          token,
       }),
    })
+   console.log(res)
 }
 
 function generateRandomGradientColor() {

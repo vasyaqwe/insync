@@ -20,8 +20,14 @@ const invitedUsersSchema = z.array(invitedUserSchema).default([])
 export const deleteOrganizationSchema = z.object({
    organizationId: z.string(),
 })
+
 export const leaveOrganizationSchema = z.object({
    organizationId: z.string(),
+})
+
+export const kickOrganizationSchema = z.object({
+   organizationId: z.string(),
+   userIdsToKick: z.array(z.string()),
 })
 
 export const inviteToOrganizationSchema = z.object({

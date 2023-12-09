@@ -10,23 +10,28 @@
       "cancel": "Скасувати"
    },
    "members": {
+      "tooltip": "Переглянути членів",
       "title": "Члени {name}",
       "title-members": "Члени {name}",
       "title-invite": "Запросити людей до {name}",
       "invite": "Запросити людей",
       "you": "Ви",
+      "empty": "Нікого не знайдено.",
+      "kick": "Вилучити",
       "owner": "Власник",
       "send-invites": "Надіслати запрошення",
       "back": "Члени",
-      "selected-users-empty": "Тут з'являться обрані користувачі.",
+      "users-to-invite-empty": "Тут з'являться обрані користувачі.",
+      "users-to-kick-empty": "Оберіть людей яких бажаєте вилучити",
       "success": "Запрошення надіслані!",
       "error": "Не вийшло надіслати запрошення, щось пішло не так",
       "search": "Шукати..."
    },
    "invite-command": {
       "empty": "Тут з'являться результати пошуку...",
-      "email-hint": "Допишіть правильний email",
-      "email-error": "О-опаньки.. Це ваш email"
+      "email-hint": "Допишіть правильний email...",
+      "email-error": "О-опаньки.. Це ваш email",
+      "email-exists-error": "О-опаньки.. Користувач уже є членом"
    },
    "invite": {
       "title": "Приєднайтеся до організації <span>{organizationName}</span>.",

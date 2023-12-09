@@ -23,18 +23,20 @@ import { UserAvatar } from "@/components/ui/user-avatar"
 import { useTranslations } from "next-intl"
 
 type InviteCommandProps = {
+   existingUserEmails?: string[]
    selectedUsers: InvitedUser[]
    setSelectedUsers: Dispatch<SetStateAction<InvitedUser[]>>
 } & HTMLAttributes<HTMLDivElement>
 
 export function InviteCommand({
+   existingUserEmails,
    selectedUsers,
    setSelectedUsers,
    className,
    ...props
 }: InviteCommandProps) {
    const t = useTranslations("invite-command")
-   const { user } = useUser()
+   const { user: currentUser } = useUser()
    const [query, setQuery] = useState("")
    const [isEmailHintVisible, setIsEmailHintVisible] = useState(false)
    const [emailHint, setEmailHint] = useState(t("email-hint"))
@@ -50,8 +52,11 @@ export function InviteCommand({
    )
 
    const searchResults =
-      data?.filter((u) => u.email !== user?.emailAddresses[0]?.emailAddress) ??
-      []
+      data
+         ?.filter(
+            (u) => u.email !== currentUser?.emailAddresses[0]?.emailAddress
+         )
+         ?.filter((u) => !existingUserEmails?.includes(u.email)) ?? []
 
    useEffect(() => {
       if (debouncedInput.length > 0) {
@@ -64,9 +69,16 @@ export function InviteCommand({
       if (isEmail(selectedUser?.email ?? "")) {
          setIsEmailHintVisible(false)
 
-         if (selectedUser.email === user?.emailAddresses[0]?.emailAddress) {
+         if (
+            selectedUser.email === currentUser?.emailAddresses[0]?.emailAddress
+         ) {
             setIsEmailHintVisible(true)
             return setEmailHint(t("email-error"))
+         }
+
+         if (existingUserEmails?.includes(selectedUser.email)) {
+            setIsEmailHintVisible(true)
+            return setEmailHint(t("email-exists-error"))
          }
 
          if (selectedUsers.some((u) => u.email === selectedUser.email)) {
@@ -94,7 +106,7 @@ export function InviteCommand({
            )
          : selectedUsers
 
-   const totalItems = [...filteredSelectedUsers, ...(searchResults ?? [])]
+   const totalItems = [...filteredSelectedUsers, ...searchResults]
 
    return (
       <Command

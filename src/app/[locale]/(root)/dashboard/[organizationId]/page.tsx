@@ -1,4 +1,4 @@
-import { Members } from "@/components/members"
+import { OrganizationMembers } from "@/components/organization-members"
 import { pick } from "@/lib/utils"
 import { db } from "@/server/db"
 import { NextIntlClientProvider } from "next-intl"
@@ -18,7 +18,7 @@ export default async function Page({
          id: true,
          name: true,
          members: true,
-         creatorId: true,
+         ownerId: true,
       },
    })
 
@@ -31,11 +31,9 @@ export default async function Page({
          <NextIntlClientProvider
             messages={pick(messages, ["members", "invite-command"])}
          >
-            <Members
+            <OrganizationMembers
                members={organization.members}
-               name={organization.name}
-               ownerId={organization.creatorId}
-               entityId={organization.id}
+               organization={organization}
             />
          </NextIntlClientProvider>
       </div>

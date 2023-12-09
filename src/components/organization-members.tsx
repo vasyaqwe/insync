@@ -1,7 +1,7 @@
 "use client"
 
 import { UserAvatar } from "@/components/ui/user-avatar"
-import { type User } from "@prisma/client"
+import { type Organization, type User } from "@prisma/client"
 import { useTranslations } from "next-intl"
 import { Hint } from "@/components/hint"
 import {
@@ -18,6 +18,7 @@ import {
    CommandItem,
    CommandList,
    CommandInput,
+   CommandEmpty,
 } from "@/components/ui/command"
 import { useUser } from "@clerk/nextjs"
 import { useState } from "react"
@@ -31,12 +32,12 @@ import { cn } from "@/lib/utils"
 
 type MembersProps = {
    members: User[]
-   name: string
-   ownerId: string
-   entityId: string
+   organization: Pick<Organization, "id" | "name" | "ownerId"> & {
+      members: User[]
+   }
 }
 
-export function Members({ members, name, entityId, ownerId }: MembersProps) {
+export function OrganizationMembers({ members, organization }: MembersProps) {
    const t = useTranslations("members")
    const [open, setOpen] = useState(false)
    const { user: currentUser } = useUser()
@@ -48,8 +49,6 @@ export function Members({ members, name, entityId, ownerId }: MembersProps) {
    const { mutate: onSubmit, isLoading } = api.organization.invite.useMutation({
       onSuccess: () => {
          setOpen(false)
-         setUsersToInvite([])
-         setTab("members")
          toast.success(t("success"))
       },
       onError: () => {
@@ -58,7 +57,8 @@ export function Members({ members, name, entityId, ownerId }: MembersProps) {
    })
 
    const onSelect = (user: InvitedUser) => {
-      if (user.id === currentUser?.id || user.id === ownerId) return
+      if (user.id === currentUser?.id || user.id === organization.ownerId)
+         return
 
       if (usersToKick.some((u) => u.id === user.id)) {
          setUsersToKick((prev) => prev.filter((u) => u.id !== user.id))
@@ -92,6 +92,8 @@ export function Members({ members, name, entityId, ownerId }: MembersProps) {
          <DialogContent
             onAnimationEndCapture={() => {
                setTab("members")
+               setUsersToInvite([])
+               setUsersToKick([])
             }}
             className="h-full max-h-[475px]"
          >
@@ -109,7 +111,9 @@ export function Members({ members, name, entityId, ownerId }: MembersProps) {
                      />
                   </Button>
                )}
-               <DialogTitle>{t.rich(`title-${tab}`, { name })}</DialogTitle>
+               <DialogTitle className="min-h-[36px]">
+                  {t.rich(`title-${tab}`, { name: organization.name })}
+               </DialogTitle>
             </DialogHeader>
             {tab === "members" ? (
                <Command className="mt-5 h-full rounded-sm border shadow-sm">
@@ -118,6 +122,9 @@ export function Members({ members, name, entityId, ownerId }: MembersProps) {
                      placeholder={t("search")}
                   />
                   <CommandList>
+                     <CommandEmpty className="p-2 text-start text-foreground/75">
+                        {t("empty")}
+                     </CommandEmpty>
                      <CommandGroup>
                         <CommandItem
                            onSelect={() => setTab("invite")}
@@ -145,7 +152,7 @@ export function Members({ members, name, entityId, ownerId }: MembersProps) {
                                     <span className="opacity-70">
                                        {user.id === currentUser?.id
                                           ? `(${t("you")})`
-                                          : user.id === ownerId
+                                          : user.id === organization.ownerId
                                           ? `(${t("owner")})`
                                           : ""}
                                     </span>
@@ -175,17 +182,49 @@ export function Members({ members, name, entityId, ownerId }: MembersProps) {
                </Command>
             ) : (
                <InviteCommand
+                  existingUserEmails={organization.members.map((m) => m.email)}
                   className="mt-5"
                   setSelectedUsers={setUsersToInvite}
                   selectedUsers={usersToInvite}
                />
             )}
 
-            {tab === "invite" && (
+            {tab === "members" && organization.ownerId === currentUser?.id ? (
+               <div className="mt-5 flex items-center justify-between">
+                  {usersToKick.length < 1 ? (
+                     <p className="text-sm text-foreground/75">
+                        {t("users-to-kick-empty")}
+                     </p>
+                  ) : (
+                     <div className="flex items-center pl-3">
+                        {usersToKick.map((user) => (
+                           <UserAvatar
+                              className="-ml-3"
+                              user={user}
+                              key={user.email}
+                           />
+                        ))}
+                     </div>
+                  )}
+                  <Button
+                     onClick={() =>
+                        onSubmit({
+                           organizationId: organization.id,
+                           organizationName: organization.name,
+                           invitedUsers: usersToKick,
+                        })
+                     }
+                     disabled={usersToKick.length < 1 || isLoading}
+                  >
+                     {t("kick")}
+                     {isLoading && <Loading />}
+                  </Button>
+               </div>
+            ) : tab === "invite" ? (
                <div className="mt-5 flex items-center justify-between">
                   {usersToInvite.length < 1 ? (
                      <p className="text-sm text-foreground/75">
-                        {t("selected-users-empty")}
+                        {t("users-to-invite-empty")}
                      </p>
                   ) : (
                      <div className="flex items-center pl-3">
@@ -201,8 +240,8 @@ export function Members({ members, name, entityId, ownerId }: MembersProps) {
                   <Button
                      onClick={() =>
                         onSubmit({
-                           organizationId: entityId,
-                           organizationName: name,
+                           organizationId: organization.id,
+                           organizationName: organization.name,
                            invitedUsers: usersToInvite,
                         })
                      }
@@ -212,7 +251,7 @@ export function Members({ members, name, entityId, ownerId }: MembersProps) {
                      {isLoading && <Loading />}
                   </Button>
                </div>
-            )}
+            ) : null}
          </DialogContent>
       </Dialog>
    )

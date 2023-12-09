@@ -22,7 +22,7 @@ export default async function Page({
       select: {
          id: true,
          name: true,
-         creatorId: true,
+         ownerId: true,
       },
    })
 
@@ -35,7 +35,7 @@ export default async function Page({
    return (
       <div>
          <p className="text-2xl font-semibold">{t("title")}</p>
-         {user?.id === organization.creatorId && (
+         {user?.id === organization.ownerId && (
             <Card className="mt-5 flex flex-col gap-4 lg:flex-row lg:justify-between lg:p-6">
                <div>
                   <p className="text-xl font-semibold">{t("delete-title")}</p>
@@ -57,7 +57,7 @@ export default async function Page({
                </NextIntlClientProvider>
             </Card>
          )}
-         {user?.id !== organization.creatorId && (
+         {user?.id !== organization.ownerId && (
             <Card className="mt-5 flex flex-col gap-4 lg:flex-row lg:justify-between lg:p-6">
                <div>
                   <p className="text-xl font-semibold">{t("leave-title")}</p>
