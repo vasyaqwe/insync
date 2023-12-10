@@ -29,7 +29,7 @@ type InviteCommandProps = {
 } & HTMLAttributes<HTMLDivElement>
 
 export function InviteCommand({
-   existingUserEmails,
+   existingUserEmails = [],
    selectedUsers,
    setSelectedUsers,
    className,

@@ -25,7 +25,7 @@ export const leaveOrganizationSchema = z.object({
    organizationId: z.string(),
 })
 
-export const kickOrganizationSchema = z.object({
+export const removeMembersOrganizationSchema = z.object({
    organizationId: z.string(),
    userIdsToKick: z.array(z.string()),
 })

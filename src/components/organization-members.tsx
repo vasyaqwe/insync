@@ -29,6 +29,7 @@ import { api } from "@/trpc/react"
 import { toast } from "sonner"
 import { Loading } from "@/components/ui/loading"
 import { cn } from "@/lib/utils"
+import { useRouter } from "next/navigation"
 
 type MembersProps = {
    members: User[]
@@ -41,23 +42,41 @@ export function OrganizationMembers({ members, organization }: MembersProps) {
    const t = useTranslations("members")
    const [open, setOpen] = useState(false)
    const { user: currentUser } = useUser()
+   const router = useRouter()
 
    const [usersToInvite, setUsersToInvite] = useState<InvitedUser[]>([])
    const [usersToKick, setUsersToKick] = useState<InvitedUser[]>([])
    const [tab, setTab] = useState<"invite" | "members">("members")
 
-   const { mutate: onSubmit, isLoading } = api.organization.invite.useMutation({
-      onSuccess: () => {
-         setOpen(false)
-         toast.success(t("success"))
-      },
-      onError: () => {
-         return toast.error(t("error"))
-      },
-   })
+   const { mutate: onSendInvites, isLoading: isSendInvitesLoading } =
+      api.organization.invite.useMutation({
+         onSuccess: () => {
+            setOpen(false)
+            toast.success(t("success-invites"))
+         },
+         onError: () => {
+            return toast.error(t("error-invites"))
+         },
+      })
+
+   const { mutate: onRemoveMembers, isLoading: isRemoveMembersLoading } =
+      api.organization.removeMembers.useMutation({
+         onSuccess: () => {
+            setOpen(false)
+            toast.success(t("success-remove-members"))
+            router.refresh()
+         },
+         onError: () => {
+            return toast.error(t("error-remove-members"))
+         },
+      })
 
    const onSelect = (user: InvitedUser) => {
-      if (user.id === currentUser?.id || user.id === organization.ownerId)
+      if (
+         user.id === currentUser?.id ||
+         user.id === organization.ownerId ||
+         currentUser?.id !== organization.ownerId
+      )
          return
 
       if (usersToKick.some((u) => u.id === user.id)) {
@@ -193,7 +212,7 @@ export function OrganizationMembers({ members, organization }: MembersProps) {
                <div className="mt-5 flex items-center justify-between">
                   {usersToKick.length < 1 ? (
                      <p className="text-sm text-foreground/75">
-                        {t("users-to-kick-empty")}
+                        {t("members-to-remove-empty")}
                      </p>
                   ) : (
                      <div className="flex items-center pl-3">
@@ -208,23 +227,22 @@ export function OrganizationMembers({ members, organization }: MembersProps) {
                   )}
                   <Button
                      onClick={() =>
-                        onSubmit({
+                        onRemoveMembers({
                            organizationId: organization.id,
-                           organizationName: organization.name,
-                           invitedUsers: usersToKick,
+                           userIdsToKick: usersToKick.map((u) => u.id),
                         })
                      }
-                     disabled={usersToKick.length < 1 || isLoading}
+                     disabled={usersToKick.length < 1 || isRemoveMembersLoading}
                   >
-                     {t("kick")}
-                     {isLoading && <Loading />}
+                     {t("remove")}
+                     {isRemoveMembersLoading && <Loading />}
                   </Button>
                </div>
             ) : tab === "invite" ? (
                <div className="mt-5 flex items-center justify-between">
                   {usersToInvite.length < 1 ? (
                      <p className="text-sm text-foreground/75">
-                        {t("users-to-invite-empty")}
+                        {t("members-to-invite-empty")}
                      </p>
                   ) : (
                      <div className="flex items-center pl-3">
@@ -239,16 +257,16 @@ export function OrganizationMembers({ members, organization }: MembersProps) {
                   )}
                   <Button
                      onClick={() =>
-                        onSubmit({
+                        onSendInvites({
                            organizationId: organization.id,
                            organizationName: organization.name,
                            invitedUsers: usersToInvite,
                         })
                      }
-                     disabled={usersToInvite.length < 1 || isLoading}
+                     disabled={usersToInvite.length < 1 || isSendInvitesLoading}
                   >
                      {t("send-invites")}
-                     {isLoading && <Loading />}
+                     {isSendInvitesLoading && <Loading />}
                   </Button>
                </div>
             ) : null}

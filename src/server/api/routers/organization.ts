@@ -5,7 +5,7 @@ import {
    createOrganizationSchema,
    deleteOrganizationSchema,
    inviteToOrganizationSchema,
-   kickOrganizationSchema,
+   removeMembersOrganizationSchema,
    leaveOrganizationSchema,
 } from "@/lib/validations/organization"
 import {
@@ -191,8 +191,8 @@ export const organizationRouter = createTRPCRouter({
 
          return leftOrganization.name
       }),
-   kick: privateProcedure
-      .input(kickOrganizationSchema)
+   removeMembers: privateProcedure
+      .input(removeMembersOrganizationSchema)
       .mutation(async ({ ctx, input: { organizationId, userIdsToKick } }) => {
          const organization = await ctx.db.organization.findFirst({
             where: {
