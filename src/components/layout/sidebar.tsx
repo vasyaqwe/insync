@@ -10,8 +10,9 @@ import {
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { ColorAvatar } from "@/components/ui/color-avatar"
+import { useLocalStorage } from "@/hooks/use-local-storage"
 import { cn } from "@/lib/utils"
-import { Link, usePathname } from "@/navigation"
+import { Link, usePathname, useRouter } from "@/navigation"
 import { useGlobalStore } from "@/stores/use-global-store"
 import { type Organization } from "@prisma/client"
 import {
@@ -22,16 +23,31 @@ import {
    SettingsIcon,
 } from "lucide-react"
 import { useTranslations } from "next-intl"
+import { useEffect } from "react"
 import { useShallow } from "zustand/react/shallow"
 
 export function Sidebar({ organizations }: { organizations: Organization[] }) {
    const t = useTranslations("sidebar")
+
+   const [lastVisitedOrganizationId, setLastVisitedOrganizationId] =
+      useLocalStorage("last-visited-organization-id", organizations[0]?.id)
+
    const { openDialog } = useGlobalStore(
       useShallow((state) => ({
          openDialog: state.openDialog,
       }))
    )
+
    const pathname = usePathname()
+   const router = useRouter()
+
+   useEffect(() => {
+      if (pathname === "/dashboard" && lastVisitedOrganizationId) {
+         router.push(`/dashboard/${lastVisitedOrganizationId}`)
+      }
+   }, [pathname, lastVisitedOrganizationId, router])
+
+   const currentOrganizationId = pathname.split("/dashboard/")?.[1] ?? ""
 
    return organizations.length < 1 ? (
       <Card className="mx-auto py-6 text-center text-lg">
@@ -64,7 +80,7 @@ export function Sidebar({ organizations }: { organizations: Organization[] }) {
                </Hint>
             </div>
             <Accordion
-               defaultValue={["f4386d73-0a4c-42d1-ad3b-8474222fe93d"]}
+               defaultValue={[currentOrganizationId]}
                type="multiple"
                className="mt-3"
             >
@@ -96,7 +112,12 @@ export function Sidebar({ organizations }: { organizations: Organization[] }) {
                                     : ""
                               )}
                            >
-                              <Link href={`/dashboard/${org.id}`}>
+                              <Link
+                                 onClick={() =>
+                                    setLastVisitedOrganizationId(org.id)
+                                 }
+                                 href={`/dashboard/${org.id}`}
+                              >
                                  <LayoutIcon /> {t("item1")}
                               </Link>
                            </Button>
@@ -110,7 +131,12 @@ export function Sidebar({ organizations }: { organizations: Organization[] }) {
                                     : ""
                               )}
                            >
-                              <Link href={`/dashboard/${org.id}/activity`}>
+                              <Link
+                                 onClick={() =>
+                                    setLastVisitedOrganizationId(org.id)
+                                 }
+                                 href={`/dashboard/${org.id}/activity`}
+                              >
                                  <ActivityIcon /> {t("item2")}
                               </Link>
                            </Button>
@@ -124,7 +150,12 @@ export function Sidebar({ organizations }: { organizations: Organization[] }) {
                                     : ""
                               )}
                            >
-                              <Link href={`/dashboard/${org.id}/settings`}>
+                              <Link
+                                 onClick={() =>
+                                    setLastVisitedOrganizationId(org.id)
+                                 }
+                                 href={`/dashboard/${org.id}/settings`}
+                              >
                                  <SettingsIcon /> {t("item3")}
                               </Link>
                            </Button>
@@ -138,7 +169,12 @@ export function Sidebar({ organizations }: { organizations: Organization[] }) {
                                     : ""
                               )}
                            >
-                              <Link href={`/dashboard/${org.id}/billing`}>
+                              <Link
+                                 onClick={() =>
+                                    setLastVisitedOrganizationId(org.id)
+                                 }
+                                 href={`/dashboard/${org.id}/billing`}
+                              >
                                  <CreditCardIcon /> {t("item4")}
                               </Link>
                            </Button>

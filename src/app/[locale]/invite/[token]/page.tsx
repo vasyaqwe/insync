@@ -1,14 +1,13 @@
 import { InvitationActions } from "@/components/forms/invitation-actions"
 import { UserAvatar } from "@/components/ui/user-avatar"
 import { pick } from "@/lib/utils"
-import { Link } from "@/navigation"
+import { Link, redirect } from "@/navigation"
 import { db } from "@/server/db"
 import { currentUser } from "@clerk/nextjs"
 import logo from "@public/logo-large.svg"
 import { NextIntlClientProvider } from "next-intl"
 import { getMessages, getTranslations } from "next-intl/server"
 import Image from "next/image"
-import { redirect } from "next/navigation"
 
 export default async function Page({
    params: { token, locale },
@@ -33,7 +32,7 @@ export default async function Page({
       (invitation.invitedUserEmail !== user?.emailAddresses[0]?.emailAddress &&
          user)
    ) {
-      redirect("/dashboard")
+      return redirect("/dashboard")
    }
 
    const organizationName = invitation.organization.name

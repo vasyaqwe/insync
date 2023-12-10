@@ -3,9 +3,9 @@ import { z } from "zod"
 
 export const GUEST_USER_ID = "guest"
 export const NAME_CHARS_LIMIT = 32
-export type InvitedUser = Partial<User> & { email: string; id: string }
+export type CommandItemUser = Partial<User> & { email: string; id: string }
 
-const invitedUserSchema: z.ZodType<InvitedUser> = z.object({
+const invitedUserSchema: z.ZodType<CommandItemUser> = z.object({
    createdAt: z.date().optional(),
    email: z.string(),
    id: z.string(),
@@ -27,7 +27,7 @@ export const leaveOrganizationSchema = z.object({
 
 export const removeMembersOrganizationSchema = z.object({
    organizationId: z.string(),
-   userIdsToKick: z.array(z.string()),
+   memberIdsToRemove: z.array(z.string()),
 })
 
 export const inviteToOrganizationSchema = z.object({

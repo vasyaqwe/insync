@@ -193,43 +193,45 @@ export const organizationRouter = createTRPCRouter({
       }),
    removeMembers: privateProcedure
       .input(removeMembersOrganizationSchema)
-      .mutation(async ({ ctx, input: { organizationId, userIdsToKick } }) => {
-         const organization = await ctx.db.organization.findFirst({
-            where: {
-               id: organizationId,
-            },
-            select: {
-               ownerId: true,
-            },
-         })
-
-         if (!organization) {
-            throw new TRPCError({
-               code: "BAD_REQUEST",
-               message: "Organization not found",
-            })
-         }
-
-         if (organization.ownerId !== ctx.session.userId) {
-            throw new TRPCError({
-               code: "BAD_REQUEST",
-               message: "Only organization owner can kick others out",
-            })
-         }
-
-         await ctx.db.organization.update({
-            where: {
-               id: organizationId,
-            },
-            data: {
-               members: {
-                  disconnect: userIdsToKick.map((id) => ({ id })),
+      .mutation(
+         async ({ ctx, input: { organizationId, memberIdsToRemove } }) => {
+            const organization = await ctx.db.organization.findFirst({
+               where: {
+                  id: organizationId,
                },
-            },
-         })
+               select: {
+                  ownerId: true,
+               },
+            })
 
-         return "OK"
-      }),
+            if (!organization) {
+               throw new TRPCError({
+                  code: "BAD_REQUEST",
+                  message: "Organization not found",
+               })
+            }
+
+            if (organization.ownerId !== ctx.session.userId) {
+               throw new TRPCError({
+                  code: "BAD_REQUEST",
+                  message: "Only organization owner remove members",
+               })
+            }
+
+            await ctx.db.organization.update({
+               where: {
+                  id: organizationId,
+               },
+               data: {
+                  members: {
+                     disconnect: memberIdsToRemove.map((id) => ({ id })),
+                  },
+               },
+            })
+
+            return "OK"
+         }
+      ),
    join: privateProcedure
       .input(acceptOrganizationInvitationSchema)
       .mutation(

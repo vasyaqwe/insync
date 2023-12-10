@@ -14,10 +14,18 @@ export function Header() {
    const pathname = usePathname()
    const { isSignedIn } = useUser()
 
+   const lastVisitedOrganizationId = JSON.parse(
+      localStorage.getItem("last-visited-organization-id") ?? ""
+   )
+
    return pathname.includes("invite") ? null : (
       <header className="flex h-[var(--header-height)] items-center bg-background/50 py-2 shadow-sm backdrop-blur-md">
          <div className="container flex items-center justify-between">
-            <Link href={isSignedIn ? "/dashboard" : "/"}>
+            <Link
+               href={
+                  isSignedIn ? `/dashboard/${lastVisitedOrganizationId}` : "/"
+               }
+            >
                <Image
                   src={logo}
                   alt="insync."
@@ -32,7 +40,13 @@ export function Header() {
                   className="text-center"
                   asChild
                >
-                  <Link href={isSignedIn ? "/dashboard" : "/sign-in"}>
+                  <Link
+                     href={
+                        isSignedIn
+                           ? `/dashboard/${lastVisitedOrganizationId}`
+                           : "/sign-in"
+                     }
+                  >
                      {t("button")}
                      <ArrowUpRight />
                   </Link>

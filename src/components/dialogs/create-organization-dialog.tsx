@@ -18,7 +18,7 @@ import { toast } from "sonner"
 import { api } from "@/trpc/react"
 import { UserAvatar } from "@/components/ui/user-avatar"
 import {
-   type InvitedUser,
+   type CommandItemUser,
    NAME_CHARS_LIMIT,
    createOrganizationSchema,
 } from "@/lib/validations/organization"
@@ -38,7 +38,7 @@ export function CreateOrganizationDialog() {
       }))
    )
 
-   const [selectedUsers, setSelectedUsers] = useState<InvitedUser[]>([])
+   const [selectedUsers, setSelectedUsers] = useState<CommandItemUser[]>([])
 
    const [formData, setFormData] = useState({
       name: "",

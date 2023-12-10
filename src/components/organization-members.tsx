@@ -23,13 +23,13 @@ import {
 import { useUser } from "@clerk/nextjs"
 import { useState } from "react"
 import { InviteCommand } from "@/components/invite-command"
-import { type InvitedUser } from "@/lib/validations/organization"
+import { type CommandItemUser } from "@/lib/validations/organization"
 import { ArrowLeft, Check, UserPlus } from "lucide-react"
 import { api } from "@/trpc/react"
 import { toast } from "sonner"
 import { Loading } from "@/components/ui/loading"
 import { cn } from "@/lib/utils"
-import { useRouter } from "next/navigation"
+import { useRouter } from "@/navigation"
 
 type MembersProps = {
    members: User[]
@@ -44,8 +44,8 @@ export function OrganizationMembers({ members, organization }: MembersProps) {
    const { user: currentUser } = useUser()
    const router = useRouter()
 
-   const [usersToInvite, setUsersToInvite] = useState<InvitedUser[]>([])
-   const [usersToKick, setUsersToKick] = useState<InvitedUser[]>([])
+   const [usersToInvite, setUsersToInvite] = useState<CommandItemUser[]>([])
+   const [membersToRemove, setMembersToRemove] = useState<CommandItemUser[]>([])
    const [tab, setTab] = useState<"invite" | "members">("members")
 
    const { mutate: onSendInvites, isLoading: isSendInvitesLoading } =
@@ -71,7 +71,7 @@ export function OrganizationMembers({ members, organization }: MembersProps) {
          },
       })
 
-   const onSelect = (user: InvitedUser) => {
+   const onSelect = (user: CommandItemUser) => {
       if (
          user.id === currentUser?.id ||
          user.id === organization.ownerId ||
@@ -79,10 +79,10 @@ export function OrganizationMembers({ members, organization }: MembersProps) {
       )
          return
 
-      if (usersToKick.some((u) => u.id === user.id)) {
-         setUsersToKick((prev) => prev.filter((u) => u.id !== user.id))
+      if (membersToRemove.some((u) => u.id === user.id)) {
+         setMembersToRemove((prev) => prev.filter((u) => u.id !== user.id))
       } else {
-         setUsersToKick((prev) => [...prev, user])
+         setMembersToRemove((prev) => [...prev, user])
       }
    }
 
@@ -112,7 +112,7 @@ export function OrganizationMembers({ members, organization }: MembersProps) {
             onAnimationEndCapture={() => {
                setTab("members")
                setUsersToInvite([])
-               setUsersToKick([])
+               setMembersToRemove([])
             }}
             className="h-full max-h-[475px]"
          >
@@ -184,7 +184,9 @@ export function OrganizationMembers({ members, organization }: MembersProps) {
                               <span
                                  className={cn(
                                     "ml-auto grid h-6 w-6 flex-shrink-0 place-content-center rounded-full bg-primary",
-                                    !usersToKick.some((u) => u.id === user.id)
+                                    !membersToRemove.some(
+                                       (u) => u.id === user.id
+                                    )
                                        ? "invisible"
                                        : ""
                                  )}
@@ -210,13 +212,13 @@ export function OrganizationMembers({ members, organization }: MembersProps) {
 
             {tab === "members" && organization.ownerId === currentUser?.id ? (
                <div className="mt-5 flex items-center justify-between">
-                  {usersToKick.length < 1 ? (
+                  {membersToRemove.length < 1 ? (
                      <p className="text-sm text-foreground/75">
                         {t("members-to-remove-empty")}
                      </p>
                   ) : (
                      <div className="flex items-center pl-3">
-                        {usersToKick.map((user) => (
+                        {membersToRemove.map((user) => (
                            <UserAvatar
                               className="-ml-3"
                               user={user}
@@ -229,10 +231,12 @@ export function OrganizationMembers({ members, organization }: MembersProps) {
                      onClick={() =>
                         onRemoveMembers({
                            organizationId: organization.id,
-                           userIdsToKick: usersToKick.map((u) => u.id),
+                           memberIdsToRemove: membersToRemove.map((u) => u.id),
                         })
                      }
-                     disabled={usersToKick.length < 1 || isRemoveMembersLoading}
+                     disabled={
+                        membersToRemove.length < 1 || isRemoveMembersLoading
+                     }
                   >
                      {t("remove")}
                      {isRemoveMembersLoading && <Loading />}
