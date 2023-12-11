@@ -1,6 +1,7 @@
 import { OrganizationMembers } from "@/components/organization-members"
 import { pick } from "@/lib/utils"
 import { db } from "@/server/db"
+import { currentUser } from "@clerk/nextjs"
 import { NextIntlClientProvider } from "next-intl"
 import { getMessages } from "next-intl/server"
 import { notFound } from "next/navigation"
@@ -10,6 +11,7 @@ export default async function Page({
 }: {
    params: { organizationId: string }
 }) {
+   const user = await currentUser()
    const organization = await db.organization.findFirst({
       where: {
          id: organizationId,
@@ -22,7 +24,8 @@ export default async function Page({
       },
    })
 
-   if (!organization) notFound()
+   if (!organization || !organization.members.some((m) => m.id === user?.id))
+      notFound()
 
    const messages = (await getMessages()) as Messages
 
