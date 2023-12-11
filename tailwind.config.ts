@@ -1,4 +1,7 @@
 /** @type {import('tailwindcss').Config} */
+
+import plugin from "tailwindcss/plugin"
+
 module.exports = {
    darkMode: ["class"],
    content: [
@@ -65,6 +68,17 @@ module.exports = {
             sm: "calc(var(--radius) - 4px)",
          },
          keyframes: {
+            blink: {
+               "0%": {
+                  opacity: "0.2",
+               },
+               "20%": {
+                  opacity: "1",
+               },
+               "100%": {
+                  opacity: " 0.2",
+               },
+            },
             "accordion-down": {
                from: { height: 0 },
                to: { height: "var(--radix-accordion-content-height)" },
@@ -75,10 +89,27 @@ module.exports = {
             },
          },
          animation: {
+            blink: "blink 1.4s infinite both",
             "accordion-down": "accordion-down 0.2s ease-out",
             "accordion-up": "accordion-up 0.2s ease-out",
          },
       },
    },
-   plugins: [require("tailwindcss-animate")],
+   plugins: [
+      require("tailwindcss-animate"),
+      plugin(({ matchUtilities, theme }) => {
+         matchUtilities(
+            {
+               "animation-delay": (value) => {
+                  return {
+                     "animation-delay": value,
+                  }
+               },
+            },
+            {
+               values: theme("transitionDelay"),
+            }
+         )
+      }),
+   ],
 }

@@ -42,10 +42,14 @@ export function Sidebar({ organizations }: { organizations: Organization[] }) {
    const router = useRouter()
 
    useEffect(() => {
-      if (pathname === "/dashboard" && lastVisitedOrganizationId) {
+      if (
+         pathname === "/dashboard" &&
+         lastVisitedOrganizationId &&
+         organizations.length > 0
+      ) {
          router.push(`/dashboard/${lastVisitedOrganizationId}`)
       }
-   }, [pathname, lastVisitedOrganizationId, router])
+   }, [pathname, lastVisitedOrganizationId, router, organizations.length])
 
    const currentOrganizationId = pathname.split("/dashboard/")?.[1] ?? ""
 
