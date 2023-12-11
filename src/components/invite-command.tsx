@@ -14,7 +14,10 @@ import {
    useState,
    type HTMLAttributes,
 } from "react"
-import { GUEST_USER_ID, type InvitedUser } from "@/lib/validations/organization"
+import {
+   GUEST_USER_ID,
+   type CommandItemUser,
+} from "@/lib/validations/organization"
 import { cn, isEmail } from "@/lib/utils"
 import { useDebounce } from "@/hooks/use-debounce"
 import { api } from "@/trpc/react"
@@ -24,8 +27,8 @@ import { useTranslations } from "next-intl"
 
 type InviteCommandProps = {
    existingUserEmails?: string[]
-   selectedUsers: InvitedUser[]
-   setSelectedUsers: Dispatch<SetStateAction<InvitedUser[]>>
+   selectedUsers: CommandItemUser[]
+   setSelectedUsers: Dispatch<SetStateAction<CommandItemUser[]>>
 } & HTMLAttributes<HTMLDivElement>
 
 export function InviteCommand({
@@ -65,7 +68,7 @@ export function InviteCommand({
       // eslint-disable-next-line react-hooks/exhaustive-deps
    }, [debouncedInput])
 
-   function onUserSelect(selectedUser: InvitedUser) {
+   function onUserSelect(selectedUser: CommandItemUser) {
       if (isEmail(selectedUser?.email ?? "")) {
          setIsEmailHintVisible(false)
 
@@ -194,9 +197,9 @@ function UserItem({
    isEmailHintVisible = false,
    emailHint,
 }: {
-   user: InvitedUser
-   selectedUsers: InvitedUser[]
-   onSelect: (user: InvitedUser) => void
+   user: CommandItemUser
+   selectedUsers: CommandItemUser[]
+   onSelect: (user: CommandItemUser) => void
    isEmailHintVisible?: boolean
    emailHint: string
 }) {
