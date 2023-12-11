@@ -2,6 +2,7 @@
 
 import { AccountMenu } from "@/components/account-menu"
 import { Button } from "@/components/ui/button"
+import { useLastVisitedOrganizationId } from "@/hooks/use-last-visited-organization-id"
 import { Link, usePathname } from "@/navigation"
 import { useUser } from "@clerk/nextjs"
 import logo from "@public/logo.svg"
@@ -14,9 +15,7 @@ export function Header() {
    const pathname = usePathname()
    const { isSignedIn } = useUser()
 
-   const lastVisitedOrganizationId = JSON.parse(
-      localStorage.getItem("last-visited-organization-id") ?? ""
-   )
+   const lastVisitedOrganizationId = useLastVisitedOrganizationId()
 
    return pathname.includes("invite") ? null : (
       <header className="flex h-[var(--header-height)] items-center bg-background/50 py-2 shadow-sm backdrop-blur-md">

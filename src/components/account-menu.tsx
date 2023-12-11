@@ -13,8 +13,10 @@ import { Link, useRouter } from "@/navigation"
 import { useTranslations } from "next-intl"
 import { useGlobalStore } from "@/stores/use-global-store"
 import { useShallow } from "zustand/react/shallow"
+import { useLastVisitedOrganizationId } from "@/hooks/use-last-visited-organization-id"
 
 export function AccountMenu() {
+   const lastVisitedOrganizationId = useLastVisitedOrganizationId()
    const { signOut } = useClerk()
    const { openDialog } = useGlobalStore(
       useShallow((state) => ({
@@ -51,7 +53,9 @@ export function AccountMenu() {
             <DropdownMenuSeparator />
 
             <DropdownMenuItem asChild>
-               <Link href={"/dashboard"}>{t("item1")}</Link>
+               <Link href={`/dashboard/${lastVisitedOrganizationId}`}>
+                  {t("item1")}
+               </Link>
             </DropdownMenuItem>
 
             <DropdownMenuItem onClick={() => openDialog("createOrganization")}>

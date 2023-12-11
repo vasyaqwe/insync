@@ -30,7 +30,10 @@ export function Sidebar({ organizations }: { organizations: Organization[] }) {
    const t = useTranslations("sidebar")
 
    const [lastVisitedOrganizationId, setLastVisitedOrganizationId] =
-      useLocalStorage("last-visited-organization-id", organizations[0]?.id)
+      useLocalStorage(
+         "last-visited-organization-id",
+         organizations[0]?.id ?? ""
+      )
 
    const { openDialog } = useGlobalStore(
       useShallow((state) => ({
@@ -51,7 +54,8 @@ export function Sidebar({ organizations }: { organizations: Organization[] }) {
       }
    }, [pathname, lastVisitedOrganizationId, router, organizations.length])
 
-   const currentOrganizationId = pathname.split("/dashboard/")?.[1] ?? ""
+   const currentOrganizationId =
+      pathname.split("/dashboard/")?.[1] ?? lastVisitedOrganizationId
 
    return organizations.length < 1 ? (
       <Card className="mx-auto py-6 text-center text-lg">

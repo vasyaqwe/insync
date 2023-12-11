@@ -1,10 +1,12 @@
 import { InvitationActions } from "@/components/forms/invitation-actions"
+import { Button } from "@/components/ui/button"
 import { UserAvatar } from "@/components/ui/user-avatar"
 import { pick } from "@/lib/utils"
-import { Link, redirect } from "@/navigation"
+import { Link } from "@/navigation"
 import { db } from "@/server/db"
 import { currentUser } from "@clerk/nextjs"
 import logo from "@public/logo-large.svg"
+import { XCircle } from "lucide-react"
 import { NextIntlClientProvider } from "next-intl"
 import { getMessages, getTranslations } from "next-intl/server"
 import Image from "next/image"
@@ -32,7 +34,36 @@ export default async function Page({
       (invitation.invitedUserEmail !== user?.emailAddresses[0]?.emailAddress &&
          user)
    ) {
-      return redirect("/dashboard")
+      return (
+         <div className="px-6 py-10 text-center">
+            <Link href={"/"}>
+               <Image
+                  src={logo}
+                  alt="insync."
+                  className="mx-auto "
+               />
+            </Link>
+            <XCircle
+               size={100}
+               className="mx-auto mt-10 stroke-destructive/80"
+            />
+            <h1 className="text-balance mt-5 text-2xl font-semibold sm:text-3xl md:text-5xl">
+               {t("error-title")}
+            </h1>
+            <div className="mx-auto max-w-[65ch]">
+               <p className="mt-10 text-lg">{t("error-1")}</p>
+               <p className="mt-10 text-foreground/75">{t("error-2")}</p>
+            </div>
+            <Button asChild>
+               <Link
+                  className="mt-8"
+                  href={"/dashboard"}
+               >
+                  {t("error-button")}
+               </Link>
+            </Button>
+         </div>
+      )
    }
 
    const organizationName = invitation.organization.name
