@@ -13,12 +13,16 @@ module.exports = {
    theme: {
       container: {
          center: true,
-         padding: "2rem",
+         padding: {
+            DEFAULT: "1rem",
+            md: "2rem",
+         },
          screens: {
+            md: "768px",
+            lg: "1024px",
             "2xl": "1400px",
          },
       },
-
       extend: {
          fontSize: {
             sm: "0.925rem",

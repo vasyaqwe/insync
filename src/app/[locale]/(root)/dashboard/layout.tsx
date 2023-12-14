@@ -27,8 +27,10 @@ export default async function RootLayout({
    return (
       <div
          className={cn(
-            "container  py-16",
-            organizations.length > 0 ? "grid grid-cols-[320px,1fr] gap-10" : ""
+            "container py-8 lg:py-16",
+            organizations.length > 0
+               ? "gap-10 lg:grid lg:grid-cols-[320px,1fr]"
+               : ""
          )}
       >
          <NextIntlClientProvider

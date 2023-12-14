@@ -13,11 +13,19 @@ export function Hint({ children, content, ...props }: HintProps) {
    return (
       <TooltipProvider>
          <Tooltip
-            delayDuration={200}
+            delayDuration={250}
             {...props}
          >
-            <TooltipTrigger asChild>{children}</TooltipTrigger>
-            <TooltipContent className="break-words text-sm">
+            <TooltipTrigger
+               onFocus={(e) => e.preventDefault()}
+               asChild
+            >
+               {children}
+            </TooltipTrigger>
+            <TooltipContent
+               hideWhenDetached
+               className="break-words text-sm"
+            >
                {content}
             </TooltipContent>
          </Tooltip>

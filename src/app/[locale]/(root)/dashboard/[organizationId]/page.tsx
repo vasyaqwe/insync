@@ -44,17 +44,17 @@ export default async function Page({
             <div className="flex items-center justify-between border-b-2 border-dotted pb-4">
                <div className="flex items-center gap-3">
                   <ColorAvatar
-                     className="[--color-avatar-size:55px]"
+                     className="[--color-avatar-size:45px] lg:[--color-avatar-size:55px]"
                      color={organization.color}
                   />
                   <div>
-                     <h1 className="text-2xl font-medium">
+                     <h1 className="text-xl font-medium lg:text-2xl">
                         {organization.name}
                      </h1>
-                     <p className="mt-1 rounded-sm border border-primary/70 bg-primary/10 px-1.5 py-0.5 text-sm leading-5 text-primary shadow-sm">
+                     <p className="mt-0.5 rounded-[.4rem] border border-primary/70 bg-primary/10 px-1 text-xs leading-5 text-primary shadow-sm lg:mt-1 lg:rounded-sm lg:px-1.5 lg:py-0.5 lg:text-sm">
                         <CreditCard
-                           className="mr-2 inline align-bottom"
-                           size={19}
+                           className="mr-1 inline align-bottom lg:mr-2"
+                           size={18}
                         />
                         {tCommon("free-plan")}
                      </p>
