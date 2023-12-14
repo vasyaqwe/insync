@@ -7,7 +7,19 @@
       }
    },
    "common": {
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "free-plan": "Free plan",
+      "pro-plan": "Pro plan",
+      "create": "Create",
+      "required": "Required",
+      "max-limit": "Maximum length is {limit} characters"
+   },
+   "boards": {
+      "title": "Boards",
+      "new-board": "New board",
+      "new-board-label": "Name your board",
+      "create-success": "Board created",
+      "create-error": "Couldn't create board, something went wrong"
    },
    "members": {
       "tooltip": "View all members",
@@ -45,10 +57,6 @@
       "error-button": "Go to dashboard",
       "success-toast": "Invitation accepted",
       "error-toast": "Couldn't accept invitation, something went wrong"
-   },
-   "error-messages": {
-      "required": "Required",
-      "max-limit": "Maximum length is {limit} characters"
    },
    "account-menu": {
       "item1": "Dashboard",

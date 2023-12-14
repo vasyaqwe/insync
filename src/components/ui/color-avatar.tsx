@@ -6,7 +6,10 @@ type ColorAvatarProps = ComponentProps<"div"> & { color: string }
 export function ColorAvatar({ className, color, ...props }: ColorAvatarProps) {
    return (
       <div
-         className={cn("h-8 w-8 rounded-full", className)}
+         className={cn(
+            "h-[var(--color-avatar-size)] w-[var(--color-avatar-size)] rounded-full [--color-avatar-size:32px]",
+            className
+         )}
          style={{ background: color }}
          {...props}
       ></div>

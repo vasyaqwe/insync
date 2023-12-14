@@ -228,6 +228,7 @@ export function OrganizationMembers({ members, organization }: MembersProps) {
                      </div>
                   )}
                   <Button
+                     variant={"destructive"}
                      onClick={() =>
                         onRemoveMembers({
                            organizationId: organization.id,

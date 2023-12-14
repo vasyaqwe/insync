@@ -25,7 +25,7 @@ module.exports = {
          },
          fontFamily: {
             "primary-en": "var(--font-geist-sans)",
-            "primary-uk": "var(--font-inter)",
+            "primary-uk": "var(--font-inter-latin)",
          },
          colors: {
             border: "hsl(var(--border))",

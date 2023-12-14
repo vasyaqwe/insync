@@ -19,7 +19,6 @@ model User {
 
     ownedOrganizations Organization[]
     organizations      Organization[] @relation("OrganizationMembers")
-    boards             Board[]        @relation("BoardMembers")
 
     lists                           List[]
     cards                           Card[]
@@ -71,14 +70,13 @@ model OrganizationInvitation {
 }
 
 model Board {
-    id    String @id @default(uuid())
-    title String
+    id   String @id @default(uuid())
+    name String
 
     organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
     organizationId String
 
-    lists   List[]
-    members User[] @relation("BoardMembers")
+    lists List[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

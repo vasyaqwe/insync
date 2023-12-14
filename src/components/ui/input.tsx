@@ -39,7 +39,7 @@ type ErrorMessageProps = {
 } & React.ComponentProps<"p">
 
 function ErrorMessage({ error, className, ...props }: ErrorMessageProps) {
-   const t = useTranslations("error-messages")
+   const t = useTranslations("common")
 
    type TranslationKeys = Parameters<typeof t>[0]
 

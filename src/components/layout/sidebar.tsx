@@ -12,7 +12,7 @@ import { Card } from "@/components/ui/card"
 import { ColorAvatar } from "@/components/ui/color-avatar"
 import { useLocalStorage } from "@/hooks/use-local-storage"
 import { cn } from "@/lib/utils"
-import { Link, usePathname, useRouter } from "@/navigation"
+import { Link, usePathname } from "@/navigation"
 import { useGlobalStore } from "@/stores/use-global-store"
 import { type Organization } from "@prisma/client"
 import {
@@ -23,7 +23,6 @@ import {
    SettingsIcon,
 } from "lucide-react"
 import { useTranslations } from "next-intl"
-import { useEffect } from "react"
 import { useShallow } from "zustand/react/shallow"
 
 export function Sidebar({ organizations }: { organizations: Organization[] }) {
@@ -42,23 +41,12 @@ export function Sidebar({ organizations }: { organizations: Organization[] }) {
    )
 
    const pathname = usePathname()
-   const router = useRouter()
-
-   useEffect(() => {
-      if (
-         pathname === "/dashboard" &&
-         lastVisitedOrganizationId &&
-         organizations.length > 0
-      ) {
-         router.push(`/dashboard/${lastVisitedOrganizationId}`)
-      }
-   }, [pathname, lastVisitedOrganizationId, router, organizations.length])
 
    const currentOrganizationId =
       pathname.split("/dashboard/")?.[1] ?? lastVisitedOrganizationId
 
    return organizations.length < 1 ? (
-      <Card className="mx-auto py-6 text-center text-lg">
+      <Card className="mx-auto pb-6 text-center text-lg">
          <p>{t("empty")}</p>
          <Button
             size={"lg"}
@@ -74,8 +62,8 @@ export function Sidebar({ organizations }: { organizations: Organization[] }) {
          className="max-w-xs"
       >
          <aside>
-            <div className="flex items-center justify-between border-b-2 border-dotted pb-3">
-               <p className="text-lg font-medium">{t("title")}</p>
+            <div className="flex items-center justify-between border-b-2 border-dotted py-2 pb-[1.05rem]">
+               <p className="text-xl font-medium">{t("title")}</p>
                <Hint content={t("empty-button")}>
                   <Button
                      onClick={() => openDialog("createOrganization")}
@@ -101,13 +89,11 @@ export function Sidebar({ organizations }: { organizations: Organization[] }) {
                      >
                         <AccordionTrigger
                            className={
-                              "rounded-lg p-3 hover:bg-primary/10 hover:no-underline"
+                              "flex items-center justify-start gap-2 rounded-lg p-3 hover:bg-primary/10 hover:no-underline [&>svg]:ml-auto"
                            }
                         >
-                           <div className="flex items-center gap-2">
-                              <ColorAvatar color={org.color} />
-                              {org.name}
-                           </div>
+                           <ColorAvatar color={org.color} />
+                           {org.name}
                         </AccordionTrigger>
                         <AccordionContent className="mt-1 space-y-1">
                            <Button

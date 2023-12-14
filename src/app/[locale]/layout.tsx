@@ -15,7 +15,7 @@ import { cookies } from "next/headers"
 import { Toaster } from "sonner"
 import { enUS, ukUA } from "@clerk/localizations"
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter-latin" })
 
 export const metadata = metadataConfig
 
@@ -36,15 +36,15 @@ export default async function RootLayout({
    const messages = (await getMessages()) as Messages
 
    return (
-      <html lang={locale}>
-         <body
-            className={cn(
-               `grainy-bg`,
-               locale === "uk" ? "font-primary-uk" : "font-primary-en",
-               GeistSans.variable,
-               inter.variable
-            )}
-         >
+      <html
+         lang={locale}
+         className={cn(
+            locale === "uk" ? "font-primary-uk" : "font-primary-en",
+            GeistSans.variable,
+            inter.variable
+         )}
+      >
+         <body className={`grainy-bg`}>
             <TRPCReactProvider cookies={cookies().toString()}>
                <ClerkProvider localization={locale === "uk" ? ukUA : enUS}>
                   <NextIntlClientProvider

@@ -30,6 +30,7 @@ import { useShallow } from "zustand/react/shallow"
 export function CreateOrganizationDialog() {
    const t = useTranslations("create-organization")
    const router = useRouter()
+
    const { dialogs, closeDialog, openDialog } = useGlobalStore(
       useShallow((state) => ({
          closeDialog: state.closeDialog,
@@ -50,12 +51,12 @@ export function CreateOrganizationDialog() {
    }
 
    const { mutate: onSubmit, isLoading } = api.organization.create.useMutation({
-      onSuccess: (res) => {
+      onSuccess: (createdOrgId) => {
          closeDialog("createOrganization")
          setFormData({ name: "" })
          setSelectedUsers([])
          // setQuery("")
-         router.push(`/dashboard/${res}`)
+         router.push(`/dashboard/${createdOrgId}`)
          router.refresh()
          toast.success(t("success"))
       },

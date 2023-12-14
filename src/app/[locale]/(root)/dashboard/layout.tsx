@@ -35,7 +35,6 @@ export default async function RootLayout({
             messages={pick(messages, [
                "sidebar",
                "create-organization",
-               "error-messages",
                "invite-command",
             ])}
          >
