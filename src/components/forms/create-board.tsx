@@ -24,12 +24,12 @@ export function CreateBoard({ organizationId }: { organizationId: string }) {
 
    const [formData, setFormData] = useState({
       name: "",
+      organizationId,
    })
 
    const { mutate: onSubmit, isLoading } = api.board.create.useMutation({
       onSuccess: (createdBoardId) => {
-         router.push(`/dashboard/${createdBoardId}`)
-         router.refresh()
+         router.push(`/dashboard/${organizationId}/${createdBoardId}`)
          toast.success(t("create-success"))
       },
       onError: () => {
@@ -38,11 +38,7 @@ export function CreateBoard({ organizationId }: { organizationId: string }) {
    })
 
    const { safeOnSubmit, errors } = useFormValidation({
-      onSubmit: () =>
-         onSubmit({
-            name: formData.name,
-            organizationId,
-         }),
+      onSubmit: () => onSubmit(formData),
       formData,
       zodSchema: createBoardSchema,
    })
@@ -50,11 +46,14 @@ export function CreateBoard({ organizationId }: { organizationId: string }) {
    return (
       <Popover>
          <PopoverTrigger asChild>
-            <Button variant="secondary">
+            <Button
+               className="h-[120px] flex-col text-xl shadow-sm"
+               variant="secondary"
+            >
                <Plus /> {t("new-board")}
             </Button>
          </PopoverTrigger>
-         <PopoverContent asChild>
+         <PopoverContent>
             <form
                onSubmit={(e) => {
                   e.preventDefault()
@@ -79,8 +78,7 @@ export function CreateBoard({ organizationId }: { organizationId: string }) {
                   disabled={isLoading}
                   className="mt-3 w-full"
                >
-                  {tCommon("create")}
-                  {isLoading && <Loading />}
+                  {isLoading ? <Loading /> : tCommon("create")}
                </Button>
             </form>
          </PopoverContent>

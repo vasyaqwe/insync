@@ -1,3 +1,4 @@
+import { Board } from "@/components/board"
 import { CreateBoard } from "@/components/forms/create-board"
 import { OrganizationMembers } from "@/components/organization-members"
 import { ColorAvatar } from "@/components/ui/color-avatar"
@@ -28,6 +29,7 @@ export default async function Page({
          members: true,
          ownerId: true,
          color: true,
+         boards: true,
       },
    })
 
@@ -53,7 +55,7 @@ export default async function Page({
                      </h1>
                      <p className="mt-0.5 rounded-[.4rem] border border-primary/70 bg-primary/10 px-1 text-xs leading-5 text-primary shadow-sm lg:mt-1 lg:rounded-sm lg:px-1.5 lg:py-0.5 lg:text-sm">
                         <CreditCard
-                           className="mr-1 inline align-bottom lg:mr-2"
+                           className="mb-[1px] mr-1.5 inline align-bottom"
                            size={18}
                         />
                         {tCommon("free-plan")}
@@ -67,10 +69,16 @@ export default async function Page({
             </div>
          </NextIntlClientProvider>
          <h2 className="mt-4 text-3xl font-medium">{t("title")}</h2>
-         <div className="mt-4">
+         <div className="mt-4 grid grid-cols-fluid gap-4">
             <NextIntlClientProvider
                messages={pick(messages, ["boards", "common"])}
             >
+               {organization.boards.map((board) => (
+                  <Board
+                     board={board}
+                     key={board.id}
+                  />
+               ))}
                <CreateBoard organizationId={organizationId} />
             </NextIntlClientProvider>
          </div>

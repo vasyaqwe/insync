@@ -96,14 +96,16 @@ function Aside({
          "last-visited-organization-id",
          organizations[0]?.id ?? ""
       )
+
    const pathname = usePathname()
 
    const currentOrganizationId =
-      pathname.split("/dashboard/")?.[1] ?? lastVisitedOrganizationId
+      pathname.split("/")?.[2] ?? lastVisitedOrganizationId
 
    return (
       <aside {...props}>
          <Link
+            onClick={() => closeDialog("mobileSidebar")}
             className="lg:hidden"
             href={`/dashboard/${lastVisitedOrganizationId}`}
          >

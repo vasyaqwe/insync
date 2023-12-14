@@ -32,7 +32,7 @@ model User {
 }
 
 model Organization {
-    id   String @id @default(uuid())
+    id   String @id @default(cuid())
     name String
 
     auditLogs AuditLog[]
@@ -51,7 +51,7 @@ model Organization {
 }
 
 model OrganizationInvitation {
-    id String @id @default(uuid())
+    id String @id @default(cuid())
 
     token String @unique
 
@@ -70,7 +70,7 @@ model OrganizationInvitation {
 }
 
 model Board {
-    id   String @id @default(uuid())
+    id   String @id @default(cuid())
     name String
 
     organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
@@ -83,7 +83,7 @@ model Board {
 }
 
 model List {
-    id    String @id @default(uuid())
+    id    String @id @default(cuid())
     title String
     order Int
 
@@ -102,7 +102,7 @@ model List {
 }
 
 model Card {
-    id          String  @id @default(uuid())
+    id          String  @id @default(cuid())
     title       String
     order       Int
     description String? @db.Text
@@ -120,7 +120,7 @@ model Card {
 }
 
 model CardComment {
-    id      String  @id @default(uuid())
+    id      String  @id @default(cuid())
     content String? @db.Text
 
     authorId String
@@ -143,7 +143,7 @@ enum ENTITY_TYPE {
 }
 
 model AuditLog {
-    id String @id @default(uuid())
+    id String @id @default(cuid())
 
     action      ACTION
     entityId    String
@@ -161,7 +161,7 @@ model AuditLog {
 }
 
 model OrgLimit {
-    id    String @id @default(uuid())
+    id    String @id @default(cuid())
     orgId String @unique
     count Int    @default(0)
 
@@ -170,7 +170,7 @@ model OrgLimit {
 }
 
 model OrgSubscription {
-    id    String @id @default(uuid())
+    id    String @id @default(cuid())
     orgId String @unique
 
     stripeCustomerId       String?   @unique @map(name: "stripe_customer_id")

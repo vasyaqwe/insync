@@ -19,7 +19,8 @@
       "new-board": "New board",
       "new-board-label": "Name your board",
       "create-success": "Board created",
-      "create-error": "Couldn't create board, something went wrong"
+      "create-error": "Couldn't create board, something went wrong",
+      "created": "Created"
    },
    "members": {
       "tooltip": "View all members",
