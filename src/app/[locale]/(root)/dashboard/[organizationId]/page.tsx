@@ -69,7 +69,7 @@ export default async function Page({
             </div>
          </NextIntlClientProvider>
          <h2 className="mt-4 text-3xl font-medium">{t("title")}</h2>
-         <div className="mt-4 grid grid-cols-fluid gap-4">
+         <div className="mt-5 grid grid-cols-fluid gap-4">
             <NextIntlClientProvider
                messages={pick(messages, ["boards", "common"])}
             >
@@ -80,7 +80,7 @@ export default async function Page({
                   />
                ))}
                <CreateBoard
-                  className={organization.boards.length < 2 ? "w-[312px]" : ""}
+                  className={organization.boards.length < 1 ? "w-[312px]" : ""}
                   organizationId={organizationId}
                />
             </NextIntlClientProvider>

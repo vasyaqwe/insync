@@ -17,6 +17,7 @@ import { Plus } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { useState } from "react"
 import { toast } from "sonner"
+import useMeasure from "react-use-measure"
 
 export function CreateBoard({
    organizationId,
@@ -26,7 +27,7 @@ export function CreateBoard({
    const t = useTranslations("boards")
    const tCommon = useTranslations("common")
    const router = useRouter()
-
+   const [triggerRef, { width: triggerWidth }] = useMeasure()
    const [formData, setFormData] = useState({
       name: "",
       organizationId,
@@ -34,7 +35,8 @@ export function CreateBoard({
 
    const { mutate: onSubmit, isLoading } = api.board.create.useMutation({
       onSuccess: (createdBoardId) => {
-         router.push(`/dashboard/${organizationId}/${createdBoardId}`)
+         router.push(`/dashboard/board/${createdBoardId}`)
+         router.refresh()
          toast.success(t("create-success"))
       },
       onError: () => {
@@ -52,6 +54,7 @@ export function CreateBoard({
       <Popover>
          <PopoverTrigger asChild>
             <Button
+               ref={triggerRef}
                className={cn("h-[120px] flex-col text-xl shadow-sm", className)}
                variant="secondary"
                {...props}
@@ -59,7 +62,7 @@ export function CreateBoard({
                <Plus /> {t("new-board")}
             </Button>
          </PopoverTrigger>
-         <PopoverContent className="min-w-[312px]">
+         <PopoverContent style={{ minWidth: triggerWidth }}>
             <form
                onSubmit={(e) => {
                   e.preventDefault()

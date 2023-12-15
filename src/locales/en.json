@@ -12,7 +12,10 @@
       "pro-plan": "Pro plan",
       "create": "Create",
       "required": "Required",
-      "max-limit": "Maximum length is {limit} characters"
+      "max-limit": "Maximum length is {limit} characters",
+      "delete": "Delete",
+      "edit": "Edit",
+      "update": "Update"
    },
    "boards": {
       "title": "Boards",
@@ -20,7 +23,11 @@
       "new-board-label": "Name your board",
       "create-success": "Board created",
       "create-error": "Couldn't create board, something went wrong",
-      "created": "Created"
+      "created": "Created",
+      "delete-success": "Board {name} deleted",
+      "delete-error": "Couldn't delete board, something went wrong",
+      "update-success": "Board {name} updated",
+      "update-error": "Couldn't update board, something went wrong"
    },
    "members": {
       "tooltip": "View all members",
