@@ -2,7 +2,7 @@
 
 import { AccountMenu } from "@/components/account-menu"
 import { Button } from "@/components/ui/button"
-import { useLastVisitedOrganizationId } from "@/hooks/use-last-visited-organization-id"
+import { useOrganizationHelpers } from "@/hooks/use-organization-helpers"
 import { Link, usePathname } from "@/navigation"
 import { useGlobalStore } from "@/stores/use-global-store"
 import { useUser } from "@clerk/nextjs"
@@ -22,7 +22,7 @@ export function Header() {
       }))
    )
 
-   const lastVisitedOrganizationId = useLastVisitedOrganizationId()
+   const { lastVisitedOrganizationId } = useOrganizationHelpers()
 
    return pathname.includes("invite") ? null : (
       <header className="flex h-[var(--header-height)] items-center bg-background/50 py-2 shadow-sm backdrop-blur-md">

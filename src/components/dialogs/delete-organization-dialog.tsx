@@ -27,6 +27,7 @@ export function DeleteOrganizationDialog({
    const t = useTranslations("organization-settings")
    const tCommon = useTranslations("common")
    const router = useRouter()
+   
    const [open, setOpen] = useState(false)
    const { isLoading, mutate: onDelete } = api.organization.delete.useMutation({
       onSuccess: () => {

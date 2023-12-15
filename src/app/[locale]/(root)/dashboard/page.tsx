@@ -13,6 +13,9 @@ export default async function Page() {
             },
          },
       },
+      select: {
+         id: true,
+      },
    })
 
    if (organizations.length > 0)

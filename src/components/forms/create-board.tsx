@@ -1,6 +1,6 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
+import { Button, type ButtonProps } from "@/components/ui/button"
 import { ErrorMessage, Input } from "@/components/ui/input"
 import { Loading } from "@/components/ui/loading"
 import {
@@ -9,6 +9,7 @@ import {
    PopoverTrigger,
 } from "@/components/ui/popover"
 import { useFormValidation } from "@/hooks/use-form-validation"
+import { cn } from "@/lib/utils"
 import { NAME_CHARS_LIMIT, createBoardSchema } from "@/lib/validations/board"
 import { useRouter } from "@/navigation"
 import { api } from "@/trpc/react"
@@ -17,7 +18,11 @@ import { useTranslations } from "next-intl"
 import { useState } from "react"
 import { toast } from "sonner"
 
-export function CreateBoard({ organizationId }: { organizationId: string }) {
+export function CreateBoard({
+   organizationId,
+   className,
+   ...props
+}: { organizationId: string } & ButtonProps) {
    const t = useTranslations("boards")
    const tCommon = useTranslations("common")
    const router = useRouter()
@@ -47,13 +52,14 @@ export function CreateBoard({ organizationId }: { organizationId: string }) {
       <Popover>
          <PopoverTrigger asChild>
             <Button
-               className="h-[120px] flex-col text-xl shadow-sm"
+               className={cn("h-[120px] flex-col text-xl shadow-sm", className)}
                variant="secondary"
+               {...props}
             >
                <Plus /> {t("new-board")}
             </Button>
          </PopoverTrigger>
-         <PopoverContent>
+         <PopoverContent className="min-w-[312px]">
             <form
                onSubmit={(e) => {
                   e.preventDefault()

@@ -79,7 +79,10 @@ export default async function Page({
                      key={board.id}
                   />
                ))}
-               <CreateBoard organizationId={organizationId} />
+               <CreateBoard
+                  className={organization.boards.length < 2 ? "w-[312px]" : ""}
+                  organizationId={organizationId}
+               />
             </NextIntlClientProvider>
          </div>
       </div>

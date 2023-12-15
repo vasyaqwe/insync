@@ -26,7 +26,7 @@ import {
 import { useTranslations } from "next-intl"
 import { useShallow } from "zustand/react/shallow"
 import { Sheet, SheetContent } from "@/components/ui/sheet"
-import { type ComponentProps } from "react"
+import { useEffect, type ComponentProps, useState } from "react"
 import Image from "next/image"
 
 export function Sidebar({ organizations }: { organizations: Organization[] }) {
@@ -55,6 +55,7 @@ export function Sidebar({ organizations }: { organizations: Organization[] }) {
       <>
          <Card asChild>
             <Aside
+               suppressHydrationWarning
                organizations={organizations}
                className="max-w-xs max-lg:hidden"
             />
@@ -84,6 +85,12 @@ function Aside({
    ...props
 }: { organizations: Organization[] } & ComponentProps<"aside">) {
    const t = useTranslations("sidebar")
+   const [isClient, setIsClient] = useState(false)
+
+   useEffect(() => {
+      setIsClient(true)
+   }, [])
+
    const { openDialog, closeDialog } = useGlobalStore(
       useShallow((state) => ({
          openDialog: state.openDialog,
@@ -91,16 +98,41 @@ function Aside({
       }))
    )
 
+   const [expandedOrganizations, setExpandedOrganizations] = useLocalStorage<
+      Record<string, boolean>
+   >("expanded-organizations", {})
+
    const [lastVisitedOrganizationId, setLastVisitedOrganizationId] =
       useLocalStorage(
          "last-visited-organization-id",
          organizations[0]?.id ?? ""
       )
 
+   useEffect(() => {
+      if (!organizations.some((org) => org.id === lastVisitedOrganizationId)) {
+         setLastVisitedOrganizationId(organizations?.[0]?.id ?? "")
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, [organizations, lastVisitedOrganizationId])
+
    const pathname = usePathname()
 
-   const currentOrganizationId =
-      pathname.split("/")?.[2] ?? lastVisitedOrganizationId
+   function onLinkClick(orgId: string) {
+      setLastVisitedOrganizationId(orgId)
+
+      closeDialog("mobileSidebar")
+   }
+
+   const defaultAccordionValue = Object.keys(expandedOrganizations).reduce(
+      (acc: string[], curr) => {
+         if (expandedOrganizations[curr]) {
+            acc.push(curr)
+         }
+
+         return acc
+      },
+      []
+   )
 
    return (
       <aside {...props}>
@@ -128,112 +160,111 @@ function Aside({
                </Button>
             </Hint>
          </div>
-         <Accordion
-            defaultValue={[currentOrganizationId]}
-            type="multiple"
-            className="mt-3"
-         >
-            {organizations.map((org) => {
-               return (
-                  <AccordionItem
-                     className="border-b-0"
-                     key={org.id}
-                     value={org.id}
-                  >
-                     <AccordionTrigger
-                        className={
-                           "flex items-center justify-start gap-2 rounded-lg p-3 hover:bg-primary/10 hover:no-underline [&>svg]:ml-auto"
-                        }
+
+         {isClient ? (
+            <Accordion
+               defaultValue={defaultAccordionValue}
+               type="multiple"
+               className="mt-3"
+            >
+               {organizations.map((org) => {
+                  return (
+                     <AccordionItem
+                        className="border-b-0"
+                        key={org.id}
+                        value={org.id}
                      >
-                        <ColorAvatar color={org.color} />
-                        {org.name}
-                     </AccordionTrigger>
-                     <AccordionContent className="mt-1 space-y-1">
-                        <Button
-                           asChild
-                           variant={"ghost"}
-                           className={cn(
-                              "w-full justify-start hover:bg-primary/10 hover:text-primary",
-                              pathname === `/dashboard/${org.id}`
-                                 ? "bg-primary/10 text-primary "
-                                 : ""
-                           )}
+                        <AccordionTrigger
+                           onClick={() =>
+                              setExpandedOrganizations((prev) => ({
+                                 ...prev,
+                                 [org.id]: !expandedOrganizations[org.id],
+                              }))
+                           }
+                           className={
+                              "flex items-center justify-start gap-2 rounded-lg p-3 hover:bg-primary/10 hover:no-underline [&>svg]:ml-auto"
+                           }
                         >
-                           <Link
-                              onClick={() => {
-                                 setLastVisitedOrganizationId(org.id)
-                                 closeDialog("mobileSidebar")
-                              }}
-                              href={`/dashboard/${org.id}`}
+                           <ColorAvatar color={org.color} />
+                           {org.name}
+                        </AccordionTrigger>
+                        <AccordionContent className="mt-1 space-y-1">
+                           <Button
+                              asChild
+                              variant={"ghost"}
+                              className={cn(
+                                 "w-full justify-start hover:bg-primary/10 hover:text-primary",
+                                 pathname === `/dashboard/${org.id}`
+                                    ? "bg-primary/10 text-primary "
+                                    : ""
+                              )}
                            >
-                              <LayoutIcon /> {t("item1")}
-                           </Link>
-                        </Button>
-                        <Button
-                           asChild
-                           variant={"ghost"}
-                           className={cn(
-                              "w-full justify-start hover:bg-primary/10 hover:text-primary",
-                              pathname === `/dashboard/${org.id}/activity`
-                                 ? "bg-primary/10 text-primary "
-                                 : ""
-                           )}
-                        >
-                           <Link
-                              onClick={() => {
-                                 setLastVisitedOrganizationId(org.id)
-                                 closeDialog("mobileSidebar")
-                              }}
-                              href={`/dashboard/${org.id}/activity`}
+                              <Link
+                                 onClick={() => onLinkClick(org.id)}
+                                 href={`/dashboard/${org.id}`}
+                              >
+                                 <LayoutIcon /> {t("item1")}
+                              </Link>
+                           </Button>
+                           <Button
+                              asChild
+                              variant={"ghost"}
+                              className={cn(
+                                 "w-full justify-start hover:bg-primary/10 hover:text-primary",
+                                 pathname === `/dashboard/${org.id}/activity`
+                                    ? "bg-primary/10 text-primary "
+                                    : ""
+                              )}
                            >
-                              <ActivityIcon /> {t("item2")}
-                           </Link>
-                        </Button>
-                        <Button
-                           asChild
-                           variant={"ghost"}
-                           className={cn(
-                              "w-full justify-start hover:bg-primary/10 hover:text-primary",
-                              pathname === `/dashboard/${org.id}/settings`
-                                 ? "bg-primary/10 text-primary "
-                                 : ""
-                           )}
-                        >
-                           <Link
-                              onClick={() => {
-                                 setLastVisitedOrganizationId(org.id)
-                                 closeDialog("mobileSidebar")
-                              }}
-                              href={`/dashboard/${org.id}/settings`}
+                              <Link
+                                 onClick={() => onLinkClick(org.id)}
+                                 href={`/dashboard/${org.id}/activity`}
+                              >
+                                 <ActivityIcon /> {t("item2")}
+                              </Link>
+                           </Button>
+                           <Button
+                              asChild
+                              variant={"ghost"}
+                              className={cn(
+                                 "w-full justify-start hover:bg-primary/10 hover:text-primary",
+                                 pathname === `/dashboard/${org.id}/settings`
+                                    ? "bg-primary/10 text-primary "
+                                    : ""
+                              )}
                            >
-                              <SettingsIcon /> {t("item3")}
-                           </Link>
-                        </Button>
-                        <Button
-                           asChild
-                           variant={"ghost"}
-                           className={cn(
-                              "w-full justify-start hover:bg-primary/10 hover:text-primary",
-                              pathname === `/dashboard/${org.id}/billing`
-                                 ? "bg-primary/10 text-primary "
-                                 : ""
-                           )}
-                        >
-                           <Link
-                              onClick={() => {
-                                 setLastVisitedOrganizationId(org.id)
-                                 closeDialog("mobileSidebar")
-                              }}
-                              href={`/dashboard/${org.id}/billing`}
+                              <Link
+                                 onClick={() => onLinkClick(org.id)}
+                                 href={`/dashboard/${org.id}/settings`}
+                              >
+                                 <SettingsIcon /> {t("item3")}
+                              </Link>
+                           </Button>
+                           <Button
+                              asChild
+                              variant={"ghost"}
+                              className={cn(
+                                 "w-full justify-start hover:bg-primary/10 hover:text-primary",
+                                 pathname === `/dashboard/${org.id}/billing`
+                                    ? "bg-primary/10 text-primary "
+                                    : ""
+                              )}
                            >
-                              <CreditCardIcon /> {t("item4")}
-                           </Link>
-                        </Button>
-                     </AccordionContent>
-                  </AccordionItem>
-               )
-            })}
-         </Accordion>
+                              <Link
+                                 onClick={() => onLinkClick(org.id)}
+                                 href={`/dashboard/${org.id}/billing`}
+                              >
+                                 <CreditCardIcon /> {t("item4")}
+                              </Link>
+                           </Button>
+                        </AccordionContent>
+                     </AccordionItem>
+                  )
+               })}
+            </Accordion>
+         ) : (
+            ""
+         )}
       </aside>
    )
 }

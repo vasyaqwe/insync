@@ -1,6 +1,6 @@
 "use client"
 
-export function useLastVisitedOrganizationId() {
+export function useOrganizationHelpers() {
    const lastVisitedOrganizationId =
       typeof window !== "undefined"
          ? JSON.parse(
@@ -8,5 +8,5 @@ export function useLastVisitedOrganizationId() {
            )
          : ""
 
-   return lastVisitedOrganizationId
+   return { lastVisitedOrganizationId }
 }

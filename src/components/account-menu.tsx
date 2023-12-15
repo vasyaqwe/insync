@@ -13,10 +13,10 @@ import { Link, useRouter } from "@/navigation"
 import { useTranslations } from "next-intl"
 import { useGlobalStore } from "@/stores/use-global-store"
 import { useShallow } from "zustand/react/shallow"
-import { useLastVisitedOrganizationId } from "@/hooks/use-last-visited-organization-id"
+import { useOrganizationHelpers } from "@/hooks/use-organization-helpers"
 
 export function AccountMenu() {
-   const lastVisitedOrganizationId = useLastVisitedOrganizationId()
+   const { lastVisitedOrganizationId } = useOrganizationHelpers()
    const { signOut } = useClerk()
    const { openDialog } = useGlobalStore(
       useShallow((state) => ({

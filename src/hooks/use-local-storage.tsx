@@ -1,12 +1,18 @@
+"use client"
+
 // hook from usehooks-ts
 import { useEventListener } from "@/hooks/use-event-listener"
 import {
    type Dispatch,
    type SetStateAction,
    useCallback,
-   useEffect,
    useState,
 } from "react"
+
+import { useEffect, useLayoutEffect } from "react"
+
+export const useIsomorphicLayoutEffect =
+   typeof window !== "undefined" ? useLayoutEffect : useEffect
 
 declare global {
    interface WindowEventMap {
@@ -61,7 +67,7 @@ export function useLocalStorage<T>(
       }
    }
 
-   useEffect(() => {
+   useIsomorphicLayoutEffect(() => {
       setStoredValue(readValue())
       // eslint-disable-next-line react-hooks/exhaustive-deps
    }, [])
