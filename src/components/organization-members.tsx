@@ -114,7 +114,6 @@ export function OrganizationMembers({ members, organization }: MembersProps) {
                setUsersToInvite([])
                setMembersToRemove([])
             }}
-            className="h-full max-h-[475px]"
          >
             <DialogHeader className="flex items-center gap-2">
                {tab === "invite" && (
@@ -135,7 +134,7 @@ export function OrganizationMembers({ members, organization }: MembersProps) {
                </DialogTitle>
             </DialogHeader>
             {tab === "members" ? (
-               <Command className="mt-5 h-full rounded-sm border shadow-sm">
+               <Command className="mt-5 h-[500px] rounded-sm border shadow-sm md:h-[355px]">
                   <CommandInput
                      autoFocus
                      placeholder={t("search")}

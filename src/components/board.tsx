@@ -111,6 +111,17 @@ export function Board({ board }: BoardProps) {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                      <DropdownMenuItem
+                        onSelect={() => {
+                           setDialogOpen(true)
+                        }}
+                     >
+                        <Pencil
+                           className="mr-1"
+                           size={20}
+                        />
+                        {tCommon("edit")}
+                     </DropdownMenuItem>
+                     <DropdownMenuItem
                         onSelect={(e) => {
                            e.preventDefault()
                            onDelete({ boardId: board.id })
@@ -130,18 +141,6 @@ export function Board({ board }: BoardProps) {
                            </>
                         )}
                      </DropdownMenuItem>
-                     <DropdownMenuItem
-                        onSelect={(e) => {
-                           e.preventDefault()
-                           setDialogOpen(true)
-                        }}
-                     >
-                        <Pencil
-                           className="mr-1"
-                           size={20}
-                        />
-                        {tCommon("edit")}
-                     </DropdownMenuItem>
                   </DropdownMenuContent>
                </DropdownMenu>
                <Dialog
@@ -149,11 +148,9 @@ export function Board({ board }: BoardProps) {
                   onOpenChange={(open) => {
                      if (!open) {
                         setFormData((prev) => ({ ...prev, name: board.name }))
-                        setMenuOpen(false)
                         setDialogOpen(false)
                      } else {
                         setDialogOpen(true)
-                        setMenuOpen(true)
                      }
                   }}
                >

@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+    /* vaul drawer fix */
+    pointer-events: unset !important;
+}
+
 @layer base {
     :root {
         --header-height: 70px;
