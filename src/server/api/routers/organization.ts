@@ -7,6 +7,7 @@ import {
    inviteToOrganizationSchema,
    removeMembersOrganizationSchema,
    leaveOrganizationSchema,
+   getOrganizationSchema,
 } from "@/lib/validations/organization"
 import {
    type TRPCContext,
@@ -17,6 +18,19 @@ import { TRPCError } from "@trpc/server"
 import { nanoid } from "nanoid"
 
 export const organizationRouter = createTRPCRouter({
+   get: privateProcedure
+      .input(getOrganizationSchema)
+      .query(async ({ ctx, input: { organizationId } }) => {
+         const organization = ctx.db.organization.findFirst({
+            where: { id: organizationId },
+            select: {
+               name: true,
+               color: true,
+            },
+         })
+
+         return organization
+      }),
    create: privateProcedure
       .input(createOrganizationSchema)
       .mutation(async ({ ctx, input: { invitedUsers, name } }) => {

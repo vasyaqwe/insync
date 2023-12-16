@@ -17,6 +17,10 @@ const invitedUserSchema: z.ZodType<CommandItemUser> = z.object({
 
 const invitedUsersSchema = z.array(invitedUserSchema).default([])
 
+export const getOrganizationSchema = z.object({
+   organizationId: z.string(),
+})
+
 export const deleteOrganizationSchema = z.object({
    organizationId: z.string(),
 })

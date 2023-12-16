@@ -11,6 +11,8 @@ body {
     :root {
         --header-height: 70px;
         --avatar-size: 40px;
+        --color-avatar-size: 32px;
+
         --background: 0 0% 100%;
         --foreground: 220 48% 20%;
         --card: 0 0% 100%;
