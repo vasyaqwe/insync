@@ -193,11 +193,15 @@ function Aside({
                            <Button
                               asChild
                               variant={"ghost"}
+                              aria-current={
+                                 pathname === `/dashboard/${org.id}` ||
+                                 (org.id === lastVisitedOrganizationId &&
+                                    pathname.includes("/board/"))
+                                    ? "page"
+                                    : undefined
+                              }
                               className={cn(
-                                 "w-full justify-start hover:bg-primary/10 hover:text-primary",
-                                 pathname === `/dashboard/${org.id}`
-                                    ? "bg-primary/10 text-primary "
-                                    : ""
+                                 "w-full justify-start hover:bg-primary/10 hover:text-primary aria-[current=page]:bg-primary/10 aria-[current=page]:text-primary"
                               )}
                            >
                               <Link
@@ -209,12 +213,14 @@ function Aside({
                            </Button>
                            <Button
                               asChild
+                              aria-current={
+                                 pathname === `/dashboard/${org.id}/activity`
+                                    ? "page"
+                                    : undefined
+                              }
                               variant={"ghost"}
                               className={cn(
-                                 "w-full justify-start hover:bg-primary/10 hover:text-primary",
-                                 pathname === `/dashboard/${org.id}/activity`
-                                    ? "bg-primary/10 text-primary "
-                                    : ""
+                                 "w-full justify-start hover:bg-primary/10 hover:text-primary aria-[current=page]:bg-primary/10 aria-[current=page]:text-primary"
                               )}
                            >
                               <Link
@@ -226,12 +232,14 @@ function Aside({
                            </Button>
                            <Button
                               asChild
+                              aria-current={
+                                 pathname === `/dashboard/${org.id}/settings`
+                                    ? "page"
+                                    : undefined
+                              }
                               variant={"ghost"}
                               className={cn(
-                                 "w-full justify-start hover:bg-primary/10 hover:text-primary",
-                                 pathname === `/dashboard/${org.id}/settings`
-                                    ? "bg-primary/10 text-primary "
-                                    : ""
+                                 "w-full justify-start hover:bg-primary/10 hover:text-primary aria-[current=page]:bg-primary/10 aria-[current=page]:text-primary"
                               )}
                            >
                               <Link
@@ -243,12 +251,14 @@ function Aside({
                            </Button>
                            <Button
                               asChild
+                              aria-current={
+                                 pathname === `/dashboard/${org.id}/billing`
+                                    ? "page"
+                                    : undefined
+                              }
                               variant={"ghost"}
                               className={cn(
-                                 "w-full justify-start hover:bg-primary/10 hover:text-primary",
-                                 pathname === `/dashboard/${org.id}/billing`
-                                    ? "bg-primary/10 text-primary "
-                                    : ""
+                                 "w-full justify-start hover:bg-primary/10 hover:text-primary aria-[current=page]:bg-primary/10 aria-[current=page]:text-primary"
                               )}
                            >
                               <Link

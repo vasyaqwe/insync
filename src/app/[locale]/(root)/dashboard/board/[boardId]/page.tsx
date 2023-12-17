@@ -1,5 +1,5 @@
 import { CreateList } from "@/components/forms/create-list"
-import { List } from "@/components/list"
+import { ListsWrapper } from "@/components/list"
 import { metadataConfig } from "@/config"
 import { pick } from "@/lib/utils"
 import { db } from "@/server/db"
@@ -34,8 +34,15 @@ export default async function Page({ params: { boardId } }: Params) {
          id: true,
          name: true,
          lists: {
+            orderBy: {
+               order: "asc",
+            },
             include: {
-               cards: true,
+               cards: {
+                  orderBy: {
+                     order: "asc",
+                  },
+               },
             },
          },
       },
@@ -54,16 +61,11 @@ export default async function Page({ params: { boardId } }: Params) {
             />
             {board.name}
          </h1>
-         <div className="grid-cols-fixed mt-6 grid h-full grid-flow-col items-start gap-4 overflow-x-auto">
+         <div className="mt-6 flex items-start gap-4 overflow-x-auto">
             <NextIntlClientProvider
                messages={pick(messages, ["lists", "cards", "common"])}
             >
-               {board.lists.map((list) => (
-                  <List
-                     list={list}
-                     key={list.id}
-                  />
-               ))}
+               <ListsWrapper board={board} />
                <CreateList boardId={boardId} />
             </NextIntlClientProvider>
          </div>

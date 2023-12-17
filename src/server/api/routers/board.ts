@@ -21,7 +21,7 @@ export const boardRouter = createTRPCRouter({
    update: privateProcedure
       .input(updateBoardSchema)
       .mutation(async ({ ctx, input: { boardId, name } }) => {
-         const deletedBoard = await ctx.db.board.update({
+         const updatedBoard = await ctx.db.board.update({
             where: {
                id: boardId,
             },
@@ -30,7 +30,7 @@ export const boardRouter = createTRPCRouter({
             },
          })
 
-         return deletedBoard.name
+         return updatedBoard.name
       }),
    delete: privateProcedure
       .input(deleteBoardSchema)

@@ -26,7 +26,7 @@ module.exports = {
       extend: {
          gridTemplateColumns: {
             fluid: "repeat(auto-fit, minmax(15rem, 1fr))",
-            fixed: "repeat(auto-fit, 18rem)",
+            fixed: "repeat(auto-fill, minmax(18rem, 1fr))",
          },
          fontSize: {
             sm: "0.925rem",

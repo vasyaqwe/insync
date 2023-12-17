@@ -15,7 +15,12 @@ export const createListSchema = z.object({
 export const deleteListSchema = z.object({
    listId: z.string(),
 })
+
 export const updateListSchema = z.object({
    listId: z.string(),
    name: listNameSchema,
+})
+
+export const updateListOrderSchema = z.object({
+   items: z.array(z.object({ order: z.number(), id: z.string() })),
 })

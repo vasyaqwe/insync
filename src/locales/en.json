@@ -39,7 +39,8 @@
       "delete-success": "List {name} deleted",
       "delete-error": "Couldn't delete list, something went wrong",
       "update-success": "List {name} updated",
-      "update-error": "Couldn't update list, something went wrong"
+      "update-error": "Couldn't update list, something went wrong",
+      "update-order-error": "Couldn't reorder list, something went wrong"
    },
    "cards": {
       "title": "Cards",
@@ -51,7 +52,8 @@
       "delete-success": "Card {name} deleted",
       "delete-error": "Couldn't delete card, something went wrong",
       "update-success": "Card {name} updated",
-      "update-error": "Couldn't update card, something went wrong"
+      "update-error": "Couldn't update card, something went wrong",
+      "update-order-error": "Couldn't reorder card, something went wrong"
    },
    "members": {
       "tooltip": "View all members",

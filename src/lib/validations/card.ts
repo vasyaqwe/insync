@@ -15,7 +15,14 @@ export const createCardSchema = z.object({
 export const deleteCardSchema = z.object({
    cardId: z.string(),
 })
+
 export const updateCardSchema = z.object({
    cardId: z.string(),
    name: cardNameSchema,
+})
+
+export const updateCardOrderSchema = z.object({
+   items: z.array(
+      z.object({ order: z.number(), id: z.string(), listId: z.string() })
+   ),
 })

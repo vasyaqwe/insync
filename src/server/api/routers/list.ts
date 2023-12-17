@@ -1,6 +1,7 @@
 import {
    createListSchema,
    deleteListSchema,
+   updateListOrderSchema,
    updateListSchema,
 } from "@/lib/validations/list"
 import { createTRPCRouter, privateProcedure } from "@/server/api/trpc"
@@ -23,10 +24,28 @@ export const listRouter = createTRPCRouter({
 
          return createdList.id
       }),
+   updateOrder: privateProcedure
+      .input(updateListOrderSchema)
+      .mutation(async ({ ctx, input: { items } }) => {
+         const transaction = items.map((item) =>
+            ctx.db.list.update({
+               where: {
+                  id: item.id,
+               },
+               data: {
+                  order: item.order,
+               },
+            })
+         )
+
+         await ctx.db.$transaction(transaction)
+
+         return "OK"
+      }),
    update: privateProcedure
       .input(updateListSchema)
       .mutation(async ({ ctx, input: { listId, name } }) => {
-         const deletedList = await ctx.db.list.update({
+         const updatedList = await ctx.db.list.update({
             where: {
                id: listId,
             },
@@ -35,7 +54,7 @@ export const listRouter = createTRPCRouter({
             },
          })
 
-         return deletedList.name
+         return updatedList.name
       }),
    delete: privateProcedure
       .input(deleteListSchema)

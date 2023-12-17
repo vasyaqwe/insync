@@ -1,6 +1,7 @@
 import {
    createCardSchema,
    deleteCardSchema,
+   updateCardOrderSchema,
    updateCardSchema,
 } from "@/lib/validations/card"
 import { createTRPCRouter, privateProcedure } from "@/server/api/trpc"
@@ -22,6 +23,25 @@ export const cardRouter = createTRPCRouter({
          })
 
          return createdCard.id
+      }),
+   updateOrder: privateProcedure
+      .input(updateCardOrderSchema)
+      .mutation(async ({ ctx, input: { items } }) => {
+         const transaction = items.map((item) =>
+            ctx.db.card.update({
+               where: {
+                  id: item.id,
+               },
+               data: {
+                  order: item.order,
+                  listId: item.listId,
+               },
+            })
+         )
+
+         await ctx.db.$transaction(transaction)
+
+         return "OK"
       }),
    update: privateProcedure
       .input(updateCardSchema)
