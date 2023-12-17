@@ -122,7 +122,7 @@ export function InviteCommand({
             return 0
          }}
          className={cn(
-            "h-[500px] rounded-sm border shadow-sm md:h-[355px]",
+            "h-[50vh] rounded-sm border shadow-sm md:h-[355px]",
             className
          )}
          {...props}

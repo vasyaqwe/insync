@@ -38,7 +38,7 @@ type MembersProps = {
    }
 }
 
-export function OrganizationMembers({ members, organization }: MembersProps) {
+export function OrganizationMembersDialog({ members, organization }: MembersProps) {
    const t = useTranslations("members")
    const [open, setOpen] = useState(false)
    const { user: currentUser } = useUser()
@@ -134,7 +134,7 @@ export function OrganizationMembers({ members, organization }: MembersProps) {
                </DialogTitle>
             </DialogHeader>
             {tab === "members" ? (
-               <Command className="mt-5 h-[500px] rounded-sm border shadow-sm md:h-[355px]">
+               <Command className="mt-5 h-[50vh] rounded-sm border shadow-sm md:h-[355px]">
                   <CommandInput
                      autoFocus
                      placeholder={t("search")}
@@ -210,7 +210,7 @@ export function OrganizationMembers({ members, organization }: MembersProps) {
             )}
 
             {tab === "members" && organization.ownerId === currentUser?.id ? (
-               <div className="mt-5 flex items-center justify-between">
+               <div className="mt-5 flex items-center justify-between gap-3">
                   {membersToRemove.length < 1 ? (
                      <p className="text-sm text-foreground/75">
                         {t("members-to-remove-empty")}
@@ -243,7 +243,7 @@ export function OrganizationMembers({ members, organization }: MembersProps) {
                   </Button>
                </div>
             ) : tab === "invite" ? (
-               <div className="mt-5 flex items-center justify-between">
+               <div className="mt-5 flex items-center justify-between gap-3">
                   {usersToInvite.length < 1 ? (
                      <p className="text-sm text-foreground/75">
                         {t("members-to-invite-empty")}

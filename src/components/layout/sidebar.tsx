@@ -9,7 +9,7 @@ import {
    AccordionTrigger,
 } from "@/components/ui/accordion"
 import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
+import { Card, type CardProps } from "@/components/ui/card"
 import { ColorAvatar } from "@/components/ui/color-avatar"
 import { useLocalStorage } from "@/hooks/use-local-storage"
 import { cn } from "@/lib/utils"
@@ -26,10 +26,14 @@ import {
 import { useTranslations } from "next-intl"
 import { useShallow } from "zustand/react/shallow"
 import { Sheet, SheetContent } from "@/components/ui/sheet"
-import { useEffect, type ComponentProps, useState } from "react"
+import { useEffect, type ComponentProps } from "react"
 import Image from "next/image"
+import { useIsClient } from "@/hooks/use-is-client"
 
-export function Sidebar({ organizations }: { organizations: Organization[] }) {
+export function Sidebar({
+   organizations,
+   className,
+}: { organizations: Organization[] } & CardProps) {
    const t = useTranslations("sidebar")
 
    const { openDialog, dialogs, closeDialog } = useGlobalStore(
@@ -41,7 +45,7 @@ export function Sidebar({ organizations }: { organizations: Organization[] }) {
    )
 
    return organizations.length < 1 ? (
-      <Card className="mx-auto pb-6 text-center text-lg">
+      <Card className={cn("mx-auto pb-6 text-center text-lg", className)}>
          <p>{t("empty")}</p>
          <Button
             size={"lg"}
@@ -57,25 +61,26 @@ export function Sidebar({ organizations }: { organizations: Organization[] }) {
             <Aside
                suppressHydrationWarning
                organizations={organizations}
-               className="max-w-xs max-lg:hidden"
+               className={cn("max-w-xs max-lg:hidden", className)}
             />
          </Card>
-         <div className="lg:hidden">
-            <Sheet
-               open={dialogs.mobileSidebar}
-               onOpenChange={(open) => {
-                  if (open) {
-                     openDialog("mobileSidebar")
-                  } else {
-                     closeDialog("mobileSidebar")
-                  }
-               }}
+         <Sheet
+            open={dialogs.mobileSidebar}
+            onOpenChange={(open) => {
+               if (open) {
+                  openDialog("mobileSidebar")
+               } else {
+                  closeDialog("mobileSidebar")
+               }
+            }}
+         >
+            <SheetContent
+               side={"left"}
+               className="lg:hidden"
             >
-               <SheetContent side={"left"}>
-                  <Aside organizations={organizations} />
-               </SheetContent>
-            </Sheet>
-         </div>
+               <Aside organizations={organizations} />
+            </SheetContent>
+         </Sheet>
       </>
    )
 }
@@ -85,11 +90,7 @@ function Aside({
    ...props
 }: { organizations: Organization[] } & ComponentProps<"aside">) {
    const t = useTranslations("sidebar")
-   const [isClient, setIsClient] = useState(false)
-
-   useEffect(() => {
-      setIsClient(true)
-   }, [])
+   const { isClient } = useIsClient()
 
    const { openDialog, closeDialog } = useGlobalStore(
       useShallow((state) => ({

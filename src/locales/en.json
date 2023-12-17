@@ -29,6 +29,30 @@
       "update-success": "Board {name} updated",
       "update-error": "Couldn't update board, something went wrong"
    },
+   "lists": {
+      "title": "Lists",
+      "new-list": "New list",
+      "new-list-label": "Name your list",
+      "create-success": "List created",
+      "create-error": "Couldn't create list, something went wrong",
+      "created": "Created",
+      "delete-success": "List {name} deleted",
+      "delete-error": "Couldn't delete list, something went wrong",
+      "update-success": "List {name} updated",
+      "update-error": "Couldn't update list, something went wrong"
+   },
+   "cards": {
+      "title": "Cards",
+      "new-card": "New card",
+      "new-card-label": "Name your card",
+      "create-success": "Card created",
+      "create-error": "Couldn't create card, something went wrong",
+      "created": "Created",
+      "delete-success": "Card {name} deleted",
+      "delete-error": "Couldn't delete card, something went wrong",
+      "update-success": "Card {name} updated",
+      "update-error": "Couldn't update card, something went wrong"
+   },
    "members": {
       "tooltip": "View all members",
       "title-members": "{name} members",

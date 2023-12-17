@@ -1,5 +1,7 @@
-import { InvitationActions } from "@/components/forms/invitation-actions"
-import { Button } from "@/components/ui/button"
+import {
+   BackToDashboardLink,
+   InvitationActions,
+} from "@/components/forms/invitation-actions"
 import { UserAvatar } from "@/components/ui/user-avatar"
 import { pick } from "@/lib/utils"
 import { Link } from "@/navigation"
@@ -54,14 +56,7 @@ export default async function Page({
                <p className="mt-10 text-lg">{t("error-1")}</p>
                <p className="mt-10 text-foreground/75">{t("error-2")}</p>
             </div>
-            <Button asChild>
-               <Link
-                  className="mt-8"
-                  href={"/dashboard"}
-               >
-                  {t("error-button")}
-               </Link>
-            </Button>
+            <BackToDashboardLink text={t("error-button")} />
          </div>
       )
    }

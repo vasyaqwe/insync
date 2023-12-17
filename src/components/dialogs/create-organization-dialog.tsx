@@ -130,7 +130,7 @@ export function CreateOrganizationDialog() {
                   setSelectedUsers={setSelectedUsers}
                />
 
-               <div className="mt-5 flex items-center justify-between">
+               <div className="mt-5 flex items-center justify-between gap-3">
                   {selectedUsers.length < 1 ? (
                      <p className="text-sm text-foreground/75">
                         {t("selected-users-empty")}

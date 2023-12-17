@@ -20,8 +20,6 @@ model User {
     ownedOrganizations Organization[]
     organizations      Organization[] @relation("OrganizationMembers")
 
-    lists                           List[]
-    cards                           Card[]
     auditLogs                       AuditLog[]
     cardComments                    CardComment[]
     sentOrganizationInvitations     OrganizationInvitation[] @relation("InvitationSender")
@@ -84,11 +82,8 @@ model Board {
 
 model List {
     id    String @id @default(cuid())
-    title String
+    name  String
     order Int
-
-    authorId String
-    author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
     boardId String
     board   Board  @relation(fields: [boardId], references: [id], onDelete: Cascade)
@@ -103,15 +98,14 @@ model List {
 
 model Card {
     id          String  @id @default(cuid())
-    title       String
+    name        String
     order       Int
     description String? @db.Text
 
-    authorId String
-    author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
-
     listId String
     list   List   @relation(fields: [listId], references: [id], onDelete: Cascade)
+
+    comments CardComment[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -125,6 +119,9 @@ model CardComment {
 
     authorId String
     author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+    card   Card   @relation(fields: [cardId], references: [id])
+    cardId String
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

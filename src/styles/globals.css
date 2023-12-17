@@ -3,6 +3,8 @@
 @tailwind utilities;
 
 body {
+    height: 100svh;
+    height: 100vh;
     /* vaul drawer fix */
     pointer-events: unset !important;
 }
@@ -11,7 +13,7 @@ body {
     :root {
         --header-height: 70px;
         --avatar-size: 40px;
-        --color-avatar-size: 32px;
+        --color-avatar-size: 29px;
 
         --background: 0 0% 100%;
         --foreground: 220 48% 20%;
@@ -21,7 +23,7 @@ body {
         --popover-foreground: 222.2 84% 4.9%;
         --primary: 221.2 83.2% 53.3%;
         --primary-foreground: 210 40% 98%;
-        --secondary: 230 60% 85.1%;
+        --secondary: 222 83% 92%;
         --secondary-foreground: 222.2 47.4% 22.2%;
         --muted: 220 20% 90%;
         --muted-foreground: 220 20% 60%;

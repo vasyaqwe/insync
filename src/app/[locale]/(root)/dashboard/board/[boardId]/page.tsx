@@ -1,12 +1,31 @@
+import { CreateList } from "@/components/forms/create-list"
+import { List } from "@/components/list"
+import { metadataConfig } from "@/config"
+import { pick } from "@/lib/utils"
 import { db } from "@/server/db"
 import { LayoutIcon } from "lucide-react"
+import { NextIntlClientProvider } from "next-intl"
+import { getMessages } from "next-intl/server"
 import { notFound } from "next/navigation"
 
-export default async function Page({
-   params: { boardId },
-}: {
+type Params = {
    params: { boardId: string }
-}) {
+}
+
+export async function generateMetadata({ params: { boardId } }: Params) {
+   const board = await db.board.findFirst({
+      where: {
+         id: boardId,
+      },
+      select: {
+         name: true,
+      },
+   })
+   if (!board) return { ...metadataConfig, title: `insync. | Board not found` }
+   return { ...metadataConfig, title: `insync. | ${board.name}` }
+}
+
+export default async function Page({ params: { boardId } }: Params) {
    const board = await db.board.findFirst({
       where: {
          id: boardId,
@@ -14,33 +33,39 @@ export default async function Page({
       select: {
          id: true,
          name: true,
+         lists: {
+            include: {
+               cards: true,
+            },
+         },
       },
    })
 
    if (!board) notFound()
 
+   const messages = (await getMessages()) as Messages
+
    return (
-      <div className="container py-8 lg:py-16">
-         <h2 className="mt-4 text-3xl font-medium">
+      <div className="container py-6 lg:py-14">
+         <h1 className="text-3xl font-medium">
             <LayoutIcon
                className="mr-2 inline"
                size={30}
             />
             {board.name}
-         </h2>
-         <div className="mt-4 grid grid-cols-fluid gap-4">
-            {/* <NextIntlClientProvider
-               messages={pick(messages, ["boards", "common"])}
+         </h1>
+         <div className="grid-cols-fixed mt-6 grid h-full grid-flow-col items-start gap-4 overflow-x-auto">
+            <NextIntlClientProvider
+               messages={pick(messages, ["lists", "cards", "common"])}
             >
-               {board.boards.map((board) => (
-                  <Board
-                     board={board}
-                     boardId={board.id}
-                     key={board.id}
+               {board.lists.map((list) => (
+                  <List
+                     list={list}
+                     key={list.id}
                   />
                ))}
-               <CreateBoard boardId={boardId} />
-            </NextIntlClientProvider> */}
+               <CreateList boardId={boardId} />
+            </NextIntlClientProvider>
          </div>
       </div>
    )

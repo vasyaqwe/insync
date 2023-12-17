@@ -9,15 +9,11 @@ export const boardRouter = createTRPCRouter({
    create: privateProcedure
       .input(createBoardSchema)
       .mutation(async ({ ctx, input: { name, organizationId } }) => {
-         const createdBoard = await ctx.db.$transaction(async (tx) => {
-            const createdBoard = await tx.board.create({
-               data: {
-                  name,
-                  organizationId,
-               },
-            })
-
-            return createdBoard
+         const createdBoard = await ctx.db.board.create({
+            data: {
+               name,
+               organizationId,
+            },
          })
 
          return createdBoard.id

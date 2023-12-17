@@ -3,15 +3,17 @@
 import { Button } from "@/components/ui/button"
 import { Loading } from "@/components/ui/loading"
 import { type AcceptOrganizationInvitationSchema } from "@/lib/validations/organization"
-import { useRouter } from "@/navigation"
+import { Link, useRouter } from "@/navigation"
 import { api } from "@/trpc/react"
 import { SignIn, SignUp, SignedIn, SignedOut } from "@clerk/nextjs"
 import { useTranslations } from "next-intl"
 import { toast } from "sonner"
 import { clerkAppearence } from "@/config"
 import { useSearchParams } from "next/navigation"
+import { useOrganizationHelpers } from "@/hooks/use-organization-helpers"
+import { useIsClient } from "@/hooks/use-is-client"
 
-export function InvitationActions({
+function InvitationActions({
    invitationId,
    organizationId,
    token,
@@ -68,3 +70,20 @@ export function InvitationActions({
       </>
    )
 }
+
+function BackToDashboardLink({ text }: { text: string }) {
+   const { lastVisitedOrganizationId } = useOrganizationHelpers()
+   const { isClient } = useIsClient()
+
+   return isClient ? (
+      <Button asChild>
+         <Link
+            className="mt-8"
+            href={`/dashboard/${lastVisitedOrganizationId}`}
+         >
+            {text}
+         </Link>
+      </Button>
+   ) : null
+}
+export { InvitationActions, BackToDashboardLink }

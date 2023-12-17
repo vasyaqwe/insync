@@ -1,6 +1,6 @@
 import { Board } from "@/components/board"
 import { CreateBoard } from "@/components/forms/create-board"
-import { OrganizationMembers } from "@/components/organization-members"
+import { OrganizationMembersDialog } from "@/components/dialogs/organization-members-dialog"
 import { ColorAvatar } from "@/components/ui/color-avatar"
 import { pick } from "@/lib/utils"
 import { db } from "@/server/db"
@@ -62,13 +62,15 @@ export default async function Page({
                      </p>
                   </div>
                </div>
-               <OrganizationMembers
+               <OrganizationMembersDialog
                   members={organization.members}
                   organization={organization}
                />
             </div>
          </NextIntlClientProvider>
-         <h2 className="mt-4 text-3xl font-medium">{t("title")}</h2>
+         <h2 className="mt-3 text-2xl font-medium md:mt-4 md:text-3xl">
+            {t("title")}
+         </h2>
          <div className="mt-5 grid grid-cols-fluid gap-4">
             <NextIntlClientProvider
                messages={pick(messages, ["boards", "common"])}
