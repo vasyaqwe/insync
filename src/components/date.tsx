@@ -8,7 +8,10 @@ export function DateDisplay({ children, date, ...props }: DateProps) {
    const format = useFormatter()
 
    return (
-      <span {...props}>
+      <span
+         suppressHydrationWarning
+         {...props}
+      >
          {format.dateTime(date, {
             month: "short",
             day: "numeric",
