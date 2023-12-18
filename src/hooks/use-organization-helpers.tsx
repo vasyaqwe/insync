@@ -1,5 +1,3 @@
-"use client"
-
 export function useOrganizationHelpers() {
    const lastVisitedOrganizationId =
       typeof window !== "undefined"

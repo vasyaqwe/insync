@@ -1,5 +1,3 @@
-"use client"
-
 // hook from usehooks-ts
 import { useEventListener } from "@/hooks/use-event-listener"
 import {
