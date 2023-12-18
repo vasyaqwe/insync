@@ -5,9 +5,16 @@ export function useOrganizationHelpers() {
       useState("")
 
    useEffect(() => {
-      const lastVisitedOrganizationId = ""
-      console.log(window, localStorage)
-      setLastVisitedOrganizationId(lastVisitedOrganizationId)
+      if (
+         typeof window !== "undefined" &&
+         typeof localStorage !== "undefined"
+      ) {
+         const storedValue = localStorage.getItem(
+            "last-visited-organization-id"
+         )
+         const parsedValue = storedValue ? JSON.parse(storedValue) : ""
+         setLastVisitedOrganizationId(parsedValue)
+      }
    }, [])
 
    return { lastVisitedOrganizationId }
