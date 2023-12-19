@@ -53,21 +53,23 @@ export default async function Page({ params: { boardId } }: Params) {
    const messages = (await getMessages()) as Messages
 
    return (
-      <div className="container py-6 lg:py-14">
-         <h1 className="text-3xl font-medium">
-            <LayoutIcon
-               className="mr-2 inline"
-               size={30}
-            />
-            {board.name}
-         </h1>
-         <div className="mt-6 flex items-start gap-4 overflow-x-auto">
-            <NextIntlClientProvider
-               messages={pick(messages, ["lists", "cards", "common"])}
-            >
-               <ListsWrapper board={board} />
-               <CreateList boardId={boardId} />
-            </NextIntlClientProvider>
+      <div className="grid-cols-full-width-split-screen grid h-full py-10 lg:py-12">
+         <div className=" col-start-2 col-end-5">
+            <h1 className="text-3xl font-medium">
+               <LayoutIcon
+                  className="mr-2 inline"
+                  size={30}
+               />
+               {board.name}
+            </h1>
+            <div className="flex h-full items-start gap-4 overflow-x-auto">
+               <NextIntlClientProvider
+                  messages={pick(messages, ["lists", "cards", "common"])}
+               >
+                  <ListsWrapper board={board} />
+                  <CreateList boardId={boardId} />
+               </NextIntlClientProvider>
+            </div>
          </div>
       </div>
    )

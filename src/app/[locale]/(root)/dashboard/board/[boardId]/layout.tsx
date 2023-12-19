@@ -27,11 +27,16 @@ export default async function RootLayout({
    return (
       <>
          <NextIntlClientProvider
-            messages={pick(messages, ["header", "account-menu"])}
+            messages={pick(messages, [
+               "header",
+               "account-menu",
+               "create-organization",
+               "invite-command",
+            ])}
          >
             <BoardHeader />
          </NextIntlClientProvider>
-         <main>
+         <main className="h-[calc(100%-var(--header-height))]">
             <NextIntlClientProvider
                messages={pick(messages, [
                   "sidebar",

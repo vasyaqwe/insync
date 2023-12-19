@@ -6,6 +6,7 @@ import { locales } from "@/navigation"
 import { metadataConfig } from "@/config"
 import { NextIntlClientProvider } from "next-intl"
 import { pick } from "@/lib/utils"
+import { Footer } from "@/components/layout/footer"
 
 export const metadata = metadataConfig
 
@@ -30,7 +31,8 @@ export default async function RootLayout({
          <NextIntlClientProvider messages={pick(messages, ["header"])}>
             <Header />
          </NextIntlClientProvider>
-         {children}
+         <main>{children}</main>
+         <Footer />
       </>
    )
 }

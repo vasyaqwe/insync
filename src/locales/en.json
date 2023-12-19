@@ -6,6 +6,11 @@
          "button": "Try it now"
       }
    },
+   "footer": {
+      "title": "&copy; {currentYear} Vasyl Polishchuk. All rights reserved.",
+      "1": "This app is built with Next.js 14 App Router, Typescript, TailwindCSS, Clerk, React Email & Resend.",
+      "2": "Source code is available on"
+   },
    "common": {
       "cancel": "Cancel",
       "free-plan": "Free plan",
@@ -15,7 +20,9 @@
       "max-limit": "Maximum length is {limit} characters",
       "delete": "Delete",
       "edit": "Edit",
-      "update": "Update"
+      "update": "Update",
+      "not-found": "This page could not be found.",
+      "go-to-dashboard": "Go to dashboard"
    },
    "boards": {
       "title": "Boards",

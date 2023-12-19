@@ -1,7 +1,5 @@
-import {
-   BackToDashboardLink,
-   InvitationActions,
-} from "@/components/forms/invitation-actions"
+import { BackToDashboardLink } from "@/components/actions/back-to-dashboard-link"
+import { InvitationActions } from "@/components/forms/invitation-actions"
 import { UserAvatar } from "@/components/ui/user-avatar"
 import { pick } from "@/lib/utils"
 import { Link } from "@/navigation"
@@ -56,7 +54,10 @@ export default async function Page({
                <p className="mt-10 text-lg">{t("error-1")}</p>
                <p className="mt-10 text-foreground/75">{t("error-2")}</p>
             </div>
-            <BackToDashboardLink text={t("error-button")} />
+            <BackToDashboardLink
+               className="mt-8"
+               text={t("error-button")}
+            />
          </div>
       )
    }

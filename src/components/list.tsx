@@ -124,7 +124,8 @@ function List({ list, index, isLoading: isDragLoading }: ListProps) {
                      </h2>
                      <Textarea
                         onKeyDown={(e) => {
-                           if (e.key === "Escape") textareaRef.current?.blur()
+                           if (e.key === "Escape" || e.key === "Enter")
+                              textareaRef.current?.blur()
                         }}
                         ref={textareaRef}
                         onBlur={onTextareaBlur}
@@ -374,7 +375,7 @@ export function ListsWrapper({
                <ol
                   {...provided.droppableProps}
                   ref={provided.innerRef}
-                  className={cn("-ml-4 flex items-start")}
+                  className={cn("-ml-4 mt-6 flex items-start")}
                >
                   {orderedData.map((list, index) => (
                      <List

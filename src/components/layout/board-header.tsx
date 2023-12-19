@@ -3,7 +3,7 @@
 import { AccountMenu } from "@/components/account-menu"
 import { Button } from "@/components/ui/button"
 import { useOrganizationHelpers } from "@/hooks/use-organization-helpers"
-import { Link, usePathname } from "@/navigation"
+import { Link } from "@/navigation"
 import { useGlobalStore } from "@/stores/use-global-store"
 import { api } from "@/trpc/react"
 import logoNoText from "@public/logo-no-text.svg"
@@ -15,7 +15,6 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { useIsClient } from "@/hooks/use-is-client"
 
 export function BoardHeader() {
-   const pathname = usePathname()
    const { isClient } = useIsClient()
    const { openDialog } = useGlobalStore(
       useShallow((state) => ({
@@ -33,7 +32,7 @@ export function BoardHeader() {
       organizationId: lastVisitedOrganizationId,
    })
 
-   return pathname.includes("invite") ? null : (
+   return (
       <header className="flex h-[var(--header-height)] items-center bg-background/50 py-2 shadow-sm backdrop-blur-md">
          <div className="container flex items-center justify-between">
             {isClient ? (

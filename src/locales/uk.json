@@ -6,6 +6,11 @@
          "button": "Спробувати безкоштовно"
       }
    },
+   "footer": {
+      "title": "&copy; {currentYear} Поліщук Василь. Усі права захищені.",
+      "1": "Сайт зроблений на Next.js 14 App Router, TypeScript, TailwindCSS, Clerk, React Email & Resend.",
+      "2": "Вихідний код доступний на"
+   },
    "common": {
       "cancel": "Скасувати",
       "free-plan": "Безкоштовний тариф",
@@ -15,7 +20,9 @@
       "max-limit": "Введіть не більше ніж {limit} літер",
       "delete": "Видалити",
       "edit": "Редагувати",
-      "update": "Оновити"
+      "update": "Оновити",
+      "not-found": "Цю сторінку не вдалося знайти.",
+      "go-to-dashboard": "До головної сторінки"
    },
    "boards": {
       "title": "Дошки",

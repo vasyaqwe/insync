@@ -38,6 +38,9 @@ export function CreateList({
          router.refresh()
          toast.success(t("create-success"))
          setFormData((prev) => ({ ...prev, name: "" }))
+
+         //close popover
+         document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }))
       },
       onError: () => {
          return toast.error(t("create-error"))
@@ -55,7 +58,7 @@ export function CreateList({
          <PopoverTrigger asChild>
             <Button
                ref={triggerRef}
-               className={cn("min-w-[18rem] text-base", className)}
+               className={cn("mr-8 mt-6 min-w-[18rem] text-base", className)}
                variant="secondary"
                {...props}
             >
