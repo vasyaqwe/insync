@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
+import { Card as UICard } from "@/components/ui/card"
 import { useRouter } from "@/navigation"
 import {
    type Board,
@@ -30,6 +30,7 @@ import {
    Droppable,
    Draggable,
 } from "@hello-pangea/dnd"
+import { Card } from "@/components/card"
 
 type ExtendedList = ListType & { cards: CardType[] }
 
@@ -94,7 +95,7 @@ function List({ list, index, isLoading: isDragLoading }: ListProps) {
          isDragDisabled={isDragLoading}
       >
          {(provided) => (
-            <Card
+            <UICard
                asChild
                className={cn("relative ml-4 w-[18rem] flex-shrink-0 p-3")}
             >
@@ -191,27 +192,12 @@ function List({ list, index, isLoading: isDragLoading }: ListProps) {
                            className={cn("min-h-[1px]")}
                         >
                            {list.cards.map((card, cardIndex) => (
-                              <Draggable
-                                 isDragDisabled={isDragLoading}
+                              <Card
                                  key={card.id}
-                                 draggableId={card.id}
+                                 card={card}
                                  index={cardIndex}
-                              >
-                                 {(provided) => (
-                                    <Card
-                                       asChild
-                                       className="mt-2 bg-muted/25 px-3 py-2 backdrop-blur-sm "
-                                    >
-                                       <li
-                                          ref={provided.innerRef}
-                                          {...provided.draggableProps}
-                                          {...provided.dragHandleProps}
-                                       >
-                                          <h3>{card.name}</h3>
-                                       </li>
-                                    </Card>
-                                 )}
-                              </Draggable>
+                                 isDragLoading={isDragLoading}
+                              />
                            ))}
                            {provided.placeholder}
                         </ol>
@@ -222,7 +208,7 @@ function List({ list, index, isLoading: isDragLoading }: ListProps) {
                      listId={list.id}
                   />
                </li>
-            </Card>
+            </UICard>
          )}
       </Draggable>
    )
