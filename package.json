@@ -14,7 +14,6 @@
   "dependencies": {
     "@clerk/localizations": "^1.26.9",
     "@clerk/nextjs": "^4.27.1",
-    "@formatjs/intl-localematcher": "^0.5.2",
     "@hello-pangea/dnd": "^16.5.0",
     "@pinecone-database/pinecone": "^1.1.2",
     "@prisma/client": "^5.1.1",
@@ -42,7 +41,6 @@
     "cmdk": "^0.2.0",
     "geist": "^1.1.0",
     "lucide-react": "^0.292.0",
-    "nanoid": "^5.0.3",
     "negotiator": "^0.6.3",
     "next": "^14.0.3",
     "next-intl": "^3.1.0",

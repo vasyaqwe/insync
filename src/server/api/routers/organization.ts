@@ -15,7 +15,7 @@ import {
    privateProcedure,
 } from "@/server/api/trpc"
 import { TRPCError } from "@trpc/server"
-import { nanoid } from "nanoid"
+import crypto from "node:crypto"
 
 export const organizationRouter = createTRPCRouter({
    get: privateProcedure
@@ -59,7 +59,7 @@ export const organizationRouter = createTRPCRouter({
                               invitedUser.id === GUEST_USER_ID
                                  ? null
                                  : invitedUser.id,
-                           token: nanoid(),
+                           token: crypto.randomBytes(16).toString("hex"),
                            organizationId: createdOrganization.id,
                         },
                      })
@@ -113,7 +113,7 @@ export const organizationRouter = createTRPCRouter({
                               invitedUser.id === GUEST_USER_ID
                                  ? null
                                  : invitedUser.id,
-                           token: nanoid(),
+                           token: crypto.randomBytes(16).toString("hex"),
                            organizationId: organizationId,
                         },
                      })

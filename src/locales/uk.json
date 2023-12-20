@@ -7,7 +7,7 @@
       }
    },
    "footer": {
-      "title": "&copy; {currentYear} Поліщук Василь. Усі права захищені.",
+      "title": "&copy; {currentYear}. Усі права захищені.",
       "1": "Сайт зроблений на Next.js 14 App Router, TypeScript, TailwindCSS, Clerk, React Email & Resend.",
       "2": "Вихідний код доступний на"
    },
