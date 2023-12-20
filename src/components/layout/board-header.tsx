@@ -33,8 +33,8 @@ export function BoardHeader() {
    })
 
    return (
-      <header className="flex h-[var(--header-height)] items-center bg-background/50 py-2 shadow-sm backdrop-blur-md">
-         <div className="container flex items-center justify-between">
+      <header className="grid h-[var(--header-height)] grid-cols-full-width-split-screen items-center bg-background/50 py-2 shadow-sm backdrop-blur-md">
+         <div className="col-start-2 col-end-4 flex items-center justify-between">
             {isClient ? (
                <div className="flex items-center gap-2">
                   <Link href={`/dashboard/${lastVisitedOrganizationId}`}>

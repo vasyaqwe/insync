@@ -20,6 +20,7 @@
       "max-limit": "Maximum length is {limit} characters",
       "delete": "Delete",
       "edit": "Edit",
+      "duplicate": "Duplicate",
       "update": "Update",
       "not-found": "This page could not be found.",
       "go-to-dashboard": "Go to dashboard",
@@ -61,7 +62,12 @@
       "delete-error": "Couldn't delete card, something went wrong",
       "update-success": "Card {name} updated",
       "update-error": "Couldn't update card, something went wrong",
-      "update-order-error": "Couldn't reorder card, something went wrong"
+      "update-order-error": "Couldn't reorder card, something went wrong",
+      "in-list": "In list",
+      "description": "Description",
+      "add-description": "Add a detailed description",
+      "comments": "Comments",
+      "activity": "Activity"
    },
    "members": {
       "tooltip": "View all members",

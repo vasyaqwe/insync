@@ -25,7 +25,7 @@ module.exports = {
             fluid: "repeat(auto-fit, minmax(15rem, 1fr))",
             fixed: "repeat(auto-fill, minmax(18rem, 1fr))",
             "full-width-split-screen":
-               "minmax(var(--container-padding-inline), 1fr) minmax(0, calc(1400px / 2)) minmax(0, calc(1400px / 2)) minmax(var(--container-padding-inline), 1fr)",
+               "minmax(var(--container-padding-inline), 1fr) minmax(0, calc(var(--container-width) / 2)) minmax(0, calc(var(--container-width) / 2)) minmax(var(--container-padding-inline), 1fr)",
          },
          fontSize: {
             sm: "0.925rem",

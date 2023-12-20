@@ -17,8 +17,8 @@ import { Link, usePathname } from "@/navigation"
 import { useGlobalStore } from "@/stores/use-global-store"
 import { type Organization } from "@prisma/client"
 import {
-   ActivityIcon,
    CreditCardIcon,
+   GanttChart,
    LayoutIcon,
    PlusIcon,
    SettingsIcon,
@@ -227,7 +227,7 @@ function Aside({
                                  onClick={() => onLinkClick(org.id)}
                                  href={`/dashboard/${org.id}/activity`}
                               >
-                                 <ActivityIcon /> {t("item2")}
+                                 <GanttChart /> {t("item2")}
                               </Link>
                            </Button>
                            <Button
