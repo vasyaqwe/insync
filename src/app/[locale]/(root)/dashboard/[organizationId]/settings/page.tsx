@@ -34,7 +34,9 @@ export default async function Page({
 
    return (
       <div>
-         <p className="text-2xl font-semibold">{t("title")}</p>
+         <h1 className="mt-3 text-2xl font-medium md:mt-4 md:text-3xl">
+            {t("title")}
+         </h1>
          {user?.id === organization.ownerId && (
             <Card className="mt-5 flex flex-col gap-4 lg:flex-row lg:justify-between lg:p-6">
                <div>
