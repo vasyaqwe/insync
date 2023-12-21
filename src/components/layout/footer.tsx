@@ -16,7 +16,7 @@ export async function Footer() {
                className=""
             ></p>
             <p className="mt-2">{t("1")}</p>
-            <p className="mt-2">
+            {/* <p className="mt-2">
                {t("2")}{" "}
                <a
                   className="underline hover:no-underline"
@@ -26,7 +26,7 @@ export async function Footer() {
                   Github
                </a>
                .
-            </p>
+            </p> */}
          </div>
       </footer>
    )

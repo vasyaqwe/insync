@@ -7,20 +7,26 @@ import {
 import { type TooltipProps } from "@radix-ui/react-tooltip"
 import { type ComponentProps } from "react"
 
-type HintProps = ComponentProps<"div"> & TooltipProps & { content: string }
+type HintProps = ComponentProps<"div"> &
+   TooltipProps & { content: string; delayDuration?: number }
 
-export function Hint({ children, content, ...props }: HintProps) {
+export function Hint({
+   children,
+   content,
+   delayDuration,
+   ...props
+}: HintProps) {
    return (
       <TooltipProvider>
          <Tooltip
-            delayDuration={250}
+            delayDuration={delayDuration ?? 250}
             {...props}
          >
             <TooltipTrigger
                onFocus={(e) => e.preventDefault()}
                asChild
             >
-               {children}
+               <span>{children}</span>
             </TooltipTrigger>
             <TooltipContent
                hideWhenDetached

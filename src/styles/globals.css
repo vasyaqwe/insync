@@ -26,7 +26,7 @@ body {
         --secondary: 222 83% 92%;
         --secondary-foreground: 222.2 47.4% 22.2%;
         --muted: 220 20% 90%;
-        --muted-foreground: 220 20% 60%;
+        --muted-foreground: 220 20% 50%;
         --accent: 220 20% 96%;
         --accent-foreground: 222.2 47.4% 11.2%;
         --destructive: 0 84.2% 60.2%;
@@ -100,4 +100,34 @@ body {
     .cl-internal-17ydaof {
         max-width: 100%;
     }
+}
+
+
+/* editor */
+.ProseMirror p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    float: left;
+    color: hsl(220 20% 60%);
+    pointer-events: none;
+    height: 0;
+}
+
+.ProseMirror ul {
+    list-style: disc;
+    padding-left: 1rem;
+}
+
+.ProseMirror ol {
+    padding-left: 1rem;
+    list-style: decimal;
+}
+
+.ProseMirror h1 {
+    font-size: 1.85rem;
+    font-weight: 500;
+}
+
+.ProseMirror h2 {
+    font-weight: 500;
+    font-size: 1.4rem;
 }

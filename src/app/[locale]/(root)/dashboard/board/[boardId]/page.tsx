@@ -53,7 +53,7 @@ export default async function Page({ params: { boardId } }: Params) {
    const messages = (await getMessages()) as Messages
 
    return (
-      <div className="grid-cols-full-width-split-screen grid h-full py-10 lg:py-12">
+      <div className="grid h-full grid-cols-full-width-split-screen py-10 lg:py-12">
          <div className=" col-start-2 col-end-5">
             <h1 className="text-3xl font-medium">
                <LayoutIcon
@@ -64,7 +64,12 @@ export default async function Page({ params: { boardId } }: Params) {
             </h1>
             <div className="flex h-full items-start gap-4 overflow-x-auto">
                <NextIntlClientProvider
-                  messages={pick(messages, ["lists", "cards", "common"])}
+                  messages={pick(messages, [
+                     "lists",
+                     "cards",
+                     "common",
+                     "editor",
+                  ])}
                >
                   <ListsWrapper board={board} />
                   <CreateList boardId={boardId} />

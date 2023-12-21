@@ -32,6 +32,8 @@ import {
    DialogTitle,
 } from "@/components/ui/dialog"
 import { ErrorMessage, Input } from "@/components/ui/input"
+import { Editor } from "@/components/ui/editor"
+import { flushSync } from "react-dom"
 
 type CardProps = {
    card: Card
@@ -44,13 +46,17 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
    const t = useTranslations("cards")
    const tCommon = useTranslations("common")
    const router = useRouter()
+   const [isEditing, setIsEditing] = useState(false)
+
    const [editDialogOpen, setEditDialogOpen] = useState(false)
    const [detailsDialogOpen, setDetailsDialogOpen] = useState(false)
    const [menuOpen, setMenuOpen] = useState(false)
+
    const [formData, setFormData] = useState({
       name: card.name,
       cardId: card.id,
    })
+   const [description, setDescription] = useState("")
 
    const { mutate: onDelete, isLoading } = api.card.delete.useMutation({
       onSuccess: (deletedBoardName) => {
@@ -169,13 +175,13 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                      </DropdownMenu>
                   </li>
 
-                  <DialogContent>
+                  <DialogContent className="max-w-xl">
                      <DialogHeader>
                         <DialogTitle className="font-medium">
                            <AppWindow className="-mt-0.5 mr-1 inline " />{" "}
                            {card.name}
                         </DialogTitle>
-                        <p className="text-sm text-foreground/75">
+                        <p className="text-sm text-muted-foreground">
                            {t("in-list")}{" "}
                            <strong className="font-semibold">
                               {list.name}
@@ -187,12 +193,42 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                            <AlignLeft className="-mt-0.5 mr-1 inline " />{" "}
                            {t("description")}
                         </DialogTitle>
-                        <Button
-                           className="mt-4"
-                           variant={"secondary"}
-                        >
-                           {t("add-description")}
-                        </Button>
+                        <div className="mt-4">
+                           {isEditing ? (
+                              <>
+                                 <Editor
+                                    className="min-h-[150px]"
+                                    value={description}
+                                    onChange={(value) => setDescription(value)}
+                                 />
+                                 <div className="mt-3 flex gap-2">
+                                    <Button
+                                       size={"sm"}
+                                       onClick={() => setIsEditing(false)}
+                                    >
+                                       {tCommon("save")}
+                                    </Button>
+                                    <Button
+                                       size={"sm"}
+                                       onClick={() => setIsEditing(false)}
+                                       variant={"outline"}
+                                    >
+                                       {tCommon("cancel")}
+                                    </Button>
+                                 </div>
+                              </>
+                           ) : (
+                              <Button
+                                 onClick={() => {
+                                    flushSync(() => setIsEditing(true))
+                                    document.getElementById("editor")?.focus()
+                                 }}
+                                 variant={"secondary"}
+                              >
+                                 {t("add-description")}
+                              </Button>
+                           )}
+                        </div>
                      </section>
                      <section>
                         <DialogTitle className="mt-8 font-medium">

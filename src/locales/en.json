@@ -7,12 +7,26 @@
       }
    },
    "footer": {
-      "title": "&copy; {currentYear}. All rights reserved.",
+      "title": "&copy; {currentYear} insync. All rights reserved.",
       "1": "This app is built with Next.js 14 App Router, Typescript, TailwindCSS, Clerk, React Email & Resend.",
       "2": "Source code is available on"
    },
+   "editor": {
+      "placeholder": "Write something...",
+      "1": "Toggle heading (level 1)",
+      "2": "Toggle heading (level 2)",
+      "3": "Toggle bold",
+      "4": "Toggle italic",
+      "5": "Toggle strikethrough",
+      "6": "Toggle ordered list",
+      "7": "Toggle bullet list",
+      "8": "Undo",
+      "9": "Redo",
+      "10": "Image"
+   },
    "common": {
       "cancel": "Cancel",
+      "save": "Save",
       "free-plan": "Free plan",
       "pro-plan": "Pro plan",
       "create": "Create",
