@@ -109,7 +109,7 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                      onClick={() => {
                         setDetailsDialogOpen(true)
                      }}
-                     className="group mt-2 flex w-full !cursor-pointer items-center gap-1 overflow-hidden rounded-lg border bg-muted/25 px-2 py-2 text-start backdrop-blur-sm"
+                     className="group mt-2 flex w-full !cursor-pointer items-center gap-1 overflow-hidden rounded-lg border bg-muted/25 px-2 py-2 text-start backdrop-blur-sm hover:opacity-75"
                      ref={provided.innerRef}
                      {...provided.draggableProps}
                      {...provided.dragHandleProps}

@@ -3,11 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Card as UICard } from "@/components/ui/card"
 import { useRouter } from "@/navigation"
-import {
-   type Board,
-   type Card as CardType,
-   type List as ListType,
-} from "@prisma/client"
+import { type Card as CardType, type List as ListType } from "@prisma/client"
 import {
    DropdownMenu,
    DropdownMenuContent,
@@ -19,7 +15,13 @@ import { useTranslations } from "next-intl"
 import { api } from "@/trpc/react"
 import { toast } from "sonner"
 import { Loading } from "@/components/ui/loading"
-import { type FocusEvent, useRef, useState, useEffect } from "react"
+import {
+   type FocusEvent,
+   useRef,
+   useState,
+   useEffect,
+   type ComponentProps,
+} from "react"
 import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
 import { flushSync } from "react-dom"
@@ -227,19 +229,20 @@ function reorder<T>(list: T[], startIndex: number, endIndex: number) {
 }
 
 export function ListsWrapper({
-   board,
-}: {
-   board: Pick<Board, "id" | "name"> & { lists: ExtendedList[] }
-}) {
+   lists,
+   className,
+   ...props
+}: { lists: ExtendedList[] } & ComponentProps<"ol">) {
    const t = useTranslations("lists")
    const tCards = useTranslations("cards")
-   const [orderedData, setOrderedData] = useState(board.lists)
+
+   const [orderedData, setOrderedData] = useState(lists ?? [])
 
    const router = useRouter()
 
    useEffect(() => {
-      setOrderedData(board.lists)
-   }, [board.lists])
+      lists && setOrderedData(lists)
+   }, [lists])
 
    const { mutate: onUpdateListOrder, isLoading: isUpdateListOrderLoading } =
       api.list.updateOrder.useMutation({
@@ -362,9 +365,10 @@ export function ListsWrapper({
                <ol
                   {...provided.droppableProps}
                   ref={provided.innerRef}
-                  className={cn("-ml-4 mt-6 flex items-start")}
+                  className={cn("-ml-4 flex items-start", className)}
+                  {...props}
                >
-                  {orderedData.map((list, index) => (
+                  {orderedData?.map((list, index) => (
                      <List
                         key={list.id}
                         isLoading={

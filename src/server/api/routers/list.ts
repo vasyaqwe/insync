@@ -1,12 +1,32 @@
 import {
    createListSchema,
    deleteListSchema,
+   getAllListsSchema,
    updateListOrderSchema,
    updateListSchema,
 } from "@/lib/validations/list"
 import { createTRPCRouter, privateProcedure } from "@/server/api/trpc"
 
 export const listRouter = createTRPCRouter({
+   getAll: privateProcedure
+      .input(getAllListsSchema)
+      .query(async ({ ctx, input: { boardId } }) => {
+         const lists = await ctx.db.list.findMany({
+            where: { boardId },
+            orderBy: {
+               order: "asc",
+            },
+            include: {
+               cards: {
+                  orderBy: {
+                     order: "asc",
+                  },
+               },
+            },
+         })
+
+         return lists
+      }),
    create: privateProcedure
       .input(createListSchema)
       .mutation(async ({ ctx, input: { name, boardId } }) => {

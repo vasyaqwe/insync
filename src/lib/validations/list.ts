@@ -7,6 +7,9 @@ const listNameSchema = z
    .min(1, { message: "required" })
    .max(NAME_CHARS_LIMIT, { message: "max-limit" })
 
+export const getAllListsSchema = z.object({
+   boardId: z.string(),
+})
 export const createListSchema = z.object({
    name: listNameSchema,
    boardId: z.string(),
