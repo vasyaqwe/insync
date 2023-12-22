@@ -2,6 +2,7 @@
 
 import { useEditor, EditorContent } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
+import Image from "@tiptap/extension-image"
 import Placeholder from "@tiptap/extension-placeholder"
 import { useTranslations } from "next-intl"
 import { Toggle, toggleVariants } from "@/components/ui/toggle"
@@ -9,6 +10,7 @@ import {
    Bold,
    Heading1,
    Heading2,
+   ImageIcon,
    Italic,
    List,
    ListOrdered,
@@ -19,7 +21,15 @@ import {
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { Hint } from "@/components/hint"
-import { useState } from "react"
+import {
+   type ChangeEvent,
+   type ClipboardEvent,
+   useState,
+   useEffect,
+} from "react"
+import { FileButton } from "@/components/ui/file-button"
+import { useUploadThing } from "@/lib/uploadthing"
+import { toast } from "sonner"
 
 export const Editor = ({
    value,
@@ -36,6 +46,11 @@ export const Editor = ({
    const editor = useEditor({
       extensions: [
          StarterKit,
+         Image.configure({
+            HTMLAttributes: {
+               class: "rounded-md",
+            },
+         }),
          Placeholder.configure({
             placeholder: t("placeholder"),
          }),
@@ -55,14 +70,59 @@ export const Editor = ({
       },
    })
 
+   const { startUpload, isUploading } = useUploadThing("imageUploader")
+
+   useEffect(() => {
+      if (!editor) return
+
+      if (isUploading) {
+         editor.commands.insertContent(<div>hello</div>)
+      } else {
+         editor.commands.deleteCurrentNode()
+      }
+   }, [isUploading, editor])
+
    if (!editor) return null
+
+   async function onImageChange(e: ChangeEvent<HTMLInputElement>) {
+      if (e.target.files?.[0]) {
+         uploadImage(e.target.files[0])
+      }
+   }
+
+   async function onImagePaste(e: ClipboardEvent<HTMLDivElement>) {
+      if (isUploading) return
+
+      if (e.clipboardData.files?.[0]) {
+         uploadImage(e.clipboardData.files[0])
+      }
+   }
+
+   function uploadImage(file: File) {
+      const promise = () => startUpload([file])
+
+      toast.promise(promise, {
+         loading: t("uploading"),
+         success: (uploadedImage) => {
+            if (uploadedImage?.[0]?.url) {
+               editor
+                  ?.chain()
+                  .focus()
+                  .setImage({ src: uploadedImage[0].url })
+                  .run()
+            }
+            return t("uploaded")
+         },
+         error: t("upload-error"),
+      })
+   }
 
    return (
       <div
          className="w-[98%] rounded-lg border border-input bg-background
       ring-ring ring-offset-2 ring-offset-white focus-within:outline-none focus-within:ring-2"
       >
-         <div className="flex border-b-2 border-dotted border-input p-1">
+         <div className="scroll-x flex overflow-x-auto border-b-2 border-dotted border-input p-1 pb-1.5">
             <Hint
                delayDuration={isAnyTooltipVisible ? 0 : 300}
                onMouseOver={() => setIsAnyTooltipVisible(true)}
@@ -206,6 +266,25 @@ export const Editor = ({
                delayDuration={isAnyTooltipVisible ? 0 : 300}
                content={t("8")}
             >
+               <FileButton
+                  onMouseOver={() => setIsAnyTooltipVisible(true)}
+                  onMouseLeave={() => setIsAnyTooltipVisible(false)}
+                  className={cn("text-foreground")}
+                  aria-label={t("8")}
+                  disabled={isUploading}
+                  onChange={onImageChange}
+                  accept="image/*"
+               >
+                  <ImageIcon size={20} />
+               </FileButton>
+            </Hint>
+            <Hint
+               onMouseOver={() => setIsAnyTooltipVisible(true)}
+               onMouseLeave={() => setIsAnyTooltipVisible(false)}
+               className="px-0.5"
+               delayDuration={isAnyTooltipVisible ? 0 : 300}
+               content={t("8")}
+            >
                <Button
                   onMouseOver={() => setIsAnyTooltipVisible(true)}
                   onMouseLeave={() => setIsAnyTooltipVisible(false)}
@@ -213,7 +292,7 @@ export const Editor = ({
                      toggleVariants({ size: "sm" }),
                      "text-foreground"
                   )}
-                  aria-label={t("8")}
+                  aria-label={t("9")}
                   onClick={() => editor.chain().focus().undo().run()}
                >
                   <Undo size={20} />
@@ -233,14 +312,17 @@ export const Editor = ({
                      toggleVariants({ size: "sm" }),
                      "text-foreground"
                   )}
-                  aria-label={t("9")}
+                  aria-label={t("10")}
                   onClick={() => editor.chain().focus().redo().run()}
                >
                   <Redo size={20} />
                </Button>
             </Hint>
          </div>
-         <EditorContent editor={editor} />
+         <EditorContent
+            onPaste={onImagePaste}
+            editor={editor}
+         />
       </div>
    )
 }

@@ -20,9 +20,12 @@
       "5": "Toggle strikethrough",
       "6": "Toggle ordered list",
       "7": "Toggle bullet list",
-      "8": "Undo",
-      "9": "Redo",
-      "10": "Image"
+      "8": "Image",
+      "9": "Undo",
+      "10": "Redo",
+      "uploading": "Uploading your image...",
+      "uploaded": "Image is uploaded",
+      "upload-error": "Failed to upload image, something went wrong"
    },
    "common": {
       "cancel": "Cancel",

@@ -112,19 +112,31 @@ body {
     height: 0;
 }
 
-.prose h1 {
+.ProseMirror img {
+    border-radius: .75rem;
+}
+
+.ProseMirror h1 {
     margin-bottom: .5em;
 }
 
-.prose h2 {
+.ProseMirror h2 {
     margin-top: .5em;
     margin-bottom: .5em;
 }
 
-.prose li p {
+.ProseMirror li p {
     margin-block: .25em;
 }
 
-.prose p:empty {
+.ProseMirror p:empty {
+    display: none;
+}
+
+.scroll-x {
+    scrollbar-width: none;
+}
+
+.scroll-x::-webkit-scrollbar {
     display: none;
 }
