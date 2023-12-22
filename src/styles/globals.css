@@ -112,22 +112,19 @@ body {
     height: 0;
 }
 
-.ProseMirror ul {
-    list-style: disc;
-    padding-left: 1rem;
+.prose h1 {
+    margin-bottom: .5em;
 }
 
-.ProseMirror ol {
-    padding-left: 1rem;
-    list-style: decimal;
+.prose h2 {
+    margin-top: .5em;
+    margin-bottom: .5em;
 }
 
-.ProseMirror h1 {
-    font-size: 1.85rem;
-    font-weight: 500;
+.prose li p {
+    margin-block: .25em;
 }
 
-.ProseMirror h2 {
-    font-weight: 500;
-    font-size: 1.4rem;
+.prose p:empty {
+    display: none;
 }

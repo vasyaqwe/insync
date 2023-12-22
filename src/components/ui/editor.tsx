@@ -45,13 +45,13 @@ export const Editor = ({
          attributes: {
             id: "editor",
             class: cn(
-               "w-full rounded-lg px-3 py-2 focus:outline-none",
+               "w-full prose rounded-lg px-3 py-2 focus:outline-none",
                className
             ),
          },
       },
       onUpdate({ editor }) {
-         onChange(editor.getHTML())
+         onChange(editor.getHTML() === "<p></p>" ? "" : editor.getHTML())
       },
    })
 
@@ -59,17 +59,18 @@ export const Editor = ({
 
    return (
       <div
-         className="rounded-lg border border-input bg-background
+         className="w-[98%] rounded-lg border border-input bg-background
       ring-ring ring-offset-2 ring-offset-white focus-within:outline-none focus-within:ring-2"
       >
-         <div className="space-x-[3px] border-b-2 border-dotted border-input p-1">
+         <div className="flex border-b-2 border-dotted border-input p-1">
             <Hint
-               delayDuration={isAnyTooltipVisible ? 0 : 250}
+               delayDuration={isAnyTooltipVisible ? 0 : 300}
+               onMouseOver={() => setIsAnyTooltipVisible(true)}
+               onMouseLeave={() => setIsAnyTooltipVisible(false)}
+               className="px-0.5"
                content={t("1")}
             >
                <Toggle
-                  onMouseOver={() => setIsAnyTooltipVisible(true)}
-                  onMouseLeave={() => setIsAnyTooltipVisible(false)}
                   size={"sm"}
                   aria-label={t("1")}
                   pressed={editor.isActive("heading", { level: 1 })}
@@ -81,12 +82,13 @@ export const Editor = ({
                </Toggle>
             </Hint>
             <Hint
-               delayDuration={isAnyTooltipVisible ? 0 : 250}
+               delayDuration={isAnyTooltipVisible ? 0 : 300}
+               onMouseOver={() => setIsAnyTooltipVisible(true)}
+               onMouseLeave={() => setIsAnyTooltipVisible(false)}
                content={t("2")}
+               className="px-0.5"
             >
                <Toggle
-                  onMouseOver={() => setIsAnyTooltipVisible(true)}
-                  onMouseLeave={() => setIsAnyTooltipVisible(false)}
                   size={"sm"}
                   aria-label={t("2")}
                   pressed={editor.isActive("heading", { level: 2 })}
@@ -98,7 +100,10 @@ export const Editor = ({
                </Toggle>
             </Hint>
             <Hint
-               delayDuration={isAnyTooltipVisible ? 0 : 250}
+               onMouseOver={() => setIsAnyTooltipVisible(true)}
+               onMouseLeave={() => setIsAnyTooltipVisible(false)}
+               className="px-0.5"
+               delayDuration={isAnyTooltipVisible ? 0 : 300}
                content={t("3")}
             >
                <Toggle
@@ -115,7 +120,10 @@ export const Editor = ({
                </Toggle>
             </Hint>
             <Hint
-               delayDuration={isAnyTooltipVisible ? 0 : 250}
+               onMouseOver={() => setIsAnyTooltipVisible(true)}
+               onMouseLeave={() => setIsAnyTooltipVisible(false)}
+               className="px-0.5"
+               delayDuration={isAnyTooltipVisible ? 0 : 300}
                content={t("4")}
             >
                <Toggle
@@ -132,7 +140,10 @@ export const Editor = ({
                </Toggle>
             </Hint>
             <Hint
-               delayDuration={isAnyTooltipVisible ? 0 : 250}
+               onMouseOver={() => setIsAnyTooltipVisible(true)}
+               onMouseLeave={() => setIsAnyTooltipVisible(false)}
+               className="px-0.5"
+               delayDuration={isAnyTooltipVisible ? 0 : 300}
                content={t("5")}
             >
                <Toggle
@@ -149,7 +160,10 @@ export const Editor = ({
                </Toggle>
             </Hint>
             <Hint
-               delayDuration={isAnyTooltipVisible ? 0 : 250}
+               onMouseOver={() => setIsAnyTooltipVisible(true)}
+               onMouseLeave={() => setIsAnyTooltipVisible(false)}
+               className="px-0.5"
+               delayDuration={isAnyTooltipVisible ? 0 : 300}
                content={t("6")}
             >
                <Toggle
@@ -166,7 +180,10 @@ export const Editor = ({
                </Toggle>
             </Hint>
             <Hint
-               delayDuration={isAnyTooltipVisible ? 0 : 250}
+               onMouseOver={() => setIsAnyTooltipVisible(true)}
+               onMouseLeave={() => setIsAnyTooltipVisible(false)}
+               className="px-0.5"
+               delayDuration={isAnyTooltipVisible ? 0 : 300}
                content={t("7")}
             >
                <Toggle
@@ -183,7 +200,10 @@ export const Editor = ({
                </Toggle>
             </Hint>
             <Hint
-               delayDuration={isAnyTooltipVisible ? 0 : 250}
+               onMouseOver={() => setIsAnyTooltipVisible(true)}
+               onMouseLeave={() => setIsAnyTooltipVisible(false)}
+               className="px-0.5"
+               delayDuration={isAnyTooltipVisible ? 0 : 300}
                content={t("8")}
             >
                <Button
@@ -200,7 +220,10 @@ export const Editor = ({
                </Button>
             </Hint>
             <Hint
-               delayDuration={isAnyTooltipVisible ? 0 : 250}
+               onMouseOver={() => setIsAnyTooltipVisible(true)}
+               onMouseLeave={() => setIsAnyTooltipVisible(false)}
+               className="px-0.5"
+               delayDuration={isAnyTooltipVisible ? 0 : 300}
                content={t("9")}
             >
                <Button

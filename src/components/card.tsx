@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Loading } from "@/components/ui/loading"
 import { useFormValidation } from "@/hooks/use-form-validation"
-import { cn } from "@/lib/utils"
+import { cn, focusContentEditableElement } from "@/lib/utils"
 import { NAME_CHARS_LIMIT, updateCardSchema } from "@/lib/validations/card"
 import { useRouter } from "@/navigation"
 import { api } from "@/trpc/react"
@@ -23,7 +23,7 @@ import {
    Trash2,
 } from "lucide-react"
 import { useTranslations } from "next-intl"
-import { useState } from "react"
+import { startTransition, useState } from "react"
 import { toast } from "sonner"
 import {
    Dialog,
@@ -55,8 +55,8 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
    const [formData, setFormData] = useState({
       name: card.name,
       cardId: card.id,
+      description: card.description ?? "",
    })
-   const [description, setDescription] = useState("")
 
    const { mutate: onDelete, isLoading } = api.card.delete.useMutation({
       onSuccess: (deletedBoardName) => {
@@ -71,10 +71,15 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
    const { mutate: onUpdate, isLoading: isUpdateLoading } =
       api.card.update.useMutation({
          onSuccess: (updatedBoardName) => {
-            router.refresh()
-            toast.success(t.rich("update-success", { name: updatedBoardName }))
-            setEditDialogOpen(false)
-            setMenuOpen(false)
+            startTransition(() => {
+               router.refresh()
+               setEditDialogOpen(false)
+               setMenuOpen(false)
+               setIsEditing(false)
+               toast.success(
+                  t.rich("update-success", { name: updatedBoardName })
+               )
+            })
          },
          onError: () => {
             return toast.error(t("update-error"))
@@ -82,7 +87,8 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
       })
 
    const { safeOnSubmit, errors } = useFormValidation({
-      onSubmit: () => onUpdate(formData),
+      onSubmit: () =>
+         onUpdate({ name: formData.name, cardId: formData.cardId }),
       formData,
       zodSchema: updateCardSchema,
    })
@@ -176,7 +182,7 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                   </li>
 
                   <DialogContent className="max-w-xl">
-                     <DialogHeader>
+                     <DialogHeader className="px-1">
                         <DialogTitle className="font-medium">
                            <AppWindow className="-mt-0.5 mr-1 inline " />{" "}
                            {card.name}
@@ -188,66 +194,96 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                            </strong>
                         </p>
                      </DialogHeader>
-                     <section>
-                        <DialogTitle className="mt-8 font-medium">
-                           <AlignLeft className="-mt-0.5 mr-1 inline " />{" "}
-                           {t("description")}
-                        </DialogTitle>
-                        <div className="mt-4">
-                           {isEditing ? (
-                              <>
-                                 <Editor
-                                    className="min-h-[150px]"
-                                    value={description}
-                                    onChange={(value) => setDescription(value)}
-                                 />
-                                 <div className="mt-3 flex gap-2">
+                     <div className="max-h-[80vh] overflow-y-auto px-1">
+                        <section>
+                           <DialogTitle className="mt-8 flex items-center gap-2 font-medium">
+                              <AlignLeft className="inline" />{" "}
+                              {t("description")}
+                              {!isEditing &&
+                                 formData.description.length > 0 && (
                                     <Button
-                                       size={"sm"}
-                                       onClick={() => setIsEditing(false)}
-                                    >
-                                       {tCommon("save")}
-                                    </Button>
-                                    <Button
-                                       size={"sm"}
-                                       onClick={() => setIsEditing(false)}
+                                       className="ml-auto"
+                                       aria-label={tCommon("edit")}
+                                       size={"icon"}
                                        variant={"outline"}
+                                       onClick={() => setIsEditing(true)}
                                     >
-                                       {tCommon("cancel")}
+                                       <Pencil size={20} />
                                     </Button>
-                                 </div>
-                              </>
-                           ) : (
-                              <Button
-                                 onClick={() => {
-                                    flushSync(() => setIsEditing(true))
-                                    document.getElementById("editor")?.focus()
-                                 }}
-                                 variant={"secondary"}
-                              >
-                                 {t("add-description")}
-                              </Button>
-                           )}
-                        </div>
-                     </section>
-                     <section>
-                        <DialogTitle className="mt-8 font-medium">
-                           <MessageCircle className="-mt-0.5 mr-1 inline " />{" "}
-                           {t("comments")}
-                        </DialogTitle>
-                        <Button
-                           className="mt-4"
-                           variant={"secondary"}
-                        >
-                           {t("add-description")}
-                        </Button>
-                     </section>
-                     <section>
-                        <DialogTitle className="mt-8 font-medium">
-                           <GanttChart className="-mt-0.5 mr-1 inline " />{" "}
-                           {t("activity")}
-                        </DialogTitle>
-                     </section>
+                                 )}
+                           </DialogTitle>
+                           <div className="mt-4">
+                              {isEditing ? (
+                                 <>
+                                    <Editor
+                                       className="min-h-[150px]"
+                                       value={formData.description}
+                                       onChange={(description) =>
+                                          setFormData((prev) => ({
+                                             ...prev,
+                                             description,
+                                          }))
+                                       }
+                                    />
+                                    <div className="mt-3 flex gap-2">
+                                       <Button
+                                          disabled={isUpdateLoading}
+                                          size={"sm"}
+                                          onClick={() => onUpdate(formData)}
+                                       >
+                                          {tCommon("save")}
+                                          {isUpdateLoading && <Loading />}
+                                       </Button>
+                                       <Button
+                                          size={"sm"}
+                                          onClick={() => setIsEditing(false)}
+                                          variant={"outline"}
+                                       >
+                                          {tCommon("cancel")}
+                                       </Button>
+                                    </div>
+                                 </>
+                              ) : card.description ? (
+                                 <div
+                                    className="prose"
+                                    dangerouslySetInnerHTML={{
+                                       __html: card.description,
+                                    }}
+                                 />
+                              ) : (
+                                 <Button
+                                    onClick={() => {
+                                       flushSync(() => setIsEditing(true))
+                                       focusContentEditableElement(
+                                          document.getElementById("editor")
+                                       )
+                                    }}
+                                    variant={"secondary"}
+                                 >
+                                    {t("add-description")}
+                                 </Button>
+                              )}
+                           </div>
+                        </section>
+                        <section className="mt-8">
+                           <DialogTitle className="font-medium">
+                              <MessageCircle className="-mt-0.5 mr-1 inline " />{" "}
+                              {t("comments")}
+                           </DialogTitle>
+                           <Button
+                              className="mt-4"
+                              variant={"secondary"}
+                           >
+                              {t("add-description")}
+                           </Button>
+                        </section>
+                        <section>
+                           <DialogTitle className="mt-8 font-medium">
+                              <GanttChart className="-mt-0.5 mr-1 inline " />{" "}
+                              {t("activity")}
+                           </DialogTitle>
+                        </section>
+                     </div>
                   </DialogContent>
                </Dialog>
             )}

@@ -35,8 +35,10 @@ DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
 
 const DialogContent = React.forwardRef<
    React.ElementRef<typeof Drawer.Content>,
-   React.ComponentPropsWithoutRef<typeof Drawer.Content>
->(({ className, children, ...props }, ref) =>
+   React.ComponentPropsWithoutRef<typeof Drawer.Content> & {
+      closeButtonClassName?: string
+   }
+>(({ className, children, closeButtonClassName, ...props }, ref) =>
    innerWidth < 768 ? (
       <Drawer.Portal>
          <Drawer.Overlay className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
@@ -67,9 +69,12 @@ const DialogContent = React.forwardRef<
             {...props}
          >
             {children}
-            <DialogPrimitive.Close
+            <DialogClose
                asChild
-               className="absolute right-4 top-5 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground"
+               className={cn(
+                  "absolute right-4 top-5 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground",
+                  closeButtonClassName
+               )}
             >
                <Button
                   size={"icon"}
@@ -81,7 +86,7 @@ const DialogContent = React.forwardRef<
                   />
                   <span className="sr-only">Close</span>
                </Button>
-            </DialogPrimitive.Close>
+            </DialogClose>
          </DialogPrimitive.Content>
       </DialogPrimitive.Portal>
    )

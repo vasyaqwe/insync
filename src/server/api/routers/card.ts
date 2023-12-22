@@ -45,17 +45,17 @@ export const cardRouter = createTRPCRouter({
       }),
    update: privateProcedure
       .input(updateCardSchema)
-      .mutation(async ({ ctx, input: { cardId, name } }) => {
-         const deletedCard = await ctx.db.card.update({
+      .mutation(async ({ ctx, input: { cardId, ...rest } }) => {
+         const updatedCard = await ctx.db.card.update({
             where: {
                id: cardId,
             },
             data: {
-               name,
+               ...rest,
             },
          })
 
-         return deletedCard.name
+         return updatedCard.name
       }),
    delete: privateProcedure
       .input(deleteCardSchema)
