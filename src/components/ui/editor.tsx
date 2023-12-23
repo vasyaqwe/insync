@@ -1,8 +1,13 @@
 "use client"
 
-import { useEditor, EditorContent } from "@tiptap/react"
+import {
+   useEditor,
+   EditorContent,
+   type Editor as CoreEditor,
+} from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
 import Image from "@tiptap/extension-image"
+import Link from "@tiptap/extension-link"
 import Placeholder from "@tiptap/extension-placeholder"
 import { useTranslations } from "next-intl"
 import { Toggle, toggleVariants } from "@/components/ui/toggle"
@@ -26,26 +31,43 @@ import {
    type ClipboardEvent,
    useState,
    useEffect,
+   useRef,
+   type Dispatch,
+   type SetStateAction,
 } from "react"
 import { FileButton } from "@/components/ui/file-button"
 import { useUploadThing } from "@/lib/uploadthing"
 import { toast } from "sonner"
 
-export const Editor = ({
-   value,
-   onChange,
-   className,
-}: {
+type EditorProps<T extends boolean> = {
    value: string
    onChange: (value: string) => void
    className?: string
-}) => {
+} & (T extends true
+   ? {
+        shouldSetImages: true
+        setImages: Dispatch<SetStateAction<string[]>>
+     }
+   : {
+        shouldSetImages?: false
+        setImages?: Dispatch<SetStateAction<string[]>>
+     })
+
+export const Editor = <T extends boolean>({
+   value,
+   onChange,
+   className,
+   shouldSetImages = false,
+   setImages,
+}: EditorProps<T>) => {
    const t = useTranslations("editor")
    const [isAnyTooltipVisible, setIsAnyTooltipVisible] = useState(false)
+   const [isMounted, setIsMounted] = useState(false)
 
    const editor = useEditor({
       extensions: [
          StarterKit,
+         Link,
          Image.configure({
             HTMLAttributes: {
                class: "rounded-md",
@@ -65,22 +87,60 @@ export const Editor = ({
             ),
          },
       },
-      onUpdate({ editor }) {
+      onUpdate({ editor: _editor }) {
+         const editor = _editor as CoreEditor
          onChange(editor.getHTML() === "<p></p>" ? "" : editor.getHTML())
+         checkForNodeDeletions({ editor })
       },
    })
-
-   const { startUpload, isUploading } = useUploadThing("imageUploader")
+   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   const previousState = useRef<any>()
 
    useEffect(() => {
-      if (!editor) return
-
-      if (isUploading) {
-         editor.commands.insertContent(<div>hello</div>)
-      } else {
-         editor.commands.deleteCurrentNode()
+      if (!isMounted && editor && shouldSetImages) {
+         checkForNodeDeletions({ editor })
+         setIsMounted(true)
       }
-   }, [isUploading, editor])
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, [editor, isMounted])
+
+   const checkForNodeDeletions = ({ editor }: { editor: CoreEditor }) => {
+      if (!shouldSetImages) return
+      // Compare previous/current nodes to detect deleted ones
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const prevNodesById: Record<string, any> = {}
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      previousState.current?.doc.forEach((node: any) => {
+         if (node.attrs.src) {
+            //only images
+            prevNodesById[node.attrs.src] = node
+         }
+      })
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const nodesById: Record<string, any> = {}
+      editor.state.doc.forEach((node) => {
+         if (node.attrs.src) {
+            //only images
+            nodesById[node.attrs.src] = node
+         }
+      })
+
+      previousState.current = editor.state
+      for (const [id, node] of Object.entries(prevNodesById)) {
+         const image = node.attrs.src
+         if (nodesById[id] === undefined && node.type.name === "image") {
+            setImages?.((prev) => prev.filter((src) => src !== image))
+         } else {
+            setImages?.((prev) =>
+               prev.includes(image) ? prev : [...prev, image]
+            )
+         }
+      }
+   }
+
+   const { startUpload, isUploading } = useUploadThing("imageUploader")
 
    if (!editor) return null
 
@@ -105,6 +165,8 @@ export const Editor = ({
          loading: t("uploading"),
          success: (uploadedImage) => {
             if (uploadedImage?.[0]?.url) {
+               setImages?.((prev) => [...prev, uploadedImage[0]!.url])
+
                editor
                   ?.chain()
                   .focus()

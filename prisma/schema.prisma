@@ -97,10 +97,11 @@ model List {
 }
 
 model Card {
-    id          String  @id @default(cuid())
+    id          String   @id @default(cuid())
     name        String
     order       Int
-    description String? @db.Text
+    description String?  @db.Text
+    images      String[] @default([])
 
     listId String
     list   List   @relation(fields: [listId], references: [id], onDelete: Cascade)

@@ -34,6 +34,7 @@ import {
 import { ErrorMessage, Input } from "@/components/ui/input"
 import { Editor } from "@/components/ui/editor"
 import { flushSync } from "react-dom"
+import Image from "next/image"
 
 type CardProps = {
    card: Card
@@ -52,10 +53,13 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
    const [detailsDialogOpen, setDetailsDialogOpen] = useState(false)
    const [menuOpen, setMenuOpen] = useState(false)
 
+   const [images, setImages] = useState(card.images)
+
    const [formData, setFormData] = useState({
       name: card.name,
       cardId: card.id,
       description: card.description ?? "",
+      images,
    })
 
    const { mutate: onDelete, isLoading } = api.card.delete.useMutation({
@@ -87,11 +91,21 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
       })
 
    const { safeOnSubmit, errors } = useFormValidation({
-      onSubmit: () =>
-         onUpdate({ name: formData.name, cardId: formData.cardId }),
+      onSubmit: () => onUpdate({ ...formData, images }),
       formData,
       zodSchema: updateCardSchema,
    })
+
+   function onCancelEditing() {
+      setIsEditing(false)
+      setFormData((prev) => ({
+         ...prev,
+         description: card.description ?? "",
+      }))
+      setImages(card.images)
+   }
+
+   const hasImages = card.images.length > 0
 
    return (
       <>
@@ -109,76 +123,97 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                      onClick={() => {
                         setDetailsDialogOpen(true)
                      }}
-                     className="group mt-2 flex w-full !cursor-pointer items-center gap-1 overflow-hidden rounded-lg border bg-muted/25 px-2 py-2 text-start backdrop-blur-sm hover:opacity-75"
+                     className={cn(
+                        "group mt-2 w-full !cursor-pointer rounded-lg bg-muted/25 text-start backdrop-blur-sm transition-opacity hover:opacity-80",
+                        !hasImages ? "border" : ""
+                     )}
                      ref={provided.innerRef}
                      {...provided.draggableProps}
                      {...provided.dragHandleProps}
                   >
-                     <h3 className="ml-0.5">{card.name}</h3>
-                     <DropdownMenu
-                        open={menuOpen}
-                        onOpenChange={setMenuOpen}
+                     {hasImages && (
+                        <Image
+                           className="max-h-[150px] rounded-lg rounded-b-none object-cover"
+                           width={288}
+                           height={150}
+                           src={card.images?.[card.images.length - 1] ?? ""}
+                           alt={card.name}
+                        />
+                     )}
+                     <div
+                        className={cn(
+                           "flex items-center gap-1 rounded-lg p-2",
+                           hasImages ? "rounded-t-none border border-t-0" : ""
+                        )}
                      >
-                        <DropdownMenuTrigger asChild>
-                           <Button
-                              onClick={(e) => {
-                                 e.preventDefault()
-                                 e.stopPropagation()
-                              }}
-                              variant={"ghost"}
-                              size={"icon"}
-                              className={cn(
-                                 "ml-auto h-7 w-7 self-start hover:bg-secondary/75 group-hover:visible",
-                                 !menuOpen ? "invisible" : ""
-                              )}
-                           >
-                              <MoreHorizontal
-                                 size={20}
-                                 className="pointer-events-none"
-                              />
-                              <span className="sr-only">Show more options</span>
-                           </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                           <DropdownMenuItem
-                              onClick={(e) => {
-                                 e.stopPropagation()
-                              }}
-                              onSelect={() => {
-                                 setEditDialogOpen(true)
-                              }}
-                           >
-                              <Pencil
-                                 className="mr-1"
-                                 size={20}
-                              />
-                              {tCommon("edit")}
-                           </DropdownMenuItem>
-                           <DropdownMenuItem
-                              disabled={isLoading}
-                              onClick={(e) => {
-                                 e.stopPropagation()
-                              }}
-                              onSelect={(e) => {
-                                 e.preventDefault()
-                                 onDelete({ cardId: card.id })
-                              }}
-                              className="!text-destructive"
-                           >
-                              {isLoading ? (
-                                 <Loading className="mx-auto" />
-                              ) : (
-                                 <>
-                                    <Trash2
-                                       className="mr-1"
-                                       size={20}
-                                    />
-                                    {tCommon("delete")}
-                                 </>
-                              )}
-                           </DropdownMenuItem>
-                        </DropdownMenuContent>
-                     </DropdownMenu>
+                        <h3 className="ml-0.5">{card.name}</h3>
+                        <DropdownMenu
+                           open={menuOpen}
+                           onOpenChange={setMenuOpen}
+                        >
+                           <DropdownMenuTrigger asChild>
+                              <Button
+                                 onClick={(e) => {
+                                    e.preventDefault()
+                                    e.stopPropagation()
+                                 }}
+                                 variant={"ghost"}
+                                 size={"icon"}
+                                 className={cn(
+                                    "ml-auto h-7 w-7 self-start hover:bg-secondary/75 group-hover:visible",
+                                    !menuOpen ? "invisible" : ""
+                                 )}
+                              >
+                                 <MoreHorizontal
+                                    size={20}
+                                    className="pointer-events-none"
+                                 />
+                                 <span className="sr-only">
+                                    Show more options
+                                 </span>
+                              </Button>
+                           </DropdownMenuTrigger>
+                           <DropdownMenuContent align="end">
+                              <DropdownMenuItem
+                                 onClick={(e) => {
+                                    e.stopPropagation()
+                                 }}
+                                 onSelect={() => {
+                                    setEditDialogOpen(true)
+                                 }}
+                              >
+                                 <Pencil
+                                    className="mr-1"
+                                    size={20}
+                                 />
+                                 {tCommon("edit")}
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                 disabled={isLoading}
+                                 onClick={(e) => {
+                                    e.stopPropagation()
+                                 }}
+                                 onSelect={(e) => {
+                                    e.preventDefault()
+                                    onDelete({ cardId: card.id })
+                                 }}
+                                 className="!text-destructive"
+                              >
+                                 {isLoading ? (
+                                    <Loading className="mx-auto" />
+                                 ) : (
+                                    <>
+                                       <Trash2
+                                          className="mr-1"
+                                          size={20}
+                                       />
+                                       {tCommon("delete")}
+                                    </>
+                                 )}
+                              </DropdownMenuItem>
+                           </DropdownMenuContent>
+                        </DropdownMenu>
+                     </div>
                   </li>
 
                   <DialogContent className="max-w-xl">
@@ -216,6 +251,8 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                               {isEditing ? (
                                  <>
                                     <Editor
+                                       shouldSetImages
+                                       setImages={setImages}
                                        className="min-h-[150px]"
                                        value={formData.description}
                                        onChange={(description) =>
@@ -229,14 +266,16 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                                        <Button
                                           disabled={isUpdateLoading}
                                           size={"sm"}
-                                          onClick={() => onUpdate(formData)}
+                                          onClick={() => {
+                                             onUpdate({ ...formData, images })
+                                          }}
                                        >
                                           {tCommon("save")}
                                           {isUpdateLoading && <Loading />}
                                        </Button>
                                        <Button
                                           size={"sm"}
-                                          onClick={() => setIsEditing(false)}
+                                          onClick={onCancelEditing}
                                           variant={"outline"}
                                        >
                                           {tCommon("cancel")}

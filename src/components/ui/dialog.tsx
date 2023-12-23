@@ -72,7 +72,7 @@ const DialogContent = React.forwardRef<
             <DialogClose
                asChild
                className={cn(
-                  "absolute right-4 top-5 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground",
+                  "absolute right-4 top-4 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground",
                   closeButtonClassName
                )}
             >
@@ -125,7 +125,7 @@ const DialogTitle = React.forwardRef<
    <DialogPrimitive.Title
       ref={ref}
       className={cn(
-         "leading-2 text-2xl font-semibold tracking-tight",
+         "leading-2 -mt-1 text-2xl font-semibold tracking-tight",
          className
       )}
       {...props}

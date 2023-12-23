@@ -133,6 +133,10 @@ body {
     display: none;
 }
 
+.prose a:hover {
+    text-decoration: unset !important;
+}
+
 .scroll-x {
     scrollbar-width: none;
 }

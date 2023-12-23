@@ -28,9 +28,12 @@ export function BoardHeader() {
       isLoading,
       isError,
       data: organization,
-   } = api.organization.get.useQuery({
-      organizationId: lastVisitedOrganizationId,
-   })
+   } = api.organization.get.useQuery(
+      {
+         organizationId: lastVisitedOrganizationId,
+      },
+      { refetchOnWindowFocus: false }
+   )
 
    return (
       <header className="grid h-[var(--header-height)] grid-cols-full-width-split-screen items-center bg-background/50 py-2 shadow-sm backdrop-blur-md">
