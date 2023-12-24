@@ -29,8 +29,10 @@ export function UserAvatar({ user, className, ...props }: UserAvatarProps) {
       <Avatar
          {...props}
          className={cn(
-            "h-[var(--avatar-size)] w-[var(--avatar-size)] border",
-            user.imageUrl ? "border-transparent" : "border-muted-foreground/75",
+            "block h-[var(--avatar-size)] w-[var(--avatar-size)] outline outline-1",
+            user.imageUrl
+               ? "outline-transparent"
+               : "outline-muted-foreground/75",
             className
          )}
       >

@@ -177,8 +177,10 @@ export const Editor = <T extends boolean>({
                   .focus()
                   .setImage({ src: uploadedImage[0].url })
                   .run()
+               return t("uploaded")
             }
-            return t("uploaded")
+
+            return t("upload-error")
          },
          error: t("upload-error"),
       })

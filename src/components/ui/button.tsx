@@ -16,7 +16,7 @@ const buttonVariants = cva(
                 before:to-white/5 hover:bg-primary/90 before:shadow-primary`,
             destructive: `bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-button-primary 
                 active:text-destructive-foreground/95 active:shadow-inner-primary before:to-white/5 before:shadow-destructive`,
-            outline: `shadow-button-secondary bg-background hover:bg-accent hover:text-accent-foreground 
+            outline: `shadow-button-secondary bg-background hover:bg-accent/25 hover:text-accent-foreground 
                 active:text-accent-foreground/90 active:shadow-inner-secondary 
                 before:to-input/25 before:shadow-input`,
             secondary: `bg-secondary text-secondary-foreground hover:bg-secondary/75 shadow-button-secondary

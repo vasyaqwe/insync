@@ -53,7 +53,7 @@ export function BoardHeader() {
                         <Skeleton className="h-3 w-24" />
                      </div>
                   ) : !isError ? (
-                     <div className="flex items-center gap-2 font-medium">
+                     <div className="flex items-center gap-2 font-medium text-foreground/75">
                         <ColorAvatar color={organization?.color ?? ""} />
                         {organization?.name}
                      </div>

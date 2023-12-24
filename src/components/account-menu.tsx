@@ -16,6 +16,8 @@ import { useShallow } from "zustand/react/shallow"
 import { useOrganizationHelpers } from "@/hooks/use-organization-helpers"
 import { Skeleton } from "@/components/ui/skeleton"
 import { CreateOrganizationDialog } from "@/components/dialogs/create-organization-dialog"
+import { ChevronsUpDown } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 export function AccountMenu() {
    const { lastVisitedOrganizationId } = useOrganizationHelpers()
@@ -34,15 +36,31 @@ export function AccountMenu() {
          <CreateOrganizationDialog />
          <DropdownMenu>
             {isLoaded && user ? (
-               <DropdownMenuTrigger className="ml-auto rounded-full transition-opacity hover:opacity-75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ">
-                  <UserAvatar
-                     user={{
-                        email: user.emailAddresses[0]?.emailAddress,
-                        firstName: user.firstName ?? undefined,
-                        imageUrl: user.imageUrl ?? undefined,
-                     }}
-                  />
-               </DropdownMenuTrigger>
+               <div className="flex items-center gap-2">
+                  <p className="flex items-center gap-2 font-medium text-foreground/75">
+                     <UserAvatar
+                        className="[--avatar-size:29px]"
+                        user={{
+                           email: user.emailAddresses[0]?.emailAddress,
+                           firstName: user.firstName ?? undefined,
+                           imageUrl: user.imageUrl ?? undefined,
+                        }}
+                     />
+                     {user.firstName}
+                  </p>
+                  <DropdownMenuTrigger asChild>
+                     <Button
+                        variant={"ghost"}
+                        size={"icon"}
+                     >
+                        <ChevronsUpDown
+                           size={18}
+                           className="stroke-foreground/75"
+                        />
+                        <span className="sr-only">More...</span>
+                     </Button>
+                  </DropdownMenuTrigger>
+               </div>
             ) : (
                <Skeleton className="ml-auto h-[var(--avatar-size)] w-[var(--avatar-size)] rounded-full" />
             )}
@@ -53,10 +71,10 @@ export function AccountMenu() {
                >
                   <div className="px-1.5 py-1">
                      <p className="font-medium">
-                        {user?.firstName} {user?.lastName}
+                        {user.firstName} {user.lastName}
                      </p>
                      <p className="truncate text-sm text-foreground/60">
-                        {user?.emailAddresses[0]?.emailAddress}
+                        {user.emailAddresses[0]?.emailAddress}
                      </p>
                   </div>
                   <DropdownMenuSeparator />
