@@ -23,7 +23,7 @@ import {
    Trash2,
 } from "lucide-react"
 import { useTranslations } from "next-intl"
-import { startTransition, useState } from "react"
+import { type KeyboardEvent, startTransition, useState } from "react"
 import { toast } from "sonner"
 import {
    Dialog,
@@ -103,6 +103,15 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
          description: card.description ?? "",
       }))
       setImages(card.images)
+   }
+
+   function onStartEditing() {
+      flushSync(() => setIsEditing(true))
+      focusContentEditableElement(document.getElementById("editor"))
+   }
+
+   function onEditorEscape(e: KeyboardEvent<HTMLDivElement>) {
+      if (e.key === "Escape") onCancelEditing()
    }
 
    const hasImages = card.images.length > 0
@@ -241,7 +250,7 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                                        aria-label={tCommon("edit")}
                                        size={"icon"}
                                        variant={"outline"}
-                                       onClick={() => setIsEditing(true)}
+                                       onClick={onStartEditing}
                                     >
                                        <Pencil size={20} />
                                     </Button>
@@ -255,6 +264,7 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                                        setImages={setImages}
                                        className="min-h-[150px]"
                                        value={formData.description}
+                                       onKeyDown={onEditorEscape}
                                        onChange={(description) =>
                                           setFormData((prev) => ({
                                              ...prev,
@@ -291,12 +301,7 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                                  />
                               ) : (
                                  <Button
-                                    onClick={() => {
-                                       flushSync(() => setIsEditing(true))
-                                       focusContentEditableElement(
-                                          document.getElementById("editor")
-                                       )
-                                    }}
+                                    onClick={onStartEditing}
                                     variant={"secondary"}
                                  >
                                     {t("add-description")}

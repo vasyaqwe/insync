@@ -5,6 +5,7 @@
 body {
     height: 100svh;
     height: 100vh;
+    pointer-events: auto !important;
 }
 
 @layer base {

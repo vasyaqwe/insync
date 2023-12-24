@@ -46,7 +46,7 @@ export function AccountMenu() {
                            imageUrl: user.imageUrl ?? undefined,
                         }}
                      />
-                     {user.firstName}
+                     <span className="max-sm:hidden"> {user.firstName}</span>
                   </p>
                   <DropdownMenuTrigger asChild>
                      <Button
@@ -62,7 +62,11 @@ export function AccountMenu() {
                   </DropdownMenuTrigger>
                </div>
             ) : (
-               <Skeleton className="ml-auto h-[var(--avatar-size)] w-[var(--avatar-size)] rounded-full" />
+               <div className="flex items-center gap-2 font-medium">
+                  <Skeleton className="h-[var(--color-avatar-size)] w-[var(--color-avatar-size)] rounded-full" />
+                  <Skeleton className="h-3 w-20 max-sm:hidden" />
+                  <Skeleton className="mx-2 h-4 w-4" />
+               </div>
             )}
             {user && (
                <DropdownMenuContent

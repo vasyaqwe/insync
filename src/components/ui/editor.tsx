@@ -33,6 +33,7 @@ import {
    useRef,
    type Dispatch,
    type SetStateAction,
+   type ComponentProps,
 } from "react"
 import { FileButton } from "@/components/ui/file-button"
 import { useUploadThing } from "@/lib/uploadthing"
@@ -50,7 +51,8 @@ type EditorProps<T extends boolean> = {
    : {
         shouldSetImages?: false
         setImages?: Dispatch<SetStateAction<string[]>>
-     })
+     }) &
+   Omit<ComponentProps<"div">, "onChange">
 
 type Node = {
    attrs: Record<string, string>
@@ -65,6 +67,7 @@ export const Editor = <T extends boolean>({
    className,
    shouldSetImages = false,
    setImages,
+   ...props
 }: EditorProps<T>) => {
    const t = useTranslations("editor")
    const [isAnyTooltipVisible, setIsAnyTooltipVisible] = useState(false)
@@ -164,9 +167,20 @@ export const Editor = <T extends boolean>({
    }
 
    function uploadImage(file: File) {
-      const promise = () => startUpload([file])
+      const upload = async (files: File[]) => {
+         try {
+            const response = await startUpload(files)
 
-      toast.promise(promise, {
+            if (!response) {
+               throw new Error("Error")
+            }
+            return response
+         } catch (error) {
+            throw error
+         }
+      }
+
+      toast.promise(upload([file]), {
          loading: t("uploading"),
          success: (uploadedImage) => {
             if (uploadedImage?.[0]?.url) {
@@ -177,10 +191,8 @@ export const Editor = <T extends boolean>({
                   .focus()
                   .setImage({ src: uploadedImage[0].url })
                   .run()
-               return t("uploaded")
             }
-
-            return t("upload-error")
+            return t("uploaded")
          },
          error: t("upload-error"),
       })
@@ -190,6 +202,7 @@ export const Editor = <T extends boolean>({
       <div
          className="w-[98%] rounded-lg border border-input bg-background
       ring-ring ring-offset-2 ring-offset-white focus-within:outline-none focus-within:ring-2"
+         {...props}
       >
          <div className="scroll-x flex overflow-x-auto border-b-2 border-dotted border-input p-1 pb-1.5">
             <Hint
