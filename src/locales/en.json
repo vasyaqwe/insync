@@ -1,7 +1,7 @@
 {
    "landing-page": {
       "hero": {
-         "title": "Your workspace is <br /> <span class='text-primary'>always</span> in sync.",
+         "title": "Your workspace is <br /> <span class='accent-text'>always</span> in sync.",
          "description": "insync allows teams to organize their workspace and always be up-to-date. <span class='underline'>With AI's help</span>.",
          "button": "Try it now"
       }
@@ -126,8 +126,12 @@
    "account-menu": {
       "item1": "Dashboard",
       "item2": "Create organization",
-      "item3": "Settings",
-      "item4": "Sign out"
+      "item3": "Theme",
+      "item3:1": "Light",
+      "item3:2": "Dark",
+      "item3:3": "System",
+      "item4": "Settings",
+      "item5": "Sign out"
    },
    "header": {
       "button": "Get started"

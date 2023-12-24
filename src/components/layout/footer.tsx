@@ -7,7 +7,7 @@ export async function Footer() {
    const t = await getTranslations("footer")
 
    return (
-      <footer className="mt-auto bg-white py-5 text-center text-xs text-foreground/70 shadow-sm">
+      <footer className="mt-auto bg-background py-5 text-center text-xs text-foreground/70 shadow-sm shadow-foreground">
          <div className="container">
             <p
                dangerouslySetInnerHTML={{

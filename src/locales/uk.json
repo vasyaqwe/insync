@@ -1,7 +1,7 @@
 {
    "landing-page": {
       "hero": {
-         "title": "insync допомагає командам <br /> <span class='text-primary'>постійно</span> бути in sync.",
+         "title": "insync допомагає командам <br /> <span class='accent-text'>постійно</span> бути in sync.",
          "description": "insync полегшує командам організовувати свій робочий простір і завжди бути в курсі подій. <span class='underline'>За допомоги штучного інтелекту</span>.",
          "button": "Спробувати безкоштовно"
       }
@@ -72,7 +72,7 @@
       "title": "Картки",
       "new-card": "Додати картку",
       "new-card-label": "Назва картки",
-      "create-success": "картку створена",
+      "create-success": "Картка створена",
       "create-error": "Не вдалося створити картку, щось пішло не так",
       "created": "Створений",
       "delete-success": "Картку {name} видалено",
@@ -127,8 +127,12 @@
    "account-menu": {
       "item1": "Дошки",
       "item2": "Створити організацію",
-      "item3": "Налаштування",
-      "item4": "Вийти"
+      "item3": "Тема",
+      "item3:1": "Світла",
+      "item3:2": "Темна",
+      "item3:3": "Як у системі",
+      "item4": "Налаштування",
+      "item5": "Вийти"
    },
    "header": {
       "button": "Розпочати"

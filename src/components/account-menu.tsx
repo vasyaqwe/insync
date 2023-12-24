@@ -2,9 +2,14 @@
 
 import {
    DropdownMenu,
+   DropdownMenuCheckboxItem,
    DropdownMenuContent,
    DropdownMenuItem,
+   DropdownMenuPortal,
    DropdownMenuSeparator,
+   DropdownMenuSub,
+   DropdownMenuSubContent,
+   DropdownMenuSubTrigger,
    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { UserAvatar } from "@/components/ui/user-avatar"
@@ -18,10 +23,12 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { CreateOrganizationDialog } from "@/components/dialogs/create-organization-dialog"
 import { ChevronsUpDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useTheme } from "next-themes"
 
 export function AccountMenu() {
    const { lastVisitedOrganizationId } = useOrganizationHelpers()
    const { signOut } = useClerk()
+   const { setTheme, theme } = useTheme()
    const { openDialog } = useGlobalStore(
       useShallow((state) => ({
          openDialog: state.openDialog,
@@ -95,8 +102,37 @@ export function AccountMenu() {
                      {t("item2")}
                   </DropdownMenuItem>
 
+                  <DropdownMenuSub>
+                     <DropdownMenuSubTrigger>
+                        {t("item3")}
+                     </DropdownMenuSubTrigger>
+                     <DropdownMenuPortal>
+                        <DropdownMenuSubContent>
+                           <DropdownMenuCheckboxItem
+                              checked={theme === "light"}
+                              onCheckedChange={() => setTheme("light")}
+                           >
+                              {t("item3:1")}
+                           </DropdownMenuCheckboxItem>
+                           <DropdownMenuCheckboxItem
+                              checked={theme === "dark"}
+                              onCheckedChange={() => setTheme("dark")}
+                           >
+                              {t("item3:2")}
+                           </DropdownMenuCheckboxItem>
+                           <DropdownMenuSeparator />
+                           <DropdownMenuCheckboxItem
+                              checked={theme === "system"}
+                              onCheckedChange={() => setTheme("system")}
+                           >
+                              {t("item3:3")}
+                           </DropdownMenuCheckboxItem>
+                        </DropdownMenuSubContent>
+                     </DropdownMenuPortal>
+                  </DropdownMenuSub>
+
                   <DropdownMenuItem asChild>
-                     <Link href={"/settings"}>{t("item3")}</Link>
+                     <Link href={"/settings"}>{t("item4")}</Link>
                   </DropdownMenuItem>
 
                   <DropdownMenuSeparator />
@@ -106,7 +142,7 @@ export function AccountMenu() {
                         await signOut(() => router.push("/"))
                      }}
                   >
-                     {t("item4")}
+                     {t("item5")}
                   </DropdownMenuItem>
                </DropdownMenuContent>
             )}

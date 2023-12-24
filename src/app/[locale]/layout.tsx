@@ -13,6 +13,7 @@ import { cookies } from "next/headers"
 import { Toaster } from "sonner"
 import { enUS, ukUA } from "@clerk/localizations"
 import { NextIntlClientProvider } from "next-intl"
+import { ThemeProvider } from "@/components/theme-provider"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter-latin" })
 
@@ -43,11 +44,18 @@ export default async function RootLayout({
             inter.variable
          )}
       >
-         <body className={`grainy-bg flex flex-col`}>
+         <body className={`grainy-bg flex flex-col bg-background`}>
             <TRPCReactProvider cookies={cookies().toString()}>
                <ClerkProvider localization={locale === "uk" ? ukUA : enUS}>
                   <NextIntlClientProvider messages={pick(messages, ["common"])}>
-                     {children}
+                     <ThemeProvider
+                        attribute="class"
+                        defaultTheme="system"
+                        enableSystem
+                        disableTransitionOnChange
+                     >
+                        {children}
+                     </ThemeProvider>
                   </NextIntlClientProvider>
                   <Toaster
                      richColors

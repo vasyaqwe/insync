@@ -36,8 +36,8 @@ export function BoardHeader() {
    )
 
    return (
-      <header className="grid h-[var(--header-height)] grid-cols-full-width-split-screen items-center bg-background/50 py-2 shadow-sm backdrop-blur-md">
-         <div className="col-start-2 col-end-4 flex items-center justify-between">
+      <header className="grid h-[var(--header-height)] grid-cols-full-width-split-screen items-center bg-background/50 py-2 shadow-sm shadow-border backdrop-blur-md">
+         <div className="col-start-2 col-end-4 flex items-center justify-between px-[var(--container-padding-inline)]">
             {isClient ? (
                <div className="flex items-center gap-2">
                   <Link href={`/dashboard/${lastVisitedOrganizationId}`}>
@@ -71,7 +71,12 @@ export function BoardHeader() {
                      <span className="sr-only">Switch organization</span>
                   </Button>
                </div>
-            ) : null}
+            ) : (
+               <Image
+                  src={logoNoText}
+                  alt="insync."
+               />
+            )}
 
             <AccountMenu />
          </div>

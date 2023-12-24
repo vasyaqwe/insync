@@ -45,7 +45,7 @@ export default async function Page({ params: { boardId } }: Params) {
 
    return (
       <div className="grid h-full grid-cols-full-width-split-screen py-10 lg:py-12">
-         <div className=" col-start-2 col-end-5">
+         <div className="col-start-2 col-end-5 px-[var(--container-padding-inline)]">
             <h1 className="text-3xl font-medium">
                <LayoutIcon
                   className="mr-2 inline"
@@ -95,6 +95,20 @@ function ListsSkeleton() {
             <Skeleton className="h-[46px] w-full rounded-lg" />
             <Skeleton className="h-[46px] w-full rounded-lg" />
             <Skeleton className="h-[46px] w-full rounded-lg" />
+            <Skeleton className="h-[150px] w-full rounded-lg" />
+         </Skeleton>
+         <Skeleton className="w-[18rem] space-y-2 border bg-card p-3">
+            <div className="flex items-center justify-between">
+               <Skeleton className="h-5 w-36 rounded-lg" />
+               <Skeleton className="h-9 w-9 rounded-lg" />
+            </div>
+            <Skeleton className="h-[46px] w-full rounded-lg" />
+            <Skeleton className="h-[150px] w-full rounded-lg" />
+            <Skeleton className="h-[46px] w-full rounded-lg" />
+            <Skeleton className="h-[46px] w-full rounded-lg" />
+            <Skeleton className="h-[46px] w-full rounded-lg" />
+            <Skeleton className="h-[46px] w-full rounded-lg" />
+            <Skeleton className="h-[150px] w-full rounded-lg" />
             <Skeleton className="h-[46px] w-full rounded-lg" />
          </Skeleton>
          <Skeleton className="w-[18rem] space-y-2 border bg-card p-3">
@@ -104,23 +118,7 @@ function ListsSkeleton() {
             </div>
             <Skeleton className="h-[46px] w-full rounded-lg" />
             <Skeleton className="h-[46px] w-full rounded-lg" />
-            <Skeleton className="h-[46px] w-full rounded-lg" />
-            <Skeleton className="h-[46px] w-full rounded-lg" />
-            <Skeleton className="h-[46px] w-full rounded-lg" />
-            <Skeleton className="h-[46px] w-full rounded-lg" />
-            <Skeleton className="h-[46px] w-full rounded-lg" />
-            <Skeleton className="h-[46px] w-full rounded-lg" />
-            <Skeleton className="h-[46px] w-full rounded-lg" />
-            <Skeleton className="h-[46px] w-full rounded-lg" />
-         </Skeleton>
-         <Skeleton className="w-[18rem] space-y-2 border bg-card p-3">
-            <div className="flex items-center justify-between">
-               <Skeleton className="h-5 w-36 rounded-lg" />
-               <Skeleton className="h-9 w-9 rounded-lg" />
-            </div>
-            <Skeleton className="h-[46px] w-full rounded-lg" />
-            <Skeleton className="h-[46px] w-full rounded-lg" />
-            <Skeleton className="h-[46px] w-full rounded-lg" />
+            <Skeleton className="h-[150px] w-full rounded-lg" />
             <Skeleton className="h-[46px] w-full rounded-lg" />
             <Skeleton className="h-[46px] w-full rounded-lg" />
             <Skeleton className="h-[46px] w-full rounded-lg" />

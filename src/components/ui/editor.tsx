@@ -38,6 +38,7 @@ import {
 import { FileButton } from "@/components/ui/file-button"
 import { useUploadThing } from "@/lib/uploadthing"
 import { toast } from "sonner"
+import { useTheme } from "next-themes"
 
 type EditorProps<T extends boolean> = {
    value: string
@@ -70,6 +71,7 @@ export const Editor = <T extends boolean>({
    ...props
 }: EditorProps<T>) => {
    const t = useTranslations("editor")
+   const { theme } = useTheme()
    const [isAnyTooltipVisible, setIsAnyTooltipVisible] = useState(false)
    const [isMounted, setIsMounted] = useState(false)
 
@@ -91,7 +93,8 @@ export const Editor = <T extends boolean>({
          attributes: {
             id: "editor",
             class: cn(
-               "w-full prose rounded-lg px-3 py-2 focus:outline-none",
+               "w-full rounded-lg px-3 py-2 focus:outline-none",
+               theme === "light" ? "prose" : "prose-dark",
                className
             ),
          },
@@ -201,7 +204,7 @@ export const Editor = <T extends boolean>({
    return (
       <div
          className="w-[98%] rounded-lg border border-input bg-background
-      ring-ring ring-offset-2 ring-offset-white focus-within:outline-none focus-within:ring-2"
+      ring-ring ring-offset-2 ring-offset-background focus-within:outline-none focus-within:ring-2"
          {...props}
       >
          <div className="scroll-x flex overflow-x-auto border-b-2 border-dotted border-input p-1 pb-1.5">

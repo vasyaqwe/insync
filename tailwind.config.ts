@@ -29,9 +29,9 @@ module.exports = {
          },
          boxShadow: {
             "inner-primary": "inset 0 2px 2px 0 rgb(0, 0, 0, 10%)",
-            "inner-secondary": "inset 0 2px 1px 0 rgb(216, 224, 235, 60%)",
+            "inner-secondary": "inset 0 1px 1px 0 hsl(var(--border))",
             "button-primary": "0 2px 1px 1px rgb(0, 0, 0, 15%)",
-            "button-secondary": "0 2px 1px 0px rgb(216, 224, 235, 75%)",
+            "button-secondary": "0 1px 1px 0px hsl(var(--border))",
          },
          fontSize: {
             sm: "0.925rem",
