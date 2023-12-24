@@ -27,6 +27,12 @@ module.exports = {
             "full-width-split-screen":
                "minmax(var(--container-padding-inline), 1fr) minmax(0, calc(var(--container-width) / 2)) minmax(0, calc(var(--container-width) / 2)) minmax(var(--container-padding-inline), 1fr)",
          },
+         boxShadow: {
+            "inner-primary": "inset 0 2px 2px 0 rgb(0, 0, 0, 10%)",
+            "inner-secondary": "inset 0 2px 1px 0 rgb(216, 224, 235, 60%)",
+            "button-primary": "0 2px 1px 1px rgb(0, 0, 0, 15%)",
+            "button-secondary": "0 2px 1px 0px rgb(216, 224, 235, 75%)",
+         },
          fontSize: {
             sm: "0.925rem",
          },

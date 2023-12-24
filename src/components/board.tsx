@@ -2,7 +2,6 @@
 
 import { DateDisplay } from "@/components/date"
 import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
 import { Link, useRouter } from "@/navigation"
 import { type Board } from "@prisma/client"
 import {
@@ -71,19 +70,20 @@ export function Board({ board }: BoardProps) {
    })
 
    return (
-      <Card
-         className="h-[120px] p-0 transition hover:opacity-80"
+      <Button
+         className="group block h-[120px] p-0 active:py-0"
+         variant={"outline"}
          asChild
       >
          <Link href={`/dashboard/board/${board.id}`}>
-            <div className="p-4">
+            <div className="p-4 group-active:pb-[15px] group-active:pt-[17px]">
                <h3 className="truncate text-xl font-medium">{board.name}</h3>
             </div>
             <div
                onClick={(e) => {
                   e.stopPropagation()
                }}
-               className="flex items-center justify-between border-t-2 border-dotted px-4 py-2"
+               className="flex items-center justify-between border-t-2 border-dotted px-4 py-2 group-active:pb-[7px] group-active:pt-[9px]"
             >
                <p className="text-sm text-foreground/75">
                   <CalendarPlus
@@ -104,6 +104,7 @@ export function Board({ board }: BoardProps) {
                         }}
                         variant={"ghost"}
                         size={"icon"}
+                        className="hover:bg-primary/10"
                      >
                         <MoreHorizontal className="pointer-events-none" />
                         <span className="sr-only">Show more options</span>
@@ -111,6 +112,7 @@ export function Board({ board }: BoardProps) {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                      <DropdownMenuItem
+                        disabled={isLoading}
                         onSelect={() => {
                            setDialogOpen(true)
                         }}
@@ -198,6 +200,6 @@ export function Board({ board }: BoardProps) {
                </Dialog>
             </div>
          </Link>
-      </Card>
+      </Button>
    )
 }

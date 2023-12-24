@@ -4,6 +4,9 @@ import {
    updateBoardSchema,
 } from "@/lib/validations/board"
 import { createTRPCRouter, privateProcedure } from "@/server/api/trpc"
+import { UTApi } from "uploadthing/server"
+
+const utapi = new UTApi()
 
 export const boardRouter = createTRPCRouter({
    create: privateProcedure
@@ -39,7 +42,27 @@ export const boardRouter = createTRPCRouter({
             where: {
                id: boardId,
             },
+            select: {
+               name: true,
+               lists: {
+                  select: {
+                     cards: true,
+                  },
+               },
+            },
          })
+
+         const deletedCards = deletedBoard.lists.flatMap((list) => list.cards)
+
+         const deletedImages = deletedCards.flatMap((card) => card.images)
+
+         const deletedImageIds = deletedImages.map(
+            (img) => img?.split("/f/")[1] ?? ""
+         )
+
+         if (deletedImageIds.length > 0) {
+            await utapi.deleteFiles(deletedImageIds)
+         }
 
          return deletedBoard.name
       }),

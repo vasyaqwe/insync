@@ -23,7 +23,7 @@ body {
         --popover-foreground: 222.2 84% 4.9%;
         --primary: 221.2 83.2% 53.3%;
         --primary-foreground: 210 40% 98%;
-        --secondary: 222 83% 92%;
+        --secondary: 222 83% 95%;
         --secondary-foreground: 222.2 47.4% 22.2%;
         --muted: 220 20% 90%;
         --muted-foreground: 220 20% 50%;
@@ -40,6 +40,7 @@ body {
     @media (min-width: 450px) {
         :root {
             --container-padding-inline: 2rem;
+
         }
     }
 

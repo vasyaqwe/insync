@@ -98,7 +98,7 @@ const DialogHeader = ({
    ...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
    <div
-      className={cn("", className)}
+      className={cn("-mt-1", className)}
       {...props}
    />
 )
@@ -125,7 +125,7 @@ const DialogTitle = React.forwardRef<
    <DialogPrimitive.Title
       ref={ref}
       className={cn(
-         "leading-2 -mt-1 text-2xl font-semibold tracking-tight",
+         "leading-2 text-2xl font-semibold tracking-tight",
          className
       )}
       {...props}

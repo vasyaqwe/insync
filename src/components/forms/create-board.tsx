@@ -55,7 +55,7 @@ export function CreateBoard({
          <PopoverTrigger asChild>
             <Button
                ref={triggerRef}
-               className={cn("h-[120px] flex-col text-xl shadow-sm", className)}
+               className={cn("h-[120px] flex-col text-xl", className)}
                variant="secondary"
                {...props}
             >

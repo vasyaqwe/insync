@@ -160,7 +160,7 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                                  variant={"ghost"}
                                  size={"icon"}
                                  className={cn(
-                                    "ml-auto h-7 w-7 self-start hover:bg-secondary/75 group-hover:visible",
+                                    "ml-auto h-7 w-7 flex-shrink-0 self-start hover:bg-primary/10 group-hover:visible",
                                     !menuOpen ? "invisible" : ""
                                  )}
                               >

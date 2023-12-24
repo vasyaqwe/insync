@@ -23,7 +23,6 @@ import {
    Strikethrough,
    Undo,
 } from "lucide-react"
-import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { Hint } from "@/components/hint"
 import {
@@ -52,6 +51,13 @@ type EditorProps<T extends boolean> = {
         shouldSetImages?: false
         setImages?: Dispatch<SetStateAction<string[]>>
      })
+
+type Node = {
+   attrs: Record<string, string>
+   type: {
+      name: string
+   }
+}
 
 export const Editor = <T extends boolean>({
    value,
@@ -90,7 +96,7 @@ export const Editor = <T extends boolean>({
       onUpdate({ editor: _editor }) {
          const editor = _editor as CoreEditor
          onChange(editor.getHTML() === "<p></p>" ? "" : editor.getHTML())
-         checkForNodeDeletions({ editor })
+         onImageNodesAddDelete({ editor })
       },
    })
    // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -98,43 +104,42 @@ export const Editor = <T extends boolean>({
 
    useEffect(() => {
       if (!isMounted && editor && shouldSetImages) {
-         checkForNodeDeletions({ editor })
+         onImageNodesAddDelete({ editor })
          setIsMounted(true)
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
    }, [editor, isMounted])
 
-   const checkForNodeDeletions = ({ editor }: { editor: CoreEditor }) => {
+   const onImageNodesAddDelete = ({ editor }: { editor: CoreEditor }) => {
       if (!shouldSetImages) return
-      // Compare previous/current nodes to detect deleted ones
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const prevNodesById: Record<string, any> = {}
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      previousState.current?.doc.forEach((node: any) => {
+      // Compare previous/current nodes to detect deleted ones
+      const prevNodesById: Record<string, Node> = {}
+      previousState.current?.doc.forEach((node: Node) => {
          if (node.attrs.src) {
-            //only images
             prevNodesById[node.attrs.src] = node
          }
       })
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const nodesById: Record<string, any> = {}
+      const nodesById: Record<string, Node> = {}
       editor.state.doc.forEach((node) => {
          if (node.attrs.src) {
-            //only images
             nodesById[node.attrs.src] = node
          }
       })
 
       previousState.current = editor.state
+
       for (const [id, node] of Object.entries(prevNodesById)) {
-         const image = node.attrs.src
+         const imageSrc = node.attrs.src ?? ""
+         //return if no src
+         if (imageSrc?.length < 1) return
+
          if (nodesById[id] === undefined && node.type.name === "image") {
-            setImages?.((prev) => prev.filter((src) => src !== image))
+            setImages?.((prev) => prev.filter((src) => src !== imageSrc))
          } else {
             setImages?.((prev) =>
-               prev.includes(image) ? prev : [...prev, image]
+               prev.includes(imageSrc) ? prev : [...prev, imageSrc]
             )
          }
       }
@@ -345,9 +350,9 @@ export const Editor = <T extends boolean>({
                onMouseLeave={() => setIsAnyTooltipVisible(false)}
                className="px-0.5"
                delayDuration={isAnyTooltipVisible ? 0 : 300}
-               content={t("8")}
+               content={t("9")}
             >
-               <Button
+               <button
                   onMouseOver={() => setIsAnyTooltipVisible(true)}
                   onMouseLeave={() => setIsAnyTooltipVisible(false)}
                   className={cn(
@@ -358,16 +363,16 @@ export const Editor = <T extends boolean>({
                   onClick={() => editor.chain().focus().undo().run()}
                >
                   <Undo size={20} />
-               </Button>
+               </button>
             </Hint>
             <Hint
                onMouseOver={() => setIsAnyTooltipVisible(true)}
                onMouseLeave={() => setIsAnyTooltipVisible(false)}
                className="px-0.5"
                delayDuration={isAnyTooltipVisible ? 0 : 300}
-               content={t("9")}
+               content={t("10")}
             >
-               <Button
+               <button
                   onMouseOver={() => setIsAnyTooltipVisible(true)}
                   onMouseLeave={() => setIsAnyTooltipVisible(false)}
                   className={cn(
@@ -378,7 +383,7 @@ export const Editor = <T extends boolean>({
                   onClick={() => editor.chain().focus().redo().run()}
                >
                   <Redo size={20} />
-               </Button>
+               </button>
             </Hint>
          </div>
          <EditorContent
