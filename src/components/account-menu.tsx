@@ -24,8 +24,10 @@ import { CreateOrganizationDialog } from "@/components/dialogs/create-organizati
 import { ChevronsUpDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useTheme } from "next-themes"
+import { type ComponentProps } from "react"
+import { cn } from "@/lib/utils"
 
-export function AccountMenu() {
+export function AccountMenu({ className, ...props }: ComponentProps<"div">) {
    const { lastVisitedOrganizationId } = useOrganizationHelpers()
    const { signOut } = useClerk()
    const { setTheme, theme } = useTheme()
@@ -43,7 +45,10 @@ export function AccountMenu() {
          <CreateOrganizationDialog />
          <DropdownMenu>
             {isLoaded && user ? (
-               <div className="flex items-center gap-2">
+               <div
+                  className={cn("flex items-center gap-2", className)}
+                  {...props}
+               >
                   <p className="flex items-center gap-2 font-medium text-foreground/75">
                      <UserAvatar
                         className="[--avatar-size:29px]"

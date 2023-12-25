@@ -1,7 +1,6 @@
 "use client"
 
 import { Hint } from "@/components/hint"
-import logo from "@public/logo.svg"
 import {
    Accordion,
    AccordionContent,
@@ -27,16 +26,14 @@ import { useTranslations } from "next-intl"
 import { useShallow } from "zustand/react/shallow"
 import { Sheet, SheetContent } from "@/components/ui/sheet"
 import { useEffect, type ComponentProps } from "react"
-import Image from "next/image"
 import { useIsClient } from "@/hooks/use-is-client"
 import { useOrganizationHelpers } from "@/hooks/use-organization-helpers"
+import { Icons } from "@/components/ui/icons"
 
 export function Sidebar({
    organizations,
    className,
 }: { organizations: Organization[] } & CardProps) {
-   const t = useTranslations("sidebar")
-
    const { openDialog, dialogs, closeDialog } = useGlobalStore(
       useShallow((state) => ({
          openDialog: state.openDialog,
@@ -45,18 +42,7 @@ export function Sidebar({
       }))
    )
 
-   return organizations.length < 1 ? (
-      <Card className={cn("mx-auto pb-6 text-center text-lg", className)}>
-         <p>{t("empty")}</p>
-         <Button
-            size={"lg"}
-            onClick={() => openDialog("createOrganization")}
-            className="mt-6"
-         >
-            {t("empty-button")}
-         </Button>
-      </Card>
-   ) : (
+   return (
       <>
          <Card asChild>
             <Aside
@@ -104,16 +90,14 @@ function Aside({
       Record<string, boolean>
    >("expanded-organizations", {})
 
-   const { lastVisitedOrganizationId: ls_lastVisitedOrganizationId } =
+   const { lastVisitedOrganizationId, setLastVisitedOrganizationId } =
       useOrganizationHelpers()
-   const [lastVisitedOrganizationId, setLastVisitedOrganizationId] =
-      useLocalStorage("organization", organizations[0]?.id ?? "")
 
    useEffect(() => {
       if (
          !organizations.some((org) => org.id === lastVisitedOrganizationId) ||
-         !ls_lastVisitedOrganizationId ||
-         ls_lastVisitedOrganizationId === ""
+         !lastVisitedOrganizationId ||
+         lastVisitedOrganizationId === ""
       ) {
          setLastVisitedOrganizationId(organizations?.[0]?.id ?? "")
       }
@@ -141,18 +125,19 @@ function Aside({
 
    return (
       <aside {...props}>
-         <Link
-            onClick={() => closeDialog("mobileSidebar")}
-            className="lg:hidden"
-            href={`/dashboard/${lastVisitedOrganizationId}`}
-         >
-            <Image
-               className="mb-5 max-w-[130px]"
-               src={logo}
-               alt="insync."
-            />
-         </Link>
-         <div className="flex items-center justify-between border-b-2 border-dotted py-2 pb-2 lg:pb-[1.05rem]">
+         {isClient ? (
+            <Link
+               onClick={() => closeDialog("mobileSidebar")}
+               className="lg:hidden"
+               href={`/dashboard/${lastVisitedOrganizationId}`}
+            >
+               <Icons.logo
+                  width={130}
+                  height={35}
+               />
+            </Link>
+         ) : null}
+         <div className="flex items-center justify-between border-b-2 border-dotted py-2 pb-2 max-lg:mt-5 lg:pb-[1.05rem]">
             <p className="text-xl font-medium">{t("title")}</p>
             <Hint content={t("empty-button")}>
                <Button

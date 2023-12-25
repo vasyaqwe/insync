@@ -18,9 +18,7 @@ export default async function RootLayout({
    children: ReactNode
    params: { organizationId: string }
 }) {
-   const messages = (await getMessages()) as Messages
    const user = await currentUser()
-   const tCommon = await getTranslations("common")
 
    const organizations = await db.organization.findMany({
       where: {
@@ -48,6 +46,9 @@ export default async function RootLayout({
    if (!organization || !organization.members.some((m) => m.id === user?.id))
       notFound()
 
+   const tCommon = await getTranslations("common")
+   const messages = (await getMessages()) as Messages
+
    return (
       <>
          <NextIntlClientProvider
@@ -58,7 +59,7 @@ export default async function RootLayout({
                "common",
             ])}
          >
-            <OrganizationHeader />
+            <OrganizationHeader organizationsCount={organizations.length} />
          </NextIntlClientProvider>
          <main
             className={cn(
@@ -68,15 +69,17 @@ export default async function RootLayout({
                   : ""
             )}
          >
-            <NextIntlClientProvider
-               messages={pick(messages, [
-                  "sidebar",
-                  "invite-command",
-                  "common",
-               ])}
-            >
-               <Sidebar organizations={organizations} />
-            </NextIntlClientProvider>
+            {organizations.length > 0 && (
+               <NextIntlClientProvider
+                  messages={pick(messages, [
+                     "sidebar",
+                     "invite-command",
+                     "common",
+                  ])}
+               >
+                  <Sidebar organizations={organizations} />
+               </NextIntlClientProvider>
+            )}
             <div>
                <NextIntlClientProvider
                   messages={pick(messages, ["members", "invite-command"])}
