@@ -8,8 +8,8 @@ import { api } from "@/trpc/react"
 import { SignIn, SignUp, SignedIn, SignedOut } from "@clerk/nextjs"
 import { useTranslations } from "next-intl"
 import { toast } from "sonner"
-import { clerkAppearence } from "@/config"
 import { useSearchParams } from "next/navigation"
+import { ClerkWrapper } from "@/components/clerk-wrapper"
 
 function InvitationActions({
    invitationId,
@@ -37,23 +37,19 @@ function InvitationActions({
    return (
       <>
          <SignedOut>
-            {mode === "sign-up" ? (
-               <SignUp
-                  signInUrl={`/${locale}/invite/${token}?mode=sign-in`}
-                  redirectUrl={`/${locale}/invite/${token}`}
-                  appearance={{
-                     ...clerkAppearence,
-                  }}
-               />
-            ) : (
-               <SignIn
-                  signUpUrl={`/${locale}/invite/${token}?mode=sign-up`}
-                  redirectUrl={`/${locale}/invite/${token}`}
-                  appearance={{
-                     ...clerkAppearence,
-                  }}
-               />
-            )}
+            <ClerkWrapper>
+               {mode === "sign-up" ? (
+                  <SignUp
+                     signInUrl={`/${locale}/invite/${token}?mode=sign-in`}
+                     redirectUrl={`/${locale}/invite/${token}`}
+                  />
+               ) : (
+                  <SignIn
+                     signUpUrl={`/${locale}/invite/${token}?mode=sign-up`}
+                     redirectUrl={`/${locale}/invite/${token}`}
+                  />
+               )}
+            </ClerkWrapper>
          </SignedOut>
          <SignedIn>
             <Button

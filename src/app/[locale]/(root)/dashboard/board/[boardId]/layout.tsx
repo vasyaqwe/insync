@@ -5,11 +5,12 @@ import { getMessages } from "next-intl/server"
 import { db } from "@/server/db"
 import { currentUser } from "@clerk/nextjs"
 import { BoardHeader } from "@/components/layout/board-header"
+import { type ReactNode } from "react"
 
 export default async function RootLayout({
    children,
 }: {
-   children: React.ReactNode
+   children: ReactNode
 }) {
    const messages = (await getMessages()) as Messages
    const user = await currentUser()

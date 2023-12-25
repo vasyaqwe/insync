@@ -32,10 +32,9 @@ import {
    DialogTitle,
 } from "@/components/ui/dialog"
 import { ErrorMessage, Input } from "@/components/ui/input"
-import { Editor } from "@/components/ui/editor"
+import { Editor, EditorOutput } from "@/components/ui/editor"
 import { flushSync } from "react-dom"
 import Image from "next/image"
-import { useTheme } from "next-themes"
 
 type CardProps = {
    card: Card
@@ -47,7 +46,6 @@ type CardProps = {
 export function Card({ card, index, list, isDragLoading }: CardProps) {
    const t = useTranslations("cards")
    const tCommon = useTranslations("common")
-   const { theme } = useTheme()
    const router = useRouter()
    const [isEditing, setIsEditing] = useState(false)
 
@@ -135,7 +133,7 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                         setDetailsDialogOpen(true)
                      }}
                      className={cn(
-                        "group mt-2 w-full !cursor-pointer rounded-lg bg-border/40 text-start backdrop-blur-sm transition-opacity hover:opacity-80",
+                        "group mt-2 w-full !cursor-pointer rounded-lg bg-border/30 text-start backdrop-blur-sm transition-opacity hover:opacity-80",
                         !hasImages ? "border" : ""
                      )}
                      ref={provided.innerRef}
@@ -186,6 +184,7 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                            </DropdownMenuTrigger>
                            <DropdownMenuContent align="end">
                               <DropdownMenuItem
+                                 disabled={isLoading}
                                  onClick={(e) => {
                                     e.stopPropagation()
                                  }}
@@ -295,16 +294,7 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                                     </div>
                                  </>
                               ) : card.description ? (
-                                 <div
-                                    className={
-                                       theme === "light"
-                                          ? "prose"
-                                          : "prose-dark"
-                                    }
-                                    dangerouslySetInnerHTML={{
-                                       __html: card.description,
-                                    }}
-                                 />
+                                 <EditorOutput html={card.description} />
                               ) : (
                                  <Button
                                     onClick={onStartEditing}

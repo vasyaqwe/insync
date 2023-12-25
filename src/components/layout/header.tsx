@@ -17,7 +17,7 @@ export function Header() {
    const { isClient } = useIsClient()
 
    return (
-      <header className="flex h-[var(--header-height)] items-center bg-background/50 py-2 shadow-sm shadow-border backdrop-blur-md">
+      <header className="flex min-h-[var(--header-height)] items-center bg-background/50 py-2 shadow-sm shadow-border backdrop-blur-md">
          <div className="container flex items-center justify-between">
             <div className="flex items-center gap-3">
                <Link href={"/"}>

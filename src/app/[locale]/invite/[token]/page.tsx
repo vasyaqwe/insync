@@ -1,5 +1,6 @@
 import { BackToDashboardLink } from "@/components/actions/back-to-dashboard-link"
 import { InvitationActions } from "@/components/forms/invitation-actions"
+import { Icons } from "@/components/ui/icons"
 import { UserAvatar } from "@/components/ui/user-avatar"
 import { pick } from "@/lib/utils"
 import { Link } from "@/navigation"
@@ -35,12 +36,14 @@ export default async function Page({
          user)
    ) {
       return (
-         <div className="px-6 py-10 text-center">
-            <Link href={"/"}>
-               <Image
-                  src={logo}
-                  alt="insync."
-                  className="mx-auto "
+         <div className="flex flex-col items-center justify-center px-6 py-10 text-center">
+            <Link
+               href={"/"}
+               className="mx-auto w-fit"
+            >
+               <Icons.logo
+                  width={200}
+                  height={40}
                />
             </Link>
             <XCircle
@@ -52,7 +55,7 @@ export default async function Page({
             </h1>
             <div className="mx-auto max-w-[65ch]">
                <p className="mt-10 text-lg">{t("error-1")}</p>
-               <p className="mt-10 text-foreground/75">{t("error-2")}</p>
+               <p className="mt-10 text-muted-foreground">{t("error-2")}</p>
             </div>
             <BackToDashboardLink
                className="mt-8"
@@ -86,7 +89,7 @@ export default async function Page({
          ></h1>
          <p
             dangerouslySetInnerHTML={{ __html: t.raw("description") }}
-            className="mt-5 text-foreground/75 md:mt-8"
+            className="mt-5 text-muted-foreground md:mt-8"
          ></p>
 
          <div className="mt-5 flex flex-col items-center justify-center gap-2 md:mt-8">

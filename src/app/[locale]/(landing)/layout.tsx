@@ -1,25 +1,20 @@
-import "@/styles/globals.css"
-
 import { Header } from "@/components/layout/header"
 import { getMessages, unstable_setRequestLocale } from "next-intl/server"
-import { locales } from "@/navigation"
+import { type Locale } from "@/navigation"
 import { metadataConfig } from "@/config"
 import { NextIntlClientProvider } from "next-intl"
 import { pick } from "@/lib/utils"
 import { Footer } from "@/components/layout/footer"
+import { type ReactNode } from "react"
 
 export const metadata = metadataConfig
-
-export function generateStaticParams() {
-   return locales.map((locale) => ({ locale }))
-}
 
 export default async function RootLayout({
    children,
    params: { locale },
 }: {
-   children: React.ReactNode
-   params: { locale: (typeof locales)[number] }
+   children: ReactNode
+   params: { locale: Locale }
 }) {
    // Enable static rendering
    unstable_setRequestLocale(locale)

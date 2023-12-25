@@ -39,6 +39,7 @@ import { FileButton } from "@/components/ui/file-button"
 import { useUploadThing } from "@/lib/uploadthing"
 import { toast } from "sonner"
 import { useTheme } from "next-themes"
+import { useIsClient } from "@/hooks/use-is-client"
 
 type EditorProps<T extends boolean> = {
    value: string
@@ -71,9 +72,12 @@ export const Editor = <T extends boolean>({
    ...props
 }: EditorProps<T>) => {
    const t = useTranslations("editor")
-   const { theme } = useTheme()
+   const { resolvedTheme: _resolvedTheme } = useTheme()
+   const { isClient } = useIsClient()
    const [isAnyTooltipVisible, setIsAnyTooltipVisible] = useState(false)
    const [isMounted, setIsMounted] = useState(false)
+
+   const resolvedTheme = isClient ? _resolvedTheme : "dark"
 
    const editor = useEditor({
       extensions: [
@@ -94,7 +98,7 @@ export const Editor = <T extends boolean>({
             id: "editor",
             class: cn(
                "w-full rounded-lg px-3 py-2 focus:outline-none",
-               theme === "light" ? "prose" : "prose-dark",
+               resolvedTheme === "light" ? "prose" : "prose-dark",
                className
             ),
          },
@@ -409,5 +413,21 @@ export const Editor = <T extends boolean>({
             editor={editor}
          />
       </div>
+   )
+}
+
+export function EditorOutput({ html }: { html: string }) {
+   const { resolvedTheme } = useTheme()
+   const { isClient } = useIsClient()
+
+   if (!isClient) return null
+
+   return (
+      <div
+         className={resolvedTheme === "light" ? "prose" : "prose-dark"}
+         dangerouslySetInnerHTML={{
+            __html: html,
+         }}
+      />
    )
 }

@@ -30,17 +30,17 @@ export default async function Home({
                bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
             />
          </div>
-         <section className="container flex flex-col items-center justify-center space-y-5 py-16 md:py-32">
+         <section className="container flex flex-col items-center justify-center py-16 md:py-32">
             <h1
                dangerouslySetInnerHTML={{ __html: t.raw("hero.title") }}
                className="text-balance text-center text-4xl font-bold leading-tight lg:text-6xl"
             ></h1>
             <p
                dangerouslySetInnerHTML={{ __html: t.raw("hero.description") }}
-               className="mx-auto max-w-[55ch] text-center text-foreground/75"
+               className="mx-auto mt-5 max-w-[55ch] text-center text-sm text-foreground/70 sm:text-base"
             ></p>
             <Button
-               className="text-center"
+               className="mt-9 text-center"
                asChild
             >
                <Link href={user ? "/dashboard" : "/sign-up"}>

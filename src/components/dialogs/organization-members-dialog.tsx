@@ -38,7 +38,10 @@ type MembersProps = {
    }
 }
 
-export function OrganizationMembersDialog({ members, organization }: MembersProps) {
+export function OrganizationMembersDialog({
+   members,
+   organization,
+}: MembersProps) {
    const t = useTranslations("members")
    const [open, setOpen] = useState(false)
    const { user: currentUser } = useUser()
@@ -140,7 +143,7 @@ export function OrganizationMembersDialog({ members, organization }: MembersProp
                      placeholder={t("search")}
                   />
                   <CommandList>
-                     <CommandEmpty className="p-2 text-start text-foreground/75">
+                     <CommandEmpty className="p-2 text-start text-muted-foreground">
                         {t("empty")}
                      </CommandEmpty>
                      <CommandGroup>
@@ -175,7 +178,7 @@ export function OrganizationMembersDialog({ members, organization }: MembersProp
                                           : ""}
                                     </span>
                                  </p>
-                                 <p className="line-clamp-1 flex w-full items-center break-all text-foreground/75">
+                                 <p className="line-clamp-1 flex w-full items-center break-all text-muted-foreground">
                                     {user.email}
                                  </p>
                               </div>
@@ -212,7 +215,7 @@ export function OrganizationMembersDialog({ members, organization }: MembersProp
             {tab === "members" && organization.ownerId === currentUser?.id ? (
                <div className="mt-5 flex items-center justify-between gap-3">
                   {membersToRemove.length < 1 ? (
-                     <p className="text-sm text-foreground/75">
+                     <p className="text-sm text-muted-foreground">
                         {t("members-to-remove-empty")}
                      </p>
                   ) : (
@@ -245,7 +248,7 @@ export function OrganizationMembersDialog({ members, organization }: MembersProp
             ) : tab === "invite" ? (
                <div className="mt-5 flex items-center justify-between gap-3">
                   {usersToInvite.length < 1 ? (
-                     <p className="text-sm text-foreground/75">
+                     <p className="text-sm text-muted-foreground">
                         {t("members-to-invite-empty")}
                      </p>
                   ) : (

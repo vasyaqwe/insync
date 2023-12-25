@@ -69,7 +69,7 @@ export function AccountMenu() {
                   </DropdownMenuTrigger>
                </div>
             ) : (
-               <div className="flex items-center gap-2 font-medium">
+               <div className="ml-auto flex items-center gap-2 font-medium">
                   <Skeleton className="h-[var(--color-avatar-size)] w-[var(--color-avatar-size)] rounded-full" />
                   <Skeleton className="h-3 w-20 max-sm:hidden" />
                   <Skeleton className="mx-2 h-4 w-4" />

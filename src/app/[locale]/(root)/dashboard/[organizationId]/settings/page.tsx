@@ -41,7 +41,7 @@ export default async function Page({
             <Card className="mt-5 flex flex-col gap-4 lg:flex-row lg:justify-between lg:p-6">
                <div>
                   <p className="text-xl font-semibold">{t("delete-title")}</p>
-                  <p className="mt-2 text-sm text-foreground/75">
+                  <p className="mt-2 text-sm text-muted-foreground">
                      {t("delete-subtitle")}
                   </p>
                   <p className="mt-3 text-sm text-destructive">
@@ -63,7 +63,7 @@ export default async function Page({
             <Card className="mt-5 flex flex-col gap-4 lg:flex-row lg:justify-between lg:p-6">
                <div>
                   <p className="text-xl font-semibold">{t("leave-title")}</p>
-                  <p className="mt-2 text-sm text-foreground/75">
+                  <p className="mt-2 text-sm text-muted-foreground">
                      {t("leave-subtitle")}
                   </p>
                </div>

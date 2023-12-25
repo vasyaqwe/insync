@@ -6,9 +6,3 @@ export const metadataConfig = {
 }
 
 export const primaryColor = "#2664eb"
-
-export const clerkAppearence = {
-   variables: {
-      colorPrimary: primaryColor,
-   },
-}

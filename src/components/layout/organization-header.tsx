@@ -21,7 +21,7 @@ export function OrganizationHeader() {
    const { lastVisitedOrganizationId } = useOrganizationHelpers()
 
    return (
-      <header className="flex h-[var(--header-height)] items-center bg-background/50 py-2 shadow-sm shadow-border backdrop-blur-md">
+      <header className="flex min-h-[var(--header-height)] items-center bg-background/50 py-2 shadow-sm shadow-border backdrop-blur-md">
          <div className="container flex items-center justify-between">
             {isClient ? (
                <Link

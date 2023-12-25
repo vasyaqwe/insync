@@ -29,6 +29,7 @@ import { Sheet, SheetContent } from "@/components/ui/sheet"
 import { useEffect, type ComponentProps } from "react"
 import Image from "next/image"
 import { useIsClient } from "@/hooks/use-is-client"
+import { useOrganizationHelpers } from "@/hooks/use-organization-helpers"
 
 export function Sidebar({
    organizations,
@@ -103,14 +104,17 @@ function Aside({
       Record<string, boolean>
    >("expanded-organizations", {})
 
+   const { lastVisitedOrganizationId: ls_lastVisitedOrganizationId } =
+      useOrganizationHelpers()
    const [lastVisitedOrganizationId, setLastVisitedOrganizationId] =
-      useLocalStorage(
-         "last-visited-organization-id",
-         organizations[0]?.id ?? ""
-      )
+      useLocalStorage("organization", organizations[0]?.id ?? "")
 
    useEffect(() => {
-      if (!organizations.some((org) => org.id === lastVisitedOrganizationId)) {
+      if (
+         !organizations.some((org) => org.id === lastVisitedOrganizationId) ||
+         !ls_lastVisitedOrganizationId ||
+         ls_lastVisitedOrganizationId === ""
+      ) {
          setLastVisitedOrganizationId(organizations?.[0]?.id ?? "")
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps

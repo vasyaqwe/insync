@@ -87,7 +87,7 @@ export function Board({ board }: BoardProps) {
             >
                <p className="text-sm text-foreground/75">
                   <CalendarPlus
-                     className="mr-1 inline align-sub "
+                     className="mr-1 inline align-sub"
                      size={18}
                   />
                   {t("created")} <DateDisplay date={board.createdAt} />

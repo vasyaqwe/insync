@@ -9,12 +9,13 @@ import { OrganizationMembersDialog } from "@/components/dialogs/organization-mem
 import { ColorAvatar } from "@/components/ui/color-avatar"
 import { CreditCard } from "lucide-react"
 import { notFound } from "next/navigation"
+import { type ReactNode } from "react"
 
 export default async function RootLayout({
    children,
    params: { organizationId },
 }: {
-   children: React.ReactNode
+   children: ReactNode
    params: { organizationId: string }
 }) {
    const messages = (await getMessages()) as Messages

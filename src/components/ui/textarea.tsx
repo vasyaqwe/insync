@@ -14,8 +14,8 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
          <TextareaAutosize
             data-invalid={Boolean(invalid)}
             className={cn(
-               `w-full rounded-lg border border-input bg-white px-3 py-2 text-sm ring-ring 
-                    ring-offset-2 ring-offset-white placeholder:text-muted-foreground focus-visible:outline-none
+               `w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-ring 
+                    ring-offset-2 ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none
                      focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50 data-[invalid=true]:ring-2
                      data-[invalid=true]:ring-destructive
                      `,
