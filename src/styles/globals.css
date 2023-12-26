@@ -120,24 +120,24 @@ body {
     border-top: 1px solid hsl(var(--foreground)) !important;
 }
 
-.ProseMirror img {
+.prose img {
     border-radius: .75rem;
 }
 
-.ProseMirror h1 {
+.prose h1 {
     margin-bottom: .5em;
 }
 
-.ProseMirror h2 {
+.prose h2 {
     margin-top: .5em;
     margin-bottom: .5em;
 }
 
-.ProseMirror li p {
+.prose li p {
     margin-block: .25em;
 }
 
-.ProseMirror p:empty {
+.prose p:empty {
     display: none;
 }
 

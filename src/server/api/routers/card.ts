@@ -78,7 +78,7 @@ export const cardRouter = createTRPCRouter({
                   ...rest,
                },
             })
-            console.log(imagesToDeleteFromServer)
+
             if (card.images.length > 0) {
                const removedImages = card.images.filter(
                   (image) => !updatedCard.images.includes(image)
