@@ -54,34 +54,39 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
    const [menuOpen, setMenuOpen] = useState(false)
 
    const [images, setImages] = useState(card.images)
+   const [imagesToDeleteFromServer, setImagesToDeleteFromServer] = useState<
+      string[]
+   >([])
 
    const [formData, setFormData] = useState({
       name: card.name,
       cardId: card.id,
       description: card.description ?? "",
       images,
+      imagesToDeleteFromServer,
    })
 
    const { mutate: onDelete, isLoading } = api.card.delete.useMutation({
-      onSuccess: (deletedBoardName) => {
+      onSuccess: (deletedCardName) => {
          router.refresh()
-         toast.success(t.rich("delete-success", { name: deletedBoardName }))
+         toast.success(t.rich("delete-success", { name: deletedCardName }))
       },
       onError: () => {
          return toast.error(t("delete-error"))
       },
    })
-
+   console.log(imagesToDeleteFromServer)
    const { mutate: onUpdate, isLoading: isUpdateLoading } =
       api.card.update.useMutation({
-         onSuccess: (updatedBoardName) => {
+         onSuccess: (updatetCardName) => {
             startTransition(() => {
                router.refresh()
                setEditDialogOpen(false)
                setMenuOpen(false)
+               setImagesToDeleteFromServer([])
                setIsEditing(false)
                toast.success(
-                  t.rich("update-success", { name: updatedBoardName })
+                  t.rich("update-success", { name: updatetCardName })
                )
             })
          },
@@ -91,7 +96,8 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
       })
 
    const { safeOnSubmit, errors } = useFormValidation({
-      onSubmit: () => onUpdate({ ...formData, images }),
+      onSubmit: () =>
+         onUpdate({ ...formData, images, imagesToDeleteFromServer: [] }),
       formData,
       zodSchema: updateCardSchema,
    })
@@ -263,6 +269,9 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                                     <Editor
                                        shouldSetImages
                                        setImages={setImages}
+                                       setImagesToDeleteFromServer={
+                                          setImagesToDeleteFromServer
+                                       }
                                        className="min-h-[150px]"
                                        value={formData.description}
                                        onKeyDown={onEditorEscape}
@@ -278,7 +287,11 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                                           disabled={isUpdateLoading}
                                           size={"sm"}
                                           onClick={() => {
-                                             onUpdate({ ...formData, images })
+                                             onUpdate({
+                                                ...formData,
+                                                images,
+                                                imagesToDeleteFromServer,
+                                             })
                                           }}
                                        >
                                           {tCommon("save")}

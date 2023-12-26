@@ -38,6 +38,9 @@ export function CreateBoard({
          router.push(`/dashboard/board/${createdBoardId}`)
          router.refresh()
          toast.success(t("create-success"))
+
+         //close popover
+         document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }))
       },
       onError: () => {
          return toast.error(t("create-error"))

@@ -16,6 +16,9 @@ import {
 } from "@/server/api/trpc"
 import { TRPCError } from "@trpc/server"
 import crypto from "node:crypto"
+import { UTApi } from "uploadthing/server"
+
+const utapi = new UTApi()
 
 export const organizationRouter = createTRPCRouter({
    get: privateProcedure
@@ -156,11 +159,36 @@ export const organizationRouter = createTRPCRouter({
             })
          }
 
-         await ctx.db.organization.delete({
+         const deletedOrganization = await ctx.db.organization.delete({
             where: {
                id: organizationId,
             },
+            select: {
+               boards: {
+                  select: {
+                     lists: {
+                        select: {
+                           cards: true,
+                        },
+                     },
+                  },
+               },
+            },
          })
+
+         const deletedCards = deletedOrganization.boards.flatMap((board) =>
+            board.lists.flatMap((list) => list.cards)
+         )
+
+         const deletedImages = deletedCards.flatMap((card) => card.images)
+
+         const deletedImageIds = deletedImages.map(
+            (img) => img?.split("/f/")[1] ?? ""
+         )
+
+         if (deletedImageIds.length > 0) {
+            await utapi.deleteFiles(deletedImageIds)
+         }
 
          return "OK"
       }),

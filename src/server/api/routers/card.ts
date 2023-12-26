@@ -49,46 +49,58 @@ export const cardRouter = createTRPCRouter({
       }),
    update: privateProcedure
       .input(updateCardSchema)
-      .mutation(async ({ ctx, input: { cardId, ...rest } }) => {
-         const card = await ctx.db.card.findFirst({
-            where: {
-               id: cardId,
-            },
-            select: {
-               images: true,
-            },
-         })
-
-         if (!card) {
-            throw new TRPCError({
-               code: "BAD_REQUEST",
-               message: "Card not found",
+      .mutation(
+         async ({
+            ctx,
+            input: { cardId, imagesToDeleteFromServer, ...rest },
+         }) => {
+            const card = await ctx.db.card.findFirst({
+               where: {
+                  id: cardId,
+               },
+               select: {
+                  images: true,
+               },
             })
+
+            if (!card) {
+               throw new TRPCError({
+                  code: "BAD_REQUEST",
+                  message: "Card not found",
+               })
+            }
+
+            const updatedCard = await ctx.db.card.update({
+               where: {
+                  id: cardId,
+               },
+               data: {
+                  ...rest,
+               },
+            })
+            console.log(imagesToDeleteFromServer)
+            if (card.images.length > 0) {
+               const removedImages = card.images.filter(
+                  (image) => !updatedCard.images.includes(image)
+               )
+
+               const removedImageIds = removedImages.map(
+                  (img) => img?.split("/f/")[1] ?? ""
+               )
+
+               if (removedImageIds.length > 0) {
+                  await utapi.deleteFiles(removedImageIds)
+               }
+            } else if (imagesToDeleteFromServer.length > 0) {
+               const ids = imagesToDeleteFromServer.map(
+                  (img) => img?.split("/f/")[1] ?? ""
+               )
+               await utapi.deleteFiles(ids)
+            }
+
+            return updatedCard.name
          }
-
-         const updatedCard = await ctx.db.card.update({
-            where: {
-               id: cardId,
-            },
-            data: {
-               ...rest,
-            },
-         })
-
-         const removedImages = card.images.filter(
-            (image) => !updatedCard.images.includes(image)
-         )
-
-         const removedImageIds = removedImages.map(
-            (img) => img?.split("/f/")[1] ?? ""
-         )
-
-         if (removedImageIds.length > 0) {
-            await utapi.deleteFiles(removedImageIds)
-         }
-
-         return updatedCard.name
-      }),
+      ),
    delete: privateProcedure
       .input(deleteCardSchema)
       .mutation(async ({ ctx, input: { cardId } }) => {

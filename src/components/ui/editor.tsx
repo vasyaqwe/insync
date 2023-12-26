@@ -38,8 +38,6 @@ import {
 import { FileButton } from "@/components/ui/file-button"
 import { useUploadThing } from "@/lib/uploadthing"
 import { toast } from "sonner"
-import { useTheme } from "next-themes"
-import { useIsClient } from "@/hooks/use-is-client"
 
 type EditorProps<T extends boolean> = {
    value: string
@@ -49,10 +47,12 @@ type EditorProps<T extends boolean> = {
    ? {
         shouldSetImages: true
         setImages: Dispatch<SetStateAction<string[]>>
+        setImagesToDeleteFromServer: Dispatch<SetStateAction<string[]>>
      }
    : {
         shouldSetImages?: false
         setImages?: Dispatch<SetStateAction<string[]>>
+        setImagesToDeleteFromServer?: Dispatch<SetStateAction<string[]>>
      }) &
    Omit<ComponentProps<"div">, "onChange">
 
@@ -69,15 +69,12 @@ export const Editor = <T extends boolean>({
    className,
    shouldSetImages = false,
    setImages,
+   setImagesToDeleteFromServer,
    ...props
 }: EditorProps<T>) => {
    const t = useTranslations("editor")
-   const { resolvedTheme: _resolvedTheme } = useTheme()
-   const { isClient } = useIsClient()
    const [isAnyTooltipVisible, setIsAnyTooltipVisible] = useState(false)
    const [isMounted, setIsMounted] = useState(false)
-
-   const resolvedTheme = isClient ? _resolvedTheme : "dark"
 
    const editor = useEditor({
       extensions: [
@@ -85,7 +82,7 @@ export const Editor = <T extends boolean>({
          Link,
          Image.configure({
             HTMLAttributes: {
-               class: "rounded-md",
+               class: "rounded-md mb-5",
             },
          }),
          Placeholder.configure({
@@ -97,8 +94,8 @@ export const Editor = <T extends boolean>({
          attributes: {
             id: "editor",
             class: cn(
-               "w-full rounded-lg px-3 py-2 focus:outline-none",
-               resolvedTheme === "light" ? "prose" : "prose-dark",
+               "w-full rounded-lg p-3 focus:outline-none",
+               "prose dark:prose-invert",
                className
             ),
          },
@@ -147,7 +144,13 @@ export const Editor = <T extends boolean>({
 
          if (nodesById[id] === undefined && node.type.name === "image") {
             setImages?.((prev) => prev.filter((src) => src !== imageSrc))
+            setImagesToDeleteFromServer?.((prev) =>
+               prev.includes(imageSrc) ? prev : [...prev, imageSrc]
+            )
          } else {
+            setImagesToDeleteFromServer?.((prev) =>
+               prev.filter((src) => src !== imageSrc)
+            )
             setImages?.((prev) =>
                prev.includes(imageSrc) ? prev : [...prev, imageSrc]
             )
@@ -186,6 +189,7 @@ export const Editor = <T extends boolean>({
             throw error
          }
       }
+      editor?.setOptions({ editable: false })
 
       toast.promise(upload([file]), {
          loading: t("uploading"),
@@ -199,6 +203,7 @@ export const Editor = <T extends boolean>({
                   .setImage({ src: uploadedImage[0].url })
                   .run()
             }
+            editor?.setOptions({ editable: true })
             return t("uploaded")
          },
          error: t("upload-error"),
@@ -417,14 +422,9 @@ export const Editor = <T extends boolean>({
 }
 
 export function EditorOutput({ html }: { html: string }) {
-   const { resolvedTheme } = useTheme()
-   const { isClient } = useIsClient()
-
-   if (!isClient) return null
-
    return (
       <div
-         className={resolvedTheme === "light" ? "prose" : "prose-dark"}
+         className={"prose dark:prose-invert"}
          dangerouslySetInnerHTML={{
             __html: html,
          }}

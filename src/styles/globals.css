@@ -116,6 +116,10 @@ body {
     height: 0;
 }
 
+.ProseMirror-gapcursor::after {
+    border-top: 1px solid hsl(var(--foreground)) !important;
+}
+
 .ProseMirror img {
     border-radius: .75rem;
 }
