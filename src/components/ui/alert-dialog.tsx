@@ -5,12 +5,21 @@ import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog"
 
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
+import { Drawer } from "vaul"
+import { MOBILE_BREAKPOINT } from "@/config"
 
-const AlertDialog = AlertDialogPrimitive.Root
+const innerWidth = typeof window === "undefined" ? 0 : window.innerWidth
 
-const AlertDialogTrigger = AlertDialogPrimitive.Trigger
+const AlertDialog =
+   innerWidth < MOBILE_BREAKPOINT ? Drawer.Root : AlertDialogPrimitive.Root
 
-const AlertDialogPortal = AlertDialogPrimitive.Portal
+const AlertDialogTrigger =
+   innerWidth < MOBILE_BREAKPOINT
+      ? Drawer.Trigger
+      : AlertDialogPrimitive.Trigger
+
+const AlertDialogPortal =
+   innerWidth < MOBILE_BREAKPOINT ? Drawer.Portal : AlertDialogPrimitive.Portal
 
 const AlertDialogOverlay = React.forwardRef<
    React.ElementRef<typeof AlertDialogPrimitive.Overlay>,
@@ -28,21 +37,43 @@ const AlertDialogOverlay = React.forwardRef<
 AlertDialogOverlay.displayName = AlertDialogPrimitive.Overlay.displayName
 
 const AlertDialogContent = React.forwardRef<
-   React.ElementRef<typeof AlertDialogPrimitive.Content>,
-   React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Content>
->(({ className, ...props }, ref) => (
-   <AlertDialogPortal>
-      <AlertDialogOverlay />
-      <AlertDialogPrimitive.Content
-         ref={ref}
-         className={cn(
-            "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg",
-            className
-         )}
-         {...props}
-      />
-   </AlertDialogPortal>
-))
+   React.ElementRef<typeof Drawer.Content>,
+   React.ComponentPropsWithoutRef<typeof Drawer.Content>
+>(({ className, children, ...props }, ref) =>
+   innerWidth < MOBILE_BREAKPOINT ? (
+      <Drawer.Portal>
+         <Drawer.Overlay className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+         <Drawer.Content
+            ref={ref}
+            className={cn(
+               "fixed bottom-0 left-0 right-0 z-[51] mt-14 flex flex-col rounded-t-2xl border-t border-border bg-popover p-4 focus-visible:outline-none",
+               className
+            )}
+            {...props}
+         >
+            <div
+               aria-hidden={true}
+               className="mx-auto mb-5 h-1.5 w-12 flex-shrink-0 rounded-full bg-muted"
+            />
+            <div className="overflow-y-auto px-1">{children}</div>
+         </Drawer.Content>
+      </Drawer.Portal>
+   ) : (
+      <AlertDialogPortal>
+         <AlertDialogOverlay />
+         <AlertDialogPrimitive.Content
+            ref={ref}
+            className={cn(
+               "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg",
+               className
+            )}
+            {...props}
+         >
+            {children}
+         </AlertDialogPrimitive.Content>
+      </AlertDialogPortal>
+   )
+)
 AlertDialogContent.displayName = AlertDialogPrimitive.Content.displayName
 
 const AlertDialogHeader = ({
@@ -64,10 +95,7 @@ const AlertDialogFooter = ({
    ...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
    <div
-      className={cn(
-         "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
-         className
-      )}
+      className={cn("flex justify-center max-md:my-5 md:mt-3", className)}
       {...props}
    />
 )
@@ -76,25 +104,41 @@ AlertDialogFooter.displayName = "AlertDialogFooter"
 const AlertDialogTitle = React.forwardRef<
    React.ElementRef<typeof AlertDialogPrimitive.Title>,
    React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Title>
->(({ className, ...props }, ref) => (
-   <AlertDialogPrimitive.Title
-      ref={ref}
-      className={cn("text-lg font-semibold", className)}
-      {...props}
-   />
-))
+>(({ className, ...props }, ref) =>
+   innerWidth < MOBILE_BREAKPOINT ? (
+      <Drawer.Title
+         ref={ref}
+         className={cn("mb-2 text-2xl font-semibold", className)}
+         {...props}
+      />
+   ) : (
+      <AlertDialogPrimitive.Title
+         ref={ref}
+         className={cn("mb-2 text-xl font-semibold", className)}
+         {...props}
+      />
+   )
+)
 AlertDialogTitle.displayName = AlertDialogPrimitive.Title.displayName
 
 const AlertDialogDescription = React.forwardRef<
    React.ElementRef<typeof AlertDialogPrimitive.Description>,
    React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Description>
->(({ className, ...props }, ref) => (
-   <AlertDialogPrimitive.Description
-      ref={ref}
-      className={cn("text-sm text-muted-foreground", className)}
-      {...props}
-   />
-))
+>(({ className, ...props }, ref) =>
+   innerWidth < MOBILE_BREAKPOINT ? (
+      <Drawer.Description
+         ref={ref}
+         className={cn("text-sm text-muted-foreground", className)}
+         {...props}
+      />
+   ) : (
+      <AlertDialogPrimitive.Description
+         ref={ref}
+         className={cn("text-sm text-muted-foreground", className)}
+         {...props}
+      />
+   )
+)
 AlertDialogDescription.displayName =
    AlertDialogPrimitive.Description.displayName
 

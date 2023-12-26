@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 import { Loading } from "@/components/ui/loading"
+import { MOBILE_BREAKPOINT } from "@/config"
 import { useRouter } from "@/navigation"
 import { useOrganizationHelpersStore } from "@/stores/use-organization-helpers-store"
 import { api } from "@/trpc/react"
@@ -44,6 +45,8 @@ export function DeleteOrganizationDialog({
       },
    })
 
+   const innerWidth = typeof window === "undefined" ? 0 : window.innerWidth
+
    return (
       <AlertDialog
          open={open}
@@ -75,9 +78,11 @@ export function DeleteOrganizationDialog({
                </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-               <AlertDialogCancel className="mr-auto">
-                  {tCommon("cancel")}
-               </AlertDialogCancel>
+               {innerWidth > MOBILE_BREAKPOINT && (
+                  <AlertDialogCancel className="mr-auto">
+                     {tCommon("cancel")}
+                  </AlertDialogCancel>
+               )}
                <Button
                   disabled={isLoading}
                   onClick={() => onDelete({ organizationId: organization.id })}

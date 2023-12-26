@@ -14,7 +14,7 @@ const buttonVariants = cva(
             default: `bg-primary text-primary-foreground shadow-button-primary active:shadow-inner-primary py-[8px] 
                 active:text-primary-foreground/95 before:to-background/10 hover:bg-primary/90 before:shadow-primary`,
             destructive: `bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-button-primary 
-                active:text-destructive-foreground/95 active:shadow-inner-primary before:to-background/10 before:shadow-destructive`,
+                active:text-destructive-foreground/95 active:shadow-inner-primary before:to-background/20 before:shadow-destructive`,
             outline: `shadow-button-secondary bg-background hover:bg-accent/50 hover:text-accent-foreground 
                 active:text-accent-foreground/90 active:shadow-inner-secondary 
                 before:to-border/25 before:shadow-border`,

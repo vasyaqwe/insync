@@ -7,14 +7,17 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { X } from "lucide-react"
 import { Drawer } from "vaul"
+import { MOBILE_BREAKPOINT } from "@/config"
 
 const innerWidth = typeof window === "undefined" ? 0 : window.innerWidth
 
-const Dialog = innerWidth < 768 ? Drawer.Root : DialogPrimitive.Root
+const Dialog =
+   innerWidth < MOBILE_BREAKPOINT ? Drawer.Root : DialogPrimitive.Root
 
 const DialogTrigger = DialogPrimitive.Trigger
 
-const DialogPortal = innerWidth < 768 ? Drawer.Portal : DialogPrimitive.Portal
+const DialogPortal =
+   innerWidth < MOBILE_BREAKPOINT ? Drawer.Portal : DialogPrimitive.Portal
 
 const DialogClose = DialogPrimitive.Close
 
@@ -39,13 +42,13 @@ const DialogContent = React.forwardRef<
       closeButtonClassName?: string
    }
 >(({ className, children, closeButtonClassName, ...props }, ref) =>
-   innerWidth < 768 ? (
+   innerWidth < MOBILE_BREAKPOINT ? (
       <Drawer.Portal>
          <Drawer.Overlay className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
          <Drawer.Content
             ref={ref}
             className={cn(
-               "fixed bottom-0 left-0 right-0 z-[51] flex flex-col rounded-t-lg border-t border-border bg-popover p-4 focus-visible:outline-none",
+               "fixed bottom-0 left-0 right-0 z-[51] mt-14 flex flex-col rounded-t-2xl border-t border-border bg-popover p-4 focus-visible:outline-none",
                className
             )}
             {...props}
@@ -54,7 +57,7 @@ const DialogContent = React.forwardRef<
                aria-hidden={true}
                className="mx-auto mb-5 h-1.5 w-12 flex-shrink-0 rounded-full bg-muted"
             />
-            {children}
+            <div className="overflow-y-auto px-1">{children}</div>
          </Drawer.Content>
       </Drawer.Portal>
    ) : (

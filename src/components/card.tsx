@@ -75,7 +75,7 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
          return toast.error(t("delete-error"))
       },
    })
-   console.log(imagesToDeleteFromServer)
+
    const { mutate: onUpdate, isLoading: isUpdateLoading } =
       api.card.update.useMutation({
          onSuccess: (updatetCardName) => {
@@ -125,6 +125,7 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
    return (
       <>
          <Draggable
+            disableInteractiveElementBlocking={true}
             isDragDisabled={isDragLoading}
             draggableId={card.id}
             index={index}
@@ -233,7 +234,7 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                   </li>
 
                   <DialogContent className="max-w-xl">
-                     <DialogHeader className="px-1">
+                     <DialogHeader>
                         <DialogTitle className="font-medium">
                            <AppWindow className="-mt-0.5 mr-1 inline " />{" "}
                            {card.name}
@@ -245,98 +246,94 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                            </strong>
                         </p>
                      </DialogHeader>
-                     <div className="max-h-[80vh] overflow-y-auto px-1">
-                        <section>
-                           <DialogTitle className="mt-8 flex items-center gap-2 font-medium">
-                              <AlignLeft className="inline" />{" "}
-                              {t("description")}
-                              {!isEditing &&
-                                 formData.description.length > 0 && (
+                     <section>
+                        <DialogTitle className="mt-8 flex items-center gap-2 font-medium">
+                           <AlignLeft className="inline" /> {t("description")}
+                           {!isEditing && formData.description.length > 0 && (
+                              <Button
+                                 className="ml-auto"
+                                 aria-label={tCommon("edit")}
+                                 size={"icon"}
+                                 variant={"outline"}
+                                 onClick={onStartEditing}
+                              >
+                                 <Pencil size={20} />
+                              </Button>
+                           )}
+                        </DialogTitle>
+                        <div className="mt-4">
+                           {isEditing ? (
+                              <>
+                                 <Editor
+                                    shouldSetImages
+                                    setImages={setImages}
+                                    setImagesToDeleteFromServer={
+                                       setImagesToDeleteFromServer
+                                    }
+                                    className="min-h-[150px]"
+                                    value={formData.description}
+                                    onKeyDown={onEditorEscape}
+                                    onChange={(description) =>
+                                       setFormData((prev) => ({
+                                          ...prev,
+                                          description,
+                                       }))
+                                    }
+                                 />
+                                 <div className="mt-3 flex gap-2">
                                     <Button
-                                       className="ml-auto"
-                                       aria-label={tCommon("edit")}
-                                       size={"icon"}
-                                       variant={"outline"}
-                                       onClick={onStartEditing}
+                                       disabled={isUpdateLoading}
+                                       size={"sm"}
+                                       onClick={() => {
+                                          onUpdate({
+                                             ...formData,
+                                             images,
+                                             imagesToDeleteFromServer,
+                                          })
+                                       }}
                                     >
-                                       <Pencil size={20} />
+                                       {tCommon("save")}
+                                       {isUpdateLoading && <Loading />}
                                     </Button>
-                                 )}
-                           </DialogTitle>
-                           <div className="mt-4">
-                              {isEditing ? (
-                                 <>
-                                    <Editor
-                                       shouldSetImages
-                                       setImages={setImages}
-                                       setImagesToDeleteFromServer={
-                                          setImagesToDeleteFromServer
-                                       }
-                                       className="min-h-[150px]"
-                                       value={formData.description}
-                                       onKeyDown={onEditorEscape}
-                                       onChange={(description) =>
-                                          setFormData((prev) => ({
-                                             ...prev,
-                                             description,
-                                          }))
-                                       }
-                                    />
-                                    <div className="mt-3 flex gap-2">
-                                       <Button
-                                          disabled={isUpdateLoading}
-                                          size={"sm"}
-                                          onClick={() => {
-                                             onUpdate({
-                                                ...formData,
-                                                images,
-                                                imagesToDeleteFromServer,
-                                             })
-                                          }}
-                                       >
-                                          {tCommon("save")}
-                                          {isUpdateLoading && <Loading />}
-                                       </Button>
-                                       <Button
-                                          size={"sm"}
-                                          onClick={onCancelEditing}
-                                          variant={"outline"}
-                                       >
-                                          {tCommon("cancel")}
-                                       </Button>
-                                    </div>
-                                 </>
-                              ) : card.description ? (
-                                 <EditorOutput html={card.description} />
-                              ) : (
-                                 <Button
-                                    onClick={onStartEditing}
-                                    variant={"secondary"}
-                                 >
-                                    {t("add-description")}
-                                 </Button>
-                              )}
-                           </div>
-                        </section>
-                        <section className="mt-8">
-                           <DialogTitle className="font-medium">
-                              <MessageCircle className="-mt-0.5 mr-1 inline " />{" "}
-                              {t("comments")}
-                           </DialogTitle>
-                           <Button
-                              className="mt-4"
-                              variant={"secondary"}
-                           >
-                              {t("add-description")}
-                           </Button>
-                        </section>
-                        <section>
-                           <DialogTitle className="mt-8 font-medium">
-                              <GanttChart className="-mt-0.5 mr-1 inline " />{" "}
-                              {t("activity")}
-                           </DialogTitle>
-                        </section>
-                     </div>
+                                    <Button
+                                       size={"sm"}
+                                       onClick={onCancelEditing}
+                                       variant={"outline"}
+                                    >
+                                       {tCommon("cancel")}
+                                    </Button>
+                                 </div>
+                              </>
+                           ) : card.description ? (
+                              <EditorOutput html={card.description} />
+                           ) : (
+                              <Button
+                                 onClick={onStartEditing}
+                                 variant={"secondary"}
+                              >
+                                 {t("add-description")}
+                              </Button>
+                           )}
+                        </div>
+                     </section>
+                     <section className="mt-8">
+                        <DialogTitle className="font-medium">
+                           <MessageCircle className="-mt-0.5 mr-1 inline " />{" "}
+                           {t("comments")}
+                        </DialogTitle>
+                        <Button
+                           className="mt-4"
+                           variant={"secondary"}
+                        >
+                           {t("add-description")}
+                        </Button>
+                     </section>
+                     <section>
+                        <DialogTitle className="mt-8 font-medium">
+                           <GanttChart className="-mt-0.5 mr-1 inline " />{" "}
+                           {t("activity")}
+                        </DialogTitle>
+                     </section>
                   </DialogContent>
                </Dialog>
             )}

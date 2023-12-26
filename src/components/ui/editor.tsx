@@ -212,7 +212,7 @@ export const Editor = <T extends boolean>({
 
    return (
       <div
-         className="w-[98%] rounded-lg border border-input bg-background
+         className="w-full rounded-lg border border-input bg-background
       ring-ring ring-offset-2 ring-offset-background focus-within:outline-none focus-within:ring-2"
          {...props}
       >

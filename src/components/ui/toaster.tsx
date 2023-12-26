@@ -15,7 +15,13 @@ export function Toaster() {
    return (
       <Sonner_Toaster
          richColors={resolvedTheme === "light"}
-         toastOptions={{ style: { borderRadius: "var(--radius)" } }}
+         toastOptions={{
+            style: {
+               borderRadius: "var(--radius)",
+               backgroundColor:
+                  resolvedTheme === "light" ? undefined : "hsl(var(--popover))",
+            },
+         }}
          theme={resolvedTheme}
          position="top-center"
          style={{ font: "inherit" }}

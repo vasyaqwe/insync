@@ -15,10 +15,16 @@ import { type ReactNode } from "react"
 import { Toaster } from "@/components/ui/toaster"
 import { enUS, ukUA } from "@clerk/localizations"
 import { ClerkProvider } from "@clerk/nextjs"
+import { type Viewport } from "next"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter-latin" })
 
 export const metadata = metadataConfig
+
+export const viewport: Viewport = {
+   initialScale: 1,
+   maximumScale: 1,
+}
 
 export function generateStaticParams() {
    return locales.map((locale) => ({ locale }))
