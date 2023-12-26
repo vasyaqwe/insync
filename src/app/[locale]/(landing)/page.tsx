@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button"
 import { Link } from "@/navigation"
-import { currentUser } from "@clerk/nextjs"
 import { ArrowUpRight } from "lucide-react"
 import { getTranslations, unstable_setRequestLocale } from "next-intl/server"
 
@@ -13,7 +12,6 @@ export default async function Home({
    unstable_setRequestLocale(locale)
 
    const t = await getTranslations("landing-page")
-   const user = await currentUser()
 
    return (
       <>
@@ -43,7 +41,7 @@ export default async function Home({
                className="mt-9 text-center"
                asChild
             >
-               <Link href={user ? "/dashboard" : "/sign-up"}>
+               <Link href={"/sign-up"}>
                   {t("hero.button")}
                   <ArrowUpRight />
                </Link>
