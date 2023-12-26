@@ -6,11 +6,9 @@ import { pick } from "@/lib/utils"
 import { Link } from "@/navigation"
 import { db } from "@/server/db"
 import { currentUser } from "@clerk/nextjs"
-import logo from "@public/logo-large.svg"
 import { XCircle } from "lucide-react"
 import { NextIntlClientProvider } from "next-intl"
 import { getMessages, getTranslations } from "next-intl/server"
-import Image from "next/image"
 
 export default async function Page({
    params: { token, locale },
@@ -36,7 +34,7 @@ export default async function Page({
          user)
    ) {
       return (
-         <div className="flex flex-col items-center justify-center px-6 py-10 text-center">
+         <main className="flex flex-col items-center justify-center px-6 py-10 text-center">
             <Link
                href={"/"}
                className="mx-auto w-fit"
@@ -61,7 +59,7 @@ export default async function Page({
                className="mt-8"
                text={t("error-button")}
             />
-         </div>
+         </main>
       )
    }
 
@@ -71,10 +69,9 @@ export default async function Page({
    return (
       <div className="px-6 py-10 text-center">
          <Link href={"/"}>
-            <Image
-               src={logo}
-               alt="insync."
-               className="mx-auto "
+            <Icons.logo
+               width={200}
+               height={40}
             />
          </Link>
          <h1
