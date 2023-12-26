@@ -77,7 +77,12 @@ export function Board({ board }: BoardProps) {
       >
          <Link href={`/dashboard/board/${board.id}`}>
             <div className="p-4 group-active:pb-[15px] group-active:pt-[17px]">
-               <h3 className="truncate text-xl font-medium">{board.name}</h3>
+               <h3
+                  title={board.name}
+                  className="truncate text-xl font-medium"
+               >
+                  {board.name}
+               </h3>
             </div>
             <div
                onClick={(e) => {

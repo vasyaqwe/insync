@@ -10,6 +10,7 @@ import { useTranslations } from "next-intl"
 import { toast } from "sonner"
 import { useSearchParams } from "next/navigation"
 import { ClerkWrapper } from "@/components/clerk-wrapper"
+import { useOrganizationHelpersStore } from "@/stores/use-organization-helpers-store"
 
 function InvitationActions({
    invitationId,
@@ -20,12 +21,14 @@ function InvitationActions({
    const t = useTranslations("invite")
    const router = useRouter()
    const searchParams = useSearchParams()
+   const { setExpandedOrganizations } = useOrganizationHelpersStore()
 
    const mode = searchParams.get("mode")
 
    const { isLoading, mutate: onAccept } = api.organization.join.useMutation({
       onSuccess: () => {
          router.push(`/dashboard/${organizationId}`)
+         setExpandedOrganizations(organizationId)
          router.refresh()
          toast.success(t("success-toast"))
       },

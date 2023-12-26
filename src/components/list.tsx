@@ -33,6 +33,7 @@ import {
    Draggable,
 } from "@hello-pangea/dnd"
 import { Card } from "@/components/card"
+import { NAME_CHARS_LIMIT } from "@/lib/validations/list"
 
 type ExtendedList = ListType & { cards: CardType[] }
 
@@ -80,6 +81,13 @@ function List({ list, index, isLoading: isDragLoading }: ListProps) {
    function onTextareaBlur(e: FocusEvent<HTMLTextAreaElement>) {
       setIsEditing(false)
       if (formData.name.length < 1) {
+         toast.error(tCommon("min-limit", { limit: NAME_CHARS_LIMIT }))
+         setFormData(previousFormData)
+         return e.preventDefault()
+      }
+
+      if (formData.name.length > NAME_CHARS_LIMIT) {
+         toast.error(tCommon("max-limit", { limit: NAME_CHARS_LIMIT }))
          setFormData(previousFormData)
          return e.preventDefault()
       }
@@ -110,7 +118,15 @@ function List({ list, index, isLoading: isDragLoading }: ListProps) {
                      className="flex items-start justify-between"
                   >
                      <h2
+                        tabIndex={0}
                         onClick={() => {
+                           flushSync(() => {
+                              setIsEditing(true)
+                           })
+                           textareaRef.current?.focus()
+                           textareaRef.current?.select()
+                        }}
+                        onFocus={() => {
                            flushSync(() => {
                               setIsEditing(true)
                            })

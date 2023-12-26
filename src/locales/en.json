@@ -35,6 +35,7 @@
       "create": "Create",
       "required": "Required",
       "max-limit": "Maximum length is {limit} characters",
+      "min-limit": "Minimum length is {limit} characters",
       "delete": "Delete",
       "edit": "Edit",
       "duplicate": "Duplicate",

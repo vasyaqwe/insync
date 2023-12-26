@@ -191,7 +191,15 @@ export const organizationRouter = createTRPCRouter({
             await utapi.deleteFiles(deletedImageIds)
          }
 
-         const firstOrganization = await ctx.db.organization.findFirst()
+         const firstOrganization = await ctx.db.organization.findFirst({
+            where: {
+               members: {
+                  some: {
+                     id: ctx.session.userId,
+                  },
+               },
+            },
+         })
 
          return {
             deletedOrganizationId: deletedOrganization.id,
@@ -237,7 +245,15 @@ export const organizationRouter = createTRPCRouter({
             },
          })
 
-         const firstOrganization = await ctx.db.organization.findFirst()
+         const firstOrganization = await ctx.db.organization.findFirst({
+            where: {
+               members: {
+                  some: {
+                     id: ctx.session.userId,
+                  },
+               },
+            },
+         })
 
          return {
             leftOrganizationId: leftOrganization.id,

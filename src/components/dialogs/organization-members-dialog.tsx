@@ -213,7 +213,7 @@ export function OrganizationMembersDialog({
             )}
 
             {tab === "members" && organization.ownerId === currentUser?.id ? (
-               <div className="mt-5 flex items-center justify-between gap-3">
+               <div className="mt-5 flex min-h-[var(--avatar-size)] items-center justify-between gap-3">
                   {membersToRemove.length < 1 ? (
                      <p className="text-sm text-muted-foreground">
                         {t("members-to-remove-empty")}
@@ -246,7 +246,7 @@ export function OrganizationMembersDialog({
                   </Button>
                </div>
             ) : tab === "invite" ? (
-               <div className="mt-5 flex items-center justify-between gap-3">
+               <div className="mt-5 flex min-h-[var(--avatar-size)] items-center justify-between gap-3">
                   {usersToInvite.length < 1 ? (
                      <p className="text-sm text-muted-foreground">
                         {t("members-to-invite-empty")}

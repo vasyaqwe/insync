@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-export const NAME_CHARS_LIMIT = 32
+export const NAME_CHARS_LIMIT = 64
 
 const cardNameSchema = z
    .string()
