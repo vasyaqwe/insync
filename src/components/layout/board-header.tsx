@@ -30,9 +30,9 @@ export function BoardHeader() {
       data: organization,
    } = api.organization.get.useQuery(
       {
-         organizationId: lastVisitedOrganizationId,
+         organizationId: isClient ? lastVisitedOrganizationId : "",
       },
-      { refetchOnWindowFocus: false }
+      { refetchOnWindowFocus: false, enabled: isClient }
    )
 
    return (

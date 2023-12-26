@@ -26,9 +26,11 @@ import { Button } from "@/components/ui/button"
 import { useTheme } from "next-themes"
 import { type ComponentProps } from "react"
 import { cn } from "@/lib/utils"
+import { useIsClient } from "@/hooks/use-is-client"
 
 export function AccountMenu({ className, ...props }: ComponentProps<"div">) {
    const { lastVisitedOrganizationId } = useOrganizationHelpers()
+   const { isClient } = useIsClient()
    const { signOut } = useClerk()
    const { setTheme, theme } = useTheme()
    const { openDialog } = useGlobalStore(
@@ -80,7 +82,7 @@ export function AccountMenu({ className, ...props }: ComponentProps<"div">) {
                   <Skeleton className="mx-2 h-4 w-4" />
                </div>
             )}
-            {user && (
+            {user && isClient && (
                <DropdownMenuContent
                   align="end"
                   className="px-3 pb-2"

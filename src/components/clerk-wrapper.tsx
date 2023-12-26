@@ -17,6 +17,8 @@ export function ClerkWrapper({ ...props }: ClerkWrapperProps) {
    const { resolvedTheme } = useTheme()
    const { isClient } = useIsClient()
 
+   if (!isClient) return null
+
    const colorPrimary =
       resolvedTheme === "light" ? primaryColor : "hsl(0 0% 98%)"
 
@@ -42,8 +44,6 @@ export function ClerkWrapper({ ...props }: ClerkWrapperProps) {
 
    //hoping all clerk components can accept appearence prop..
    const Comp = Slot as typeof SignIn
-
-   if (!isClient) return null
 
    return (
       <Comp
