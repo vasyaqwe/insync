@@ -23,7 +23,7 @@ export default async function RootLayout({
          <NextIntlClientProvider messages={pick(messages, ["header"])}>
             <Header />
          </NextIntlClientProvider>
-         <main className="grid h-[calc(100svh-var(--header-height))] place-content-center">
+         <main className="grid h-[calc(100svh-var(--header-height))] place-content-center px-5">
             {children}
          </main>
          <Footer />

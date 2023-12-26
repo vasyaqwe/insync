@@ -100,20 +100,11 @@ body {
 }
 
 /* clerk */
-.cl-internal-17ydaof {
-    max-width: fit-content;
-}
 
-@media (max-width: 450px) {
-    .cl-internal-17qh226 {
-        flex-direction: column;
-    }
-}
-
-@media (min-width: 450px) {
-    .cl-internal-17ydaof {
-        max-width: 100%;
-    }
+.cl-card {
+    margin-top: 3rem;
+    margin-bottom: 5rem;
+    max-width: calc(-2rem + 100vw)
 }
 
 /* editor */
