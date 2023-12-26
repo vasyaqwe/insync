@@ -2,12 +2,12 @@
 
 import { Button } from "@/components/ui/button"
 import { Card, type CardProps } from "@/components/ui/card"
-import { useIsClient } from "@/hooks/use-is-client"
-import { useOrganizationHelpers } from "@/hooks/use-organization-helpers"
+// import { useIsClient } from "@/hooks/use-is-client"
+// import { useOrganizationHelpers } from "@/hooks/use-organization-helpers"
 import { cn } from "@/lib/utils"
 import { useGlobalStore } from "@/stores/use-global-store"
 import { useTranslations } from "next-intl"
-import { useEffect } from "react"
+// import { useEffect } from "react"
 import { useShallow } from "zustand/react/shallow"
 
 type OrganizationEmptyProps = CardProps
@@ -17,19 +17,19 @@ export function OrganizationEmpty({
    ...props
 }: OrganizationEmptyProps) {
    const t = useTranslations("sidebar")
-   const { isClient } = useIsClient()
+   // const { isClient } = useIsClient()
    const { openDialog } = useGlobalStore(
       useShallow((state) => ({
          openDialog: state.openDialog,
       }))
    )
 
-   const { setLastVisitedOrganizationId } = useOrganizationHelpers()
+   // const { setLastVisitedOrganizationId } = useOrganizationHelpers()
 
-   useEffect(() => {
-      isClient && setLastVisitedOrganizationId("")
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-   }, [isClient])
+   // useEffect(() => {
+   //    isClient && setLastVisitedOrganizationId("")
+   //    // eslint-disable-next-line react-hooks/exhaustive-deps
+   // }, [isClient])
 
    return (
       <Card
