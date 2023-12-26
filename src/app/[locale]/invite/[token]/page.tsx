@@ -34,9 +34,9 @@ export default async function Page({
          user)
    ) {
       return (
-         <main className="flex flex-col items-center justify-center px-6 py-10 text-center">
+         <div className="flex flex-col items-center justify-center px-6 py-10 text-center">
             <Link
-               href={"/"}
+               href={user ? "/dashboard" : "/"}
                className="mx-auto w-fit"
             >
                <Icons.logo
@@ -59,7 +59,7 @@ export default async function Page({
                className="mt-8"
                text={t("error-button")}
             />
-         </main>
+         </div>
       )
    }
 
@@ -67,8 +67,11 @@ export default async function Page({
    const messages = (await getMessages()) as Messages
 
    return (
-      <div className="px-6 py-10 text-center">
-         <Link href={"/"}>
+      <div className="flex flex-col items-center justify-center px-6 py-10 text-center">
+         <Link
+            className="mx-auto w-fit"
+            href={user ? "/dashboard" : "/"}
+         >
             <Icons.logo
                width={200}
                height={40}
@@ -80,13 +83,13 @@ export default async function Page({
                __html: t.markup("title", {
                   organizationName: organizationName,
                   span: (chunks) =>
-                     `<span class='text-primary'>${chunks}</span>`,
+                     `<span class='accent-text'>${chunks}</span>`,
                }),
             }}
          ></h1>
          <p
             dangerouslySetInnerHTML={{ __html: t.raw("description") }}
-            className="mt-5 text-muted-foreground md:mt-8"
+            className="mt-5 text-foreground/75 md:mt-8"
          ></p>
 
          <div className="mt-5 flex flex-col items-center justify-center gap-2 md:mt-8">

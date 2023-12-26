@@ -164,6 +164,7 @@ export const organizationRouter = createTRPCRouter({
                id: organizationId,
             },
             select: {
+               id: true,
                boards: {
                   select: {
                      lists: {
@@ -190,7 +191,12 @@ export const organizationRouter = createTRPCRouter({
             await utapi.deleteFiles(deletedImageIds)
          }
 
-         return "OK"
+         const firstOrganization = await ctx.db.organization.findFirst()
+
+         return {
+            deletedOrganizationId: deletedOrganization.id,
+            firstOrganizationId: firstOrganization?.id ?? "",
+         }
       }),
    leave: privateProcedure
       .input(leaveOrganizationSchema)
@@ -231,7 +237,13 @@ export const organizationRouter = createTRPCRouter({
             },
          })
 
-         return leftOrganization.name
+         const firstOrganization = await ctx.db.organization.findFirst()
+
+         return {
+            leftOrganizationId: leftOrganization.id,
+            leftOrganizationName: leftOrganization.name,
+            firstOrganizationId: firstOrganization?.id ?? "",
+         }
       }),
    removeMembers: privateProcedure
       .input(removeMembersOrganizationSchema)

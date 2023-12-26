@@ -2,9 +2,9 @@
 
 import { Button } from "@/components/ui/button"
 import { Card, type CardProps } from "@/components/ui/card"
-import { useOrganizationHelpers } from "@/hooks/use-organization-helpers"
 import { cn } from "@/lib/utils"
 import { useGlobalStore } from "@/stores/use-global-store"
+import { useOrganizationHelpersStore } from "@/stores/use-organization-helpers-store"
 import { useTranslations } from "next-intl"
 import { useEffect } from "react"
 import { useShallow } from "zustand/react/shallow"
@@ -23,7 +23,7 @@ export function OrganizationEmpty({
       }))
    )
 
-   const { setLastVisitedOrganizationId } = useOrganizationHelpers()
+   const { setLastVisitedOrganizationId } = useOrganizationHelpersStore()
 
    useEffect(() => {
       setLastVisitedOrganizationId("")

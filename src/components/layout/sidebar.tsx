@@ -10,7 +10,6 @@ import {
 import { Button } from "@/components/ui/button"
 import { Card, type CardProps } from "@/components/ui/card"
 import { ColorAvatar } from "@/components/ui/color-avatar"
-import { useLocalStorage } from "@/hooks/use-local-storage"
 import { cn } from "@/lib/utils"
 import { Link, usePathname } from "@/navigation"
 import { useGlobalStore } from "@/stores/use-global-store"
@@ -26,9 +25,9 @@ import { useTranslations } from "next-intl"
 import { useShallow } from "zustand/react/shallow"
 import { Sheet, SheetContent } from "@/components/ui/sheet"
 import { useEffect, type ComponentProps } from "react"
-import { useIsClient } from "@/hooks/use-is-client"
-import { useOrganizationHelpers } from "@/hooks/use-organization-helpers"
 import { Icons } from "@/components/ui/icons"
+import { useOrganizationHelpersStore } from "@/stores/use-organization-helpers-store"
+import { useIsHydrated } from "@/hooks/use-is-hydrated"
 
 export function Sidebar({
    organizations,
@@ -46,9 +45,8 @@ export function Sidebar({
       <>
          <Card asChild>
             <Aside
-               suppressHydrationWarning
                organizations={organizations}
-               className={cn("max-w-xs max-lg:hidden", className)}
+               className={cn("max-w-xs self-start max-lg:hidden", className)}
             />
          </Card>
          <Sheet
@@ -77,7 +75,7 @@ function Aside({
    ...props
 }: { organizations: Organization[] } & ComponentProps<"aside">) {
    const t = useTranslations("sidebar")
-   const { isClient } = useIsClient()
+   const { isHydrated } = useIsHydrated()
 
    const { openDialog, closeDialog } = useGlobalStore(
       useShallow((state) => ({
@@ -86,12 +84,12 @@ function Aside({
       }))
    )
 
-   const [expandedOrganizations, setExpandedOrganizations] = useLocalStorage<
-      Record<string, boolean>
-   >("expanded-organizations", {})
-
-   const { lastVisitedOrganizationId, setLastVisitedOrganizationId } =
-      useOrganizationHelpers()
+   const {
+      lastVisitedOrganizationId,
+      expandedOrganizations,
+      setExpandedOrganizations,
+      setLastVisitedOrganizationId,
+   } = useOrganizationHelpersStore()
 
    useEffect(() => {
       if (
@@ -125,7 +123,7 @@ function Aside({
 
    return (
       <aside {...props}>
-         {isClient ? (
+         {isHydrated ? (
             <Link
                onClick={() => closeDialog("mobileSidebar")}
                className="lg:hidden"
@@ -151,7 +149,7 @@ function Aside({
             </Hint>
          </div>
 
-         {isClient ? (
+         {isHydrated ? (
             <Accordion
                defaultValue={defaultAccordionValue}
                type="multiple"
@@ -165,12 +163,7 @@ function Aside({
                         value={org.id}
                      >
                         <AccordionTrigger
-                           onClick={() =>
-                              setExpandedOrganizations((prev) => ({
-                                 ...prev,
-                                 [org.id]: !expandedOrganizations[org.id],
-                              }))
-                           }
+                           onClick={() => setExpandedOrganizations(org.id)}
                            className={
                               "flex items-center justify-start gap-2 rounded-lg p-3 hover:bg-primary/10 hover:no-underline [&>svg]:ml-auto"
                            }

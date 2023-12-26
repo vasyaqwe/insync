@@ -2,9 +2,9 @@
 
 import { Button } from "@/components/ui/button"
 import { Icons } from "@/components/ui/icons"
-import { useIsClient } from "@/hooks/use-is-client"
-import { useOrganizationHelpers } from "@/hooks/use-organization-helpers"
+import { useIsHydrated } from "@/hooks/use-is-hydrated"
 import { Link } from "@/navigation"
+import { useOrganizationHelpersStore } from "@/stores/use-organization-helpers-store"
 import { useUser } from "@clerk/nextjs"
 import { ArrowUpRight } from "lucide-react"
 import { useTranslations } from "next-intl"
@@ -13,8 +13,8 @@ export function Header() {
    const t = useTranslations("header")
    const { isSignedIn } = useUser()
 
-   const { lastVisitedOrganizationId } = useOrganizationHelpers()
-   const { isClient } = useIsClient()
+   const { lastVisitedOrganizationId } = useOrganizationHelpersStore()
+   const { isHydrated } = useIsHydrated()
 
    return (
       <header className="flex min-h-[var(--header-height)] items-center bg-background/50 py-2 shadow-sm shadow-border backdrop-blur-md">
@@ -26,7 +26,7 @@ export function Header() {
             </div>
 
             {isSignedIn ? (
-               isClient ? (
+               isHydrated ? (
                   <Button
                      size={"sm"}
                      className="text-center"

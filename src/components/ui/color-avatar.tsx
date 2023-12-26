@@ -7,7 +7,7 @@ export function ColorAvatar({ className, color, ...props }: ColorAvatarProps) {
    return (
       <div
          className={cn(
-            "h-[var(--color-avatar-size)] w-[var(--color-avatar-size)] rounded-full",
+            "h-[var(--color-avatar-size)] w-[var(--color-avatar-size)] flex-shrink-0 rounded-full",
             className
          )}
          style={{ background: color }}

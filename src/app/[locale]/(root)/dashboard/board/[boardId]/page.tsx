@@ -45,7 +45,7 @@ export default async function Page({ params: { boardId } }: Params) {
 
    return (
       <div className="grid h-full grid-cols-full-width-split-screen py-10 lg:py-12">
-         <div className="col-start-2 col-end-5 px-[var(--container-padding-inline)]">
+         <div className="col-start-2 col-end-5 md:pl-[var(--container-padding-inline)]">
             <h1 className="text-3xl font-medium">
                <LayoutIcon
                   className="mr-2 inline"

@@ -1,19 +1,19 @@
 "use client"
 
-import { useOrganizationHelpers } from "@/hooks/use-organization-helpers"
 import { Button, type ButtonProps } from "@/components/ui/button"
-import { useIsClient } from "@/hooks/use-is-client"
 import { cn } from "@/lib/utils"
 import { Link } from "@/navigation"
+import { useOrganizationHelpersStore } from "@/stores/use-organization-helpers-store"
+import { useIsHydrated } from "@/hooks/use-is-hydrated"
 
 export function BackToDashboardLink({
    text,
    className,
 }: { text: string } & ButtonProps) {
-   const { lastVisitedOrganizationId } = useOrganizationHelpers()
-   const { isClient } = useIsClient()
+   const { lastVisitedOrganizationId } = useOrganizationHelpersStore()
+   const { isHydrated } = useIsHydrated()
 
-   return isClient ? (
+   return isHydrated ? (
       <Button asChild>
          <Link
             className={cn("", className)}

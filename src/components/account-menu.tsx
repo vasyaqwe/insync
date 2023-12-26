@@ -18,7 +18,6 @@ import { Link, useRouter } from "@/navigation"
 import { useTranslations } from "next-intl"
 import { useGlobalStore } from "@/stores/use-global-store"
 import { useShallow } from "zustand/react/shallow"
-import { useOrganizationHelpers } from "@/hooks/use-organization-helpers"
 import { Skeleton } from "@/components/ui/skeleton"
 import { CreateOrganizationDialog } from "@/components/dialogs/create-organization-dialog"
 import { ChevronsUpDown } from "lucide-react"
@@ -26,11 +25,12 @@ import { Button } from "@/components/ui/button"
 import { useTheme } from "next-themes"
 import { type ComponentProps } from "react"
 import { cn } from "@/lib/utils"
-import { useIsClient } from "@/hooks/use-is-client"
+import { useOrganizationHelpersStore } from "@/stores/use-organization-helpers-store"
+import { useIsHydrated } from "@/hooks/use-is-hydrated"
 
 export function AccountMenu({ className, ...props }: ComponentProps<"div">) {
-   const { lastVisitedOrganizationId } = useOrganizationHelpers()
-   const { isClient } = useIsClient()
+   const { lastVisitedOrganizationId } = useOrganizationHelpersStore()
+   const { isHydrated } = useIsHydrated()
    const { signOut } = useClerk()
    const { setTheme, theme } = useTheme()
    const { openDialog } = useGlobalStore(
@@ -82,7 +82,7 @@ export function AccountMenu({ className, ...props }: ComponentProps<"div">) {
                   <Skeleton className="mx-2 h-4 w-4" />
                </div>
             )}
-            {user && isClient && (
+            {user && isHydrated && (
                <DropdownMenuContent
                   align="end"
                   className="px-3 pb-2"

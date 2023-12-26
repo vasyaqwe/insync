@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Loading } from "@/components/ui/loading"
 import { useRouter } from "@/navigation"
+import { useOrganizationHelpersStore } from "@/stores/use-organization-helpers-store"
 import { api } from "@/trpc/react"
 import { type Organization } from "@prisma/client"
 import { useTranslations } from "next-intl"
@@ -28,15 +29,21 @@ export function LeaveOrganizationDialog({
    const tCommon = useTranslations("common")
    const router = useRouter()
    const [open, setOpen] = useState(false)
+   const { removeExpandedOrganizations } = useOrganizationHelpersStore()
 
    const { isLoading, mutate: onLeave } = api.organization.leave.useMutation({
-      onSuccess: (organizationName) => {
-         router.push("/dashboard")
+      onSuccess: ({
+         leftOrganizationName,
+         leftOrganizationId,
+         firstOrganizationId,
+      }) => {
+         router.push(`/dashboard/${firstOrganizationId}`)
          router.refresh()
          toast.success(
-            t.rich("leave-success-toast", { name: organizationName })
+            t.rich("leave-success-toast", { name: leftOrganizationName })
          )
          setOpen(false)
+         removeExpandedOrganizations(leftOrganizationId)
       },
       onError: () => {
          toast.error(t("leave-error-toast"))

@@ -1,16 +1,19 @@
 "use client"
 
-import { useOrganizationHelpers } from "@/hooks/use-organization-helpers"
+import { useIsHydrated } from "@/hooks/use-is-hydrated"
 import { useRouter } from "@/navigation"
+import { useOrganizationHelpersStore } from "@/stores/use-organization-helpers-store"
 import { useEffect } from "react"
 
 export function DashboardRedirect() {
    const router = useRouter()
-   const { lastVisitedOrganizationId } = useOrganizationHelpers()
+   const { lastVisitedOrganizationId } = useOrganizationHelpersStore()
+   const { isHydrated } = useIsHydrated()
 
    useEffect(() => {
-      router.push(`/dashboard/${lastVisitedOrganizationId}`)
-   }, [router, lastVisitedOrganizationId])
+      if (lastVisitedOrganizationId.length > 0 && isHydrated)
+         router.push(`/dashboard/${lastVisitedOrganizationId}`)
+   }, [router, lastVisitedOrganizationId, isHydrated])
 
    return null
 }

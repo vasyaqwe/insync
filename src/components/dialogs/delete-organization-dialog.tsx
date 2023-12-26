@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Loading } from "@/components/ui/loading"
 import { useRouter } from "@/navigation"
+import { useOrganizationHelpersStore } from "@/stores/use-organization-helpers-store"
 import { api } from "@/trpc/react"
 import { type Organization } from "@prisma/client"
 import { useTranslations } from "next-intl"
@@ -27,14 +28,16 @@ export function DeleteOrganizationDialog({
    const t = useTranslations("organization-settings")
    const tCommon = useTranslations("common")
    const router = useRouter()
+   const { removeExpandedOrganizations } = useOrganizationHelpersStore()
 
    const [open, setOpen] = useState(false)
    const { isLoading, mutate: onDelete } = api.organization.delete.useMutation({
-      onSuccess: () => {
-         router.push("/dashboard")
+      onSuccess: ({ firstOrganizationId, deletedOrganizationId }) => {
+         router.push(`/dashboard/${firstOrganizationId}`)
          router.refresh()
          toast.success(t("delete-success-toast"))
          setOpen(false)
+         removeExpandedOrganizations(deletedOrganizationId)
       },
       onError: () => {
          toast.error(t("delete-error-toast"))

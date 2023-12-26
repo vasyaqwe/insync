@@ -26,10 +26,13 @@ import { useRouter } from "@/navigation"
 import { useGlobalStore } from "@/stores/use-global-store"
 import { InviteCommand } from "@/components/invite-command"
 import { useShallow } from "zustand/react/shallow"
+import { useOrganizationHelpersStore } from "@/stores/use-organization-helpers-store"
 
 export function CreateOrganizationDialog() {
    const t = useTranslations("create-organization")
    const router = useRouter()
+   const { setLastVisitedOrganizationId, setExpandedOrganizations } =
+      useOrganizationHelpersStore()
 
    const { dialogs, closeDialog, openDialog } = useGlobalStore(
       useShallow((state) => ({
@@ -56,6 +59,8 @@ export function CreateOrganizationDialog() {
          setFormData({ name: "" })
          setSelectedUsers([])
          // setQuery("")
+         setLastVisitedOrganizationId(createdOrgId)
+         setExpandedOrganizations(createdOrgId)
          router.push(`/dashboard/${createdOrgId}`)
          router.refresh()
          toast.success(t("success"))
