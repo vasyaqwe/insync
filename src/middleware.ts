@@ -23,7 +23,6 @@ export default authMiddleware({
       return intlMiddleware(req)
    },
 
-   // Ensure that locale-specific sign in pages are public
    publicRoutes: [
       "/:locale",
       "/:locale/sign-in",
