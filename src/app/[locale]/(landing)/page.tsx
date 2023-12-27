@@ -31,11 +31,11 @@ export default async function Home({
          <section className="container flex flex-col items-center justify-center py-16 md:py-32">
             <h1
                dangerouslySetInnerHTML={{ __html: t.raw("hero.title") }}
-               className="text-balance text-center text-4xl font-bold leading-tight lg:text-6xl"
+               className="text-balance text-center text-4xl font-bold leading-tight sm:text-6xl xl:text-7xl"
             ></h1>
             <p
                dangerouslySetInnerHTML={{ __html: t.raw("hero.description") }}
-               className="mx-auto mt-5 max-w-[55ch] text-center text-sm text-foreground/70 sm:text-base"
+               className="mx-auto mt-5 max-w-[45ch] text-center text-sm text-foreground/70 sm:text-base "
             ></p>
             <Button
                className="mt-9 text-center"

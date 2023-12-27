@@ -52,7 +52,9 @@ export default async function RootLayout({
             inter.variable
          )}
       >
-         <body className={`grainy-bg flex flex-col bg-background`}>
+         <body
+            className={`grainy-bg flex flex-col bg-background text-foreground`}
+         >
             <TRPCReactProvider cookies={cookies().toString()}>
                <ClerkProvider localization={locale === "uk" ? ukUA : enUS}>
                   <ThemeProvider

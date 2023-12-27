@@ -26,10 +26,10 @@ export function OrganizationInviteEmail({
    organizationName,
    token,
 }: OrganizationInviteEmailProps) {
-   const baseUrl =
-      process.env.NODE_ENV === "development"
-         ? `http://localhost:3000`
-         : "https://insync-ai.vercel.app"
+ const baseUrl = process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : "http://localhost:3000"
+
 
    return (
       <Html>
