@@ -125,7 +125,7 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
    return (
       <>
          <Draggable
-            disableInteractiveElementBlocking={true}
+            shouldRespectForcePress
             isDragDisabled={isDragLoading}
             draggableId={card.id}
             index={index}

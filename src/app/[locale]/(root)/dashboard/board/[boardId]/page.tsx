@@ -53,7 +53,7 @@ export default async function Page({ params: { boardId } }: Params) {
                />
                {board.name}
             </h1>
-            <div className="flex h-full items-start gap-4 overflow-x-auto ">
+            <div className="flex h-full items-start gap-4 overflow-x-auto pr-4">
                <NextIntlClientProvider
                   messages={pick(messages, [
                      "lists",

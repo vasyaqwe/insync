@@ -15,6 +15,9 @@ export default async function Page({
       where: {
          organizationId,
       },
+      orderBy: {
+         updatedAt: "desc",
+      },
    })
 
    const t = await getTranslations("boards")
