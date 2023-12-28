@@ -5,6 +5,7 @@ import { metadataConfig } from "@/config"
 import { pick } from "@/lib/utils"
 import { db } from "@/server/db"
 import { api } from "@/trpc/server"
+import { currentUser } from "@clerk/nextjs"
 import { LayoutIcon } from "lucide-react"
 import { NextIntlClientProvider } from "next-intl"
 import { getMessages } from "next-intl/server"
@@ -29,6 +30,8 @@ export async function generateMetadata({ params: { boardId } }: Params) {
 }
 
 export default async function Page({ params: { boardId } }: Params) {
+   const user = await currentUser()
+
    const board = await db.board.findFirst({
       where: {
          id: boardId,
@@ -36,10 +39,16 @@ export default async function Page({ params: { boardId } }: Params) {
       select: {
          id: true,
          name: true,
+         organization: {
+            select: {
+               members: true,
+            },
+         },
       },
    })
 
-   if (!board) notFound()
+   if (!board || !board.organization.members.some((m) => m.id === user?.id))
+      notFound()
 
    const messages = (await getMessages()) as Messages
 

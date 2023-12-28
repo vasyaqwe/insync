@@ -23,7 +23,7 @@ export default async function RootLayout({
          <NextIntlClientProvider messages={pick(messages, ["header"])}>
             <Header />
          </NextIntlClientProvider>
-         <main className="grid h-[calc(100svh-var(--header-height))] place-content-center px-5">
+         <main className="flex h-full items-center justify-center px-5 py-10">
             {children}
          </main>
          <Footer />

@@ -100,7 +100,6 @@ function List({ list, index, isLoading: isDragLoading }: ListProps) {
 
    return (
       <Draggable
-         shouldRespectForcePress
          draggableId={list.id}
          index={index}
          isDragDisabled={isDragLoading}

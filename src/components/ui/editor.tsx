@@ -204,9 +204,15 @@ export const Editor = <T extends boolean>({
                   .run()
             }
             editor?.setOptions({ editable: true })
+            editor?.chain().focus("end").run()
+            editor?.commands.createParagraphNear()
             return t("uploaded")
          },
-         error: t("upload-error"),
+         error: () => {
+            editor?.setOptions({ editable: true })
+            editor?.chain().focus("end").run()
+            return t("upload-error")
+         },
       })
    }
 

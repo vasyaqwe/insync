@@ -57,7 +57,7 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
    const [imagesToDeleteFromServer, setImagesToDeleteFromServer] = useState<
       string[]
    >([])
-
+   console.log("render")
    const [formData, setFormData] = useState({
       name: card.name,
       cardId: card.id,
@@ -125,7 +125,6 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
    return (
       <>
          <Draggable
-            shouldRespectForcePress
             isDragDisabled={isDragLoading}
             draggableId={card.id}
             index={index}

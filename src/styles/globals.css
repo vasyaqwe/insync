@@ -96,11 +96,9 @@ body {
 }
 
 /* clerk */
-
 .cl-card {
-    margin-top: 3rem;
-    margin-bottom: 5rem;
-    max-width: calc(-2rem + 100vw)
+    background-color: hsl(var(--popover));
+    max-width: calc(-2rem + 100vw);
 }
 
 /* editor */

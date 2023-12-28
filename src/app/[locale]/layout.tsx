@@ -16,6 +16,9 @@ import { Toaster } from "@/components/ui/toaster"
 import { enUS, ukUA } from "@clerk/localizations"
 import { ClerkProvider } from "@clerk/nextjs"
 import { type Viewport } from "next"
+import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin"
+import { extractRouterConfig } from "uploadthing/server"
+import { ourFileRouter } from "@/app/api/uploadthing/core"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter-latin" })
 
@@ -66,6 +69,9 @@ export default async function RootLayout({
                      <NextIntlClientProvider
                         messages={pick(messages, ["common"])}
                      >
+                        <NextSSRPlugin
+                           routerConfig={extractRouterConfig(ourFileRouter)}
+                        />
                         {children}
                      </NextIntlClientProvider>
                      <Toaster />
