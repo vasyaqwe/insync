@@ -36,7 +36,7 @@ export function BoardHeader() {
    )
 
    return (
-      <header className="grid min-h-[var(--header-height)] grid-cols-full-width-split-screen items-center bg-background/50 py-2 shadow-sm shadow-border backdrop-blur-md">
+      <header className="sticky top-0 z-[50] grid min-h-[var(--header-height)] grid-cols-full-width-split-screen items-center bg-background/50 py-2 shadow-sm shadow-border backdrop-blur-md">
          <div className="col-start-2 col-end-4 flex items-center justify-between gap-6 md:px-[var(--container-padding-inline)]">
             <div className="flex items-center gap-2">
                {isHydrated ? (

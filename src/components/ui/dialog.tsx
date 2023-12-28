@@ -48,7 +48,7 @@ const DialogContent = React.forwardRef<
          <Drawer.Content
             ref={ref}
             className={cn(
-               "fixed bottom-0 left-0 right-0 z-[51] flex !max-w-full flex-col rounded-t-2xl border-t border-border bg-popover p-4 pb-0 focus-visible:outline-none",
+               "fixed bottom-0 left-0 right-0 z-[51] flex !max-w-full flex-col rounded-t-2xl border-t border-border bg-popover pt-4 focus-visible:outline-none",
                className
             )}
             {...props}
@@ -57,7 +57,9 @@ const DialogContent = React.forwardRef<
                aria-hidden={true}
                className="mx-auto mb-5 h-1.5 w-12 flex-shrink-0 rounded-full bg-muted"
             />
-            <div className="max-h-[90svh] overflow-y-auto px-1">{children}</div>
+            <div className="max-h-[90svh] overflow-y-auto px-4 pb-6 pt-4">
+               {children}
+            </div>
          </Drawer.Content>
       </Drawer.Portal>
    ) : (

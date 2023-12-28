@@ -24,6 +24,7 @@ import { api } from "@/trpc/react"
 import { useUser } from "@clerk/nextjs"
 import { UserAvatar } from "@/components/ui/user-avatar"
 import { useTranslations } from "next-intl"
+import { MOBILE_BREAKPOINT } from "@/config"
 
 type InviteCommandProps = {
    existingUserEmails?: string[]
@@ -111,6 +112,8 @@ export function InviteCommand({
 
    const totalItems = [...filteredSelectedUsers, ...searchResults]
 
+   const innerWidth = typeof window === "undefined" ? 0 : window.innerWidth
+
    return (
       <Command
          filter={(value, search) => {
@@ -128,7 +131,7 @@ export function InviteCommand({
          {...props}
       >
          <CommandInput
-            autoFocus
+            autoFocus={innerWidth > MOBILE_BREAKPOINT}
             value={query}
             onValueChange={(val) => {
                setQuery(val)

@@ -30,6 +30,7 @@ import { toast } from "sonner"
 import { Loading } from "@/components/ui/loading"
 import { cn } from "@/lib/utils"
 import { useRouter } from "@/navigation"
+import { MOBILE_BREAKPOINT } from "@/config"
 
 type MembersProps = {
    members: User[]
@@ -89,6 +90,8 @@ export function OrganizationMembersDialog({
       }
    }
 
+   const innerWidth = typeof window === "undefined" ? 0 : window.innerWidth
+
    return (
       <Dialog
          onOpenChange={setOpen}
@@ -139,7 +142,7 @@ export function OrganizationMembersDialog({
             {tab === "members" ? (
                <Command className="mt-5 h-[50vh] rounded-sm border shadow-sm md:h-[355px]">
                   <CommandInput
-                     autoFocus
+                     autoFocus={innerWidth > MOBILE_BREAKPOINT}
                      placeholder={t("search")}
                   />
                   <CommandList>

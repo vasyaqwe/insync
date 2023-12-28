@@ -29,7 +29,7 @@ export function OrganizationHeader({
    const isNoOrganizations = organizationsCount < 1
 
    return (
-      <header className="flex min-h-[var(--header-height)] items-center bg-background/50 py-2 shadow-sm shadow-border backdrop-blur-md">
+      <header className="sticky top-0 z-[50] flex min-h-[var(--header-height)] items-center bg-background/50 py-2 shadow-sm shadow-border backdrop-blur-md">
          <div className="container flex items-center justify-between">
             {isHydrated ? (
                <Link
