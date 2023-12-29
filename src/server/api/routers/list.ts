@@ -6,9 +6,6 @@ import {
    updateListSchema,
 } from "@/lib/validations/list"
 import { createTRPCRouter, privateProcedure } from "@/server/api/trpc"
-import { UTApi } from "uploadthing/server"
-
-const utapi = new UTApi()
 
 export const listRouter = createTRPCRouter({
    getAll: privateProcedure
@@ -88,20 +85,21 @@ export const listRouter = createTRPCRouter({
             },
             select: {
                name: true,
-               cards: true,
+               cards: {
+                  select: {
+                     description: true,
+                  },
+               },
             },
          })
 
-         const deletedImages = deletedList.cards.flatMap((card) => card.images)
-
-         const deletedImageIds = deletedImages.map(
-            (img) => img?.split("/f/")[1] ?? ""
+         const deletedDescriptions = deletedList.cards.map(
+            (card) => card.description ?? ""
          )
 
-         if (deletedImageIds.length > 0) {
-            await utapi.deleteFiles(deletedImageIds)
+         return {
+            name: deletedList.name,
+            editorContents: deletedDescriptions,
          }
-
-         return deletedList.name
       }),
 })

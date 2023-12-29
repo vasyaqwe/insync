@@ -23,7 +23,7 @@ import {
    Strikethrough,
    Undo,
 } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { cn, getUploadThingFileIdFromUrl } from "@/lib/utils"
 import { Hint } from "@/components/hint"
 import {
    type ChangeEvent,
@@ -39,39 +39,20 @@ import { FileButton } from "@/components/ui/file-button"
 import { useUploadThing } from "@/lib/uploadthing"
 import { toast } from "sonner"
 
-type EditorProps<T extends boolean> = {
+type EditorProps = {
    value: string
    onChange: (value: string) => void
    className?: string
-} & (T extends true
-   ? {
-        shouldSetImages: true
-        setImages: Dispatch<SetStateAction<string[]>>
-        setImagesToDeleteFromServer: Dispatch<SetStateAction<string[]>>
-     }
-   : {
-        shouldSetImages?: false
-        setImages?: Dispatch<SetStateAction<string[]>>
-        setImagesToDeleteFromServer?: Dispatch<SetStateAction<string[]>>
-     }) &
-   Omit<ComponentProps<"div">, "onChange">
+   setFileIdsToDeleteFromStorage: Dispatch<SetStateAction<string[]>>
+} & Omit<ComponentProps<"div">, "onChange">
 
-type Node = {
-   attrs: Record<string, string>
-   type: {
-      name: string
-   }
-}
-
-export const Editor = <T extends boolean>({
+export const Editor = ({
    value,
    onChange,
    className,
-   shouldSetImages = false,
-   setImages,
-   setImagesToDeleteFromServer,
+   setFileIdsToDeleteFromStorage,
    ...props
-}: EditorProps<T>) => {
+}: EditorProps) => {
    const t = useTranslations("editor")
    const [isAnyTooltipVisible, setIsAnyTooltipVisible] = useState(false)
    const [isMounted, setIsMounted] = useState(false)
@@ -87,6 +68,7 @@ export const Editor = <T extends boolean>({
          }),
          Placeholder.configure({
             placeholder: t("placeholder"),
+            showOnlyWhenEditable: false,
          }),
       ],
       content: value,
@@ -107,10 +89,10 @@ export const Editor = <T extends boolean>({
       },
    })
    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-   const previousState = useRef<any>()
+   const previousImages = useRef<any>()
 
    useEffect(() => {
-      if (!isMounted && editor && shouldSetImages) {
+      if (!isMounted && editor) {
          onImageNodesAddDelete({ editor })
          setIsMounted(true)
       }
@@ -118,41 +100,40 @@ export const Editor = <T extends boolean>({
    }, [editor, isMounted])
 
    const onImageNodesAddDelete = ({ editor }: { editor: CoreEditor }) => {
-      if (!shouldSetImages) return
+      const parser = new DOMParser()
+      const doc = parser.parseFromString(editor.getHTML(), "text/html")
+
+      // Get all img elements in the document
+      const images = [...doc.querySelectorAll("img")]
 
       // Compare previous/current nodes to detect deleted ones
-      const prevNodesById: Record<string, Node> = {}
-      previousState.current?.doc.forEach((node: Node) => {
-         if (node.attrs.src) {
-            prevNodesById[node.attrs.src] = node
+      const prevNodesById: Record<string, HTMLImageElement> = {}
+      previousImages.current?.forEach((node: HTMLImageElement) => {
+         if (node.src) {
+            prevNodesById[node.src] = node
          }
       })
 
-      const nodesById: Record<string, Node> = {}
-      editor.state.doc.forEach((node) => {
-         if (node.attrs.src) {
-            nodesById[node.attrs.src] = node
+      const nodesById: Record<string, HTMLImageElement> = {}
+      images.forEach((node) => {
+         if (node.src) {
+            nodesById[node.src] = node
          }
       })
 
-      previousState.current = editor.state
+      previousImages.current = images
 
       for (const [id, node] of Object.entries(prevNodesById)) {
-         const imageSrc = node.attrs.src ?? ""
-         //return if no src
-         if (imageSrc?.length < 1) return
+         const imageFileId = getUploadThingFileIdFromUrl(node.src)
+         if (!imageFileId) return
 
-         if (nodesById[id] === undefined && node.type.name === "image") {
-            setImages?.((prev) => prev.filter((src) => src !== imageSrc))
-            setImagesToDeleteFromServer?.((prev) =>
-               prev.includes(imageSrc) ? prev : [...prev, imageSrc]
+         if (nodesById[id] === undefined) {
+            setFileIdsToDeleteFromStorage?.((prev) =>
+               prev.includes(imageFileId) ? prev : [...prev, imageFileId]
             )
          } else {
-            setImagesToDeleteFromServer?.((prev) =>
-               prev.filter((src) => src !== imageSrc)
-            )
-            setImages?.((prev) =>
-               prev.includes(imageSrc) ? prev : [...prev, imageSrc]
+            setFileIdsToDeleteFromStorage?.((prev) =>
+               prev.filter((id) => id !== imageFileId)
             )
          }
       }
@@ -177,9 +158,9 @@ export const Editor = <T extends boolean>({
    }
 
    function uploadImage(file: File) {
-      const upload = async (files: File[]) => {
+      const upload = async () => {
          try {
-            const response = await startUpload(files)
+            const response = await startUpload([file])
 
             if (!response) {
                throw new Error("Error")
@@ -191,12 +172,10 @@ export const Editor = <T extends boolean>({
       }
       editor?.setOptions({ editable: false })
 
-      toast.promise(upload([file]), {
+      toast.promise(upload, {
          loading: t("uploading"),
          success: (uploadedImage) => {
             if (uploadedImage?.[0]?.url) {
-               setImages?.((prev) => [...prev, uploadedImage[0]!.url])
-
                editor
                   ?.chain()
                   .focus()

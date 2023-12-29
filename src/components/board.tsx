@@ -25,6 +25,7 @@ import {
    DialogHeader,
    DialogTitle,
 } from "@/components/ui/dialog"
+import { getUploadthingFileIdsFromHTML } from "@/lib/utils"
 
 type BoardProps = {
    board: Board
@@ -40,10 +41,22 @@ export function Board({ board }: BoardProps) {
       boardId: board.id,
    })
 
+   const { mutate: onDeleteFiles } = api.uploadthing.deleteFiles.useMutation()
+
    const { mutate: onDelete, isLoading } = api.board.delete.useMutation({
-      onSuccess: (deletedBoardName) => {
+      onSuccess: ({ name, editorContents }) => {
          router.refresh()
-         toast.success(t.rich("delete-success", { name: deletedBoardName }))
+         toast.success(t.rich("delete-success", { name }))
+
+         const filesToDelete = editorContents.flatMap((d) =>
+            getUploadthingFileIdsFromHTML(d)
+         )
+
+         if (filesToDelete && filesToDelete.length > 0) {
+            onDeleteFiles({
+               fileIds: filesToDelete,
+            })
+         }
       },
       onError: () => {
          return toast.error(t("delete-error"))

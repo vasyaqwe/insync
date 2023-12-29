@@ -7,7 +7,11 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Loading } from "@/components/ui/loading"
 import { useFormValidation } from "@/hooks/use-form-validation"
-import { cn, focusContentEditableElement } from "@/lib/utils"
+import {
+   cn,
+   focusContentEditableElement,
+   getUploadthingFileIdsFromHTML,
+} from "@/lib/utils"
 import { NAME_CHARS_LIMIT, updateCardSchema } from "@/lib/validations/card"
 import { useRouter } from "@/navigation"
 import { api } from "@/trpc/react"
@@ -35,6 +39,7 @@ import { ErrorMessage, Input } from "@/components/ui/input"
 import { Editor, EditorOutput } from "@/components/ui/editor"
 import { flushSync } from "react-dom"
 import Image from "next/image"
+import { useIsClient } from "@/hooks/use-is-client"
 
 type CardProps = {
    card: Card
@@ -47,48 +52,60 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
    const t = useTranslations("cards")
    const tCommon = useTranslations("common")
    const router = useRouter()
+   const { isClient } = useIsClient()
    const [isEditing, setIsEditing] = useState(false)
 
    const [editDialogOpen, setEditDialogOpen] = useState(false)
    const [detailsDialogOpen, setDetailsDialogOpen] = useState(false)
    const [menuOpen, setMenuOpen] = useState(false)
 
-   const [images, setImages] = useState(card.images)
-   const [imagesToDeleteFromServer, setImagesToDeleteFromServer] = useState<
+   const [fileIdsToDeleteFromStorage, setFileIdsToDeleteFromStorage] = useState<
       string[]
    >([])
-   console.log("render")
+
    const [formData, setFormData] = useState({
       name: card.name,
       cardId: card.id,
       description: card.description ?? "",
-      images,
-      imagesToDeleteFromServer,
    })
 
    const { mutate: onDelete, isLoading } = api.card.delete.useMutation({
-      onSuccess: (deletedCardName) => {
+      onSuccess: ({ name, description }) => {
          router.refresh()
-         toast.success(t.rich("delete-success", { name: deletedCardName }))
+         toast.success(t.rich("delete-success", { name }))
+         const filesToDelete = getUploadthingFileIdsFromHTML(description)
+         if (filesToDelete && filesToDelete.length > 0) {
+            onDeleteFiles({
+               fileIds: filesToDelete,
+            })
+         }
       },
       onError: () => {
          return toast.error(t("delete-error"))
       },
    })
 
+   const { mutate: onDeleteFiles } = api.uploadthing.deleteFiles.useMutation({
+      onSettled: () => {
+         setFileIdsToDeleteFromStorage([])
+      },
+   })
+
    const { mutate: onUpdate, isLoading: isUpdateLoading } =
       api.card.update.useMutation({
-         onSuccess: (updatetCardName) => {
+         onSuccess: ({ name }) => {
             startTransition(() => {
                router.refresh()
                setEditDialogOpen(false)
                setMenuOpen(false)
-               setImagesToDeleteFromServer([])
                setIsEditing(false)
-               toast.success(
-                  t.rich("update-success", { name: updatetCardName })
-               )
+               toast.success(t.rich("update-success", { name }))
             })
+            if (fileIdsToDeleteFromStorage.length > 0) {
+               onDeleteFiles({
+                  fileIds: fileIdsToDeleteFromStorage,
+               })
+            }
          },
          onError: () => {
             return toast.error(t("update-error"))
@@ -96,8 +113,7 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
       })
 
    const { safeOnSubmit, errors } = useFormValidation({
-      onSubmit: () =>
-         onUpdate({ ...formData, images, imagesToDeleteFromServer: [] }),
+      onSubmit: () => onUpdate(formData),
       formData,
       zodSchema: updateCardSchema,
    })
@@ -108,7 +124,6 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
          ...prev,
          description: card.description ?? "",
       }))
-      setImages(card.images)
    }
 
    function onStartEditing() {
@@ -120,7 +135,23 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
       if (e.key === "Escape") onCancelEditing()
    }
 
-   const hasImages = card.images.length > 0
+   function getLastImageSrcFromHTML(html: string | null) {
+      if (!html || !isClient) return
+
+      const parser = new DOMParser()
+      const doc = parser.parseFromString(html, "text/html")
+
+      // Get all img elements in the document
+      const images = doc.querySelectorAll("img")
+
+      // Get the last image element and its source URL
+      const lastImg = images[images.length - 1]
+      const imgSrc = lastImg ? lastImg.getAttribute("src") : null
+
+      return imgSrc
+   }
+
+   const lastImageSrc = getLastImageSrcFromHTML(card.description)
 
    return (
       <>
@@ -140,25 +171,27 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                      }}
                      className={cn(
                         "group mt-2 w-full !cursor-pointer rounded-lg bg-border/30 text-start backdrop-blur-sm transition-opacity hover:opacity-80",
-                        !hasImages ? "border" : ""
+                        !lastImageSrc ? "border" : ""
                      )}
                      ref={provided.innerRef}
                      {...provided.draggableProps}
                      {...provided.dragHandleProps}
                   >
-                     {hasImages && (
+                     {lastImageSrc && (
                         <Image
                            className="max-h-[150px] rounded-lg rounded-b-none object-cover"
                            width={288}
                            height={150}
-                           src={card.images?.[card.images.length - 1] ?? ""}
+                           src={lastImageSrc}
                            alt={card.name}
                         />
                      )}
                      <div
                         className={cn(
                            "flex items-center gap-1 rounded-lg p-2",
-                           hasImages ? "rounded-t-none border border-t-0" : ""
+                           lastImageSrc
+                              ? "rounded-t-none border border-t-0"
+                              : ""
                         )}
                      >
                         <h3 className="ml-0.5">{card.name}</h3>
@@ -264,10 +297,8 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                            {isEditing ? (
                               <>
                                  <Editor
-                                    shouldSetImages
-                                    setImages={setImages}
-                                    setImagesToDeleteFromServer={
-                                       setImagesToDeleteFromServer
+                                    setFileIdsToDeleteFromStorage={
+                                       setFileIdsToDeleteFromStorage
                                     }
                                     className="min-h-[150px]"
                                     value={formData.description}
@@ -286,8 +317,6 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                                        onClick={() => {
                                           onUpdate({
                                              ...formData,
-                                             images,
-                                             imagesToDeleteFromServer,
                                           })
                                        }}
                                     >

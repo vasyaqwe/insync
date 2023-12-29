@@ -53,6 +53,7 @@
     "next": "^14.0.3",
     "next-intl": "^3.1.0",
     "next-themes": "^0.2.1",
+    "node-html-parser": "^6.1.12",
     "openai": "^4.18.0",
     "pdf-parse": "^1.1.1",
     "react": "18.2.0",
@@ -75,6 +76,7 @@
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.10",
+    "@total-typescript/ts-reset": "^0.5.1",
     "@types/eslint": "^8.44.2",
     "@types/negotiator": "^0.6.3",
     "@types/node": "^18.16.0",

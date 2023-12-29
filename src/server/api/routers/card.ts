@@ -5,10 +5,6 @@ import {
    updateCardSchema,
 } from "@/lib/validations/card"
 import { createTRPCRouter, privateProcedure } from "@/server/api/trpc"
-import { TRPCError } from "@trpc/server"
-import { UTApi } from "uploadthing/server"
-
-const utapi = new UTApi()
 
 export const cardRouter = createTRPCRouter({
    create: privateProcedure
@@ -49,58 +45,18 @@ export const cardRouter = createTRPCRouter({
       }),
    update: privateProcedure
       .input(updateCardSchema)
-      .mutation(
-         async ({
-            ctx,
-            input: { cardId, imagesToDeleteFromServer, ...rest },
-         }) => {
-            const card = await ctx.db.card.findFirst({
-               where: {
-                  id: cardId,
-               },
-               select: {
-                  images: true,
-               },
-            })
+      .mutation(async ({ ctx, input: { cardId, ...rest } }) => {
+         const updatedCard = await ctx.db.card.update({
+            where: {
+               id: cardId,
+            },
+            data: {
+               ...rest,
+            },
+         })
 
-            if (!card) {
-               throw new TRPCError({
-                  code: "BAD_REQUEST",
-                  message: "Card not found",
-               })
-            }
-
-            const updatedCard = await ctx.db.card.update({
-               where: {
-                  id: cardId,
-               },
-               data: {
-                  ...rest,
-               },
-            })
-
-            if (card.images.length > 0) {
-               const removedImages = card.images.filter(
-                  (image) => !updatedCard.images.includes(image)
-               )
-
-               const removedImageIds = removedImages.map(
-                  (img) => img?.split("/f/")[1] ?? ""
-               )
-
-               if (removedImageIds.length > 0) {
-                  await utapi.deleteFiles(removedImageIds)
-               }
-            } else if (imagesToDeleteFromServer.length > 0) {
-               const ids = imagesToDeleteFromServer.map(
-                  (img) => img?.split("/f/")[1] ?? ""
-               )
-               await utapi.deleteFiles(ids)
-            }
-
-            return updatedCard.name
-         }
-      ),
+         return { name: updatedCard.name, description: updatedCard.description }
+      }),
    delete: privateProcedure
       .input(deleteCardSchema)
       .mutation(async ({ ctx, input: { cardId } }) => {
@@ -108,16 +64,12 @@ export const cardRouter = createTRPCRouter({
             where: {
                id: cardId,
             },
+            select: {
+               description: true,
+               name: true,
+            },
          })
 
-         const imageIds = deletedCard.images.map(
-            (img) => img?.split("/f/")[1] ?? ""
-         )
-
-         if (imageIds.length > 0) {
-            await utapi.deleteFiles(imageIds)
-         }
-
-         return deletedCard.name
+         return { name: deletedCard.name, description: deletedCard.description }
       }),
 })

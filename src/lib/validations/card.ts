@@ -20,8 +20,6 @@ export const updateCardSchema = z.object({
    cardId: z.string(),
    name: cardNameSchema,
    description: z.string().optional(),
-   images: z.array(z.string()),
-   imagesToDeleteFromServer: z.array(z.string()),
 })
 
 export const updateCardOrderSchema = z.object({

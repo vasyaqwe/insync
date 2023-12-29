@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Loading } from "@/components/ui/loading"
 import { MOBILE_BREAKPOINT } from "@/config"
+import { getUploadthingFileIdsFromHTML } from "@/lib/utils"
 import { useRouter } from "@/navigation"
 import { useOrganizationHelpersStore } from "@/stores/use-organization-helpers-store"
 import { api } from "@/trpc/react"
@@ -32,13 +33,30 @@ export function DeleteOrganizationDialog({
    const { removeExpandedOrganizations } = useOrganizationHelpersStore()
 
    const [open, setOpen] = useState(false)
+
+   const { mutate: onDeleteFiles } = api.uploadthing.deleteFiles.useMutation()
+
    const { isLoading, mutate: onDelete } = api.organization.delete.useMutation({
-      onSuccess: ({ firstOrganizationId, deletedOrganizationId }) => {
+      onSuccess: ({
+         firstOrganizationId,
+         deletedOrganizationId,
+         editorContents,
+      }) => {
          router.push(`/dashboard/${firstOrganizationId}`)
          router.refresh()
          toast.success(t("delete-success-toast"))
          setOpen(false)
          removeExpandedOrganizations(deletedOrganizationId)
+
+         const filesToDelete = editorContents.flatMap((d) =>
+            getUploadthingFileIdsFromHTML(d)
+         )
+
+         if (filesToDelete && filesToDelete.length > 0) {
+            onDeleteFiles({
+               fileIds: filesToDelete,
+            })
+         }
       },
       onError: () => {
          toast.error(t("delete-error-toast"))

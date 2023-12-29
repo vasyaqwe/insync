@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
+import "@total-typescript/ts-reset"
 
 export function cn(...inputs: ClassValue[]) {
    return twMerge(clsx(inputs))
@@ -41,4 +42,21 @@ export function focusContentEditableElement(
    const selection = window.getSelection() //get the selection object (allows you to change selection)
    selection?.removeAllRanges() //remove any selections already made
    selection?.addRange(range) //make the range you have just created the visible selection
+}
+
+export function getUploadthingFileIdsFromHTML(html: string | null) {
+   if (!html || typeof window === "undefined") return []
+
+   const parser = new DOMParser()
+   const doc = parser.parseFromString(html, "text/html")
+
+   const ids = [...doc.querySelectorAll("img")]
+      .map((img) => getUploadThingFileIdFromUrl(img.getAttribute("src")))
+      .filter(Boolean)
+
+   return ids
+}
+
+export function getUploadThingFileIdFromUrl(url: string | undefined | null) {
+   return url?.split("/f/")[1]
 }

@@ -23,7 +23,7 @@ import {
    type ComponentProps,
 } from "react"
 import { Textarea } from "@/components/ui/textarea"
-import { cn } from "@/lib/utils"
+import { cn, getUploadthingFileIdsFromHTML } from "@/lib/utils"
 import { flushSync } from "react-dom"
 import { CreateCard } from "@/components/forms/create-card"
 import {
@@ -58,10 +58,22 @@ function List({ list, index, isLoading: isDragLoading }: ListProps) {
 
    const textareaRef = useRef<HTMLTextAreaElement>(null)
 
+   const { mutate: onDeleteFiles } = api.uploadthing.deleteFiles.useMutation()
+
    const { mutate: onDelete, isLoading } = api.list.delete.useMutation({
-      onSuccess: (deletedListName) => {
+      onSuccess: ({ name, editorContents }) => {
          router.refresh()
-         toast.success(t.rich("delete-success", { name: deletedListName }))
+         toast.success(t.rich("delete-success", { name }))
+
+         const filesToDelete = editorContents.flatMap((d) =>
+            getUploadthingFileIdsFromHTML(d)
+         )
+
+         if (filesToDelete && filesToDelete.length > 0) {
+            onDeleteFiles({
+               fileIds: filesToDelete,
+            })
+         }
       },
       onError: () => {
          return toast.error(t("delete-error"))

@@ -92,6 +92,8 @@ function Aside({
    } = useOrganizationHelpersStore()
 
    useEffect(() => {
+      if (!isHydrated) return
+
       if (
          !organizations.some((org) => org.id === lastVisitedOrganizationId) ||
          !lastVisitedOrganizationId ||
@@ -100,7 +102,7 @@ function Aside({
          setLastVisitedOrganizationId(organizations?.[0]?.id ?? "")
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
-   }, [organizations, lastVisitedOrganizationId])
+   }, [organizations, lastVisitedOrganizationId, isHydrated])
 
    const pathname = usePathname()
 
