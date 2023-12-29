@@ -89,7 +89,7 @@ export const Editor = ({
       },
    })
    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-   const previousImages = useRef<any>()
+   const previousImages = useRef<HTMLImageElement[]>([])
 
    useEffect(() => {
       if (!isMounted && editor) {
@@ -108,7 +108,7 @@ export const Editor = ({
 
       // Compare previous/current nodes to detect deleted ones
       const prevNodesById: Record<string, HTMLImageElement> = {}
-      previousImages.current?.forEach((node: HTMLImageElement) => {
+      previousImages.current.forEach((node: HTMLImageElement) => {
          if (node.src) {
             prevNodesById[node.src] = node
          }
