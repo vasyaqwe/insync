@@ -22,7 +22,7 @@ export const useFormValidation = <TFormData,>({
    const validate = () => {
       const res = zodSchema.safeParse(formData)
       if (!res.success) {
-         const errorsArr: ZodIssue[] = JSON.parse(res.error.message)
+         const errorsArr = JSON.parse(res.error.message) as ZodIssue[]
 
          const errorsObject = errorsArr.reduce(
             (result: Record<string, string>, e) => {
