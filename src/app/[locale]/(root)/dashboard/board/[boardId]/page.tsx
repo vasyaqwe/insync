@@ -2,6 +2,7 @@ import { CreateList } from "@/components/forms/create-list"
 import { ListsWrapper } from "@/components/list"
 import { pick } from "@/lib/utils"
 import { db } from "@/server/db"
+import { metadataConfig } from "@/config"
 import { currentUser } from "@clerk/nextjs"
 import { KanbanSquare } from "lucide-react"
 import { NextIntlClientProvider } from "next-intl"
@@ -12,18 +13,20 @@ type Params = {
    params: { boardId: string }
 }
 
-// export async function generateMetadata({ params: { boardId } }: Params) {
-//    const board = await db.board.findFirst({
-//       where: {
-//          id: boardId,
-//       },
-//       select: {
-//          name: true,
-//       },
-//    })
-//    if (!board) return { ...metadataConfig, title: `insync. | Board not found` }
-//    return { ...metadataConfig, title: `insync. | ${board.name}` }
-// }
+export async function generateMetadata({ params: { boardId } }: Params) {
+   const board = await db.board.findFirst({
+      where: {
+         id: boardId,
+      },
+      select: {
+         name: true,
+      },
+   })
+   if (!board) return { ...metadataConfig, title: `insync. | Board not found` }
+   return { ...metadataConfig, title: `insync. | ${board.name}` }
+}
+
+export const dynamic = "force-dynamic"
 
 export default async function Page({ params: { boardId } }: Params) {
    const user = await currentUser()
