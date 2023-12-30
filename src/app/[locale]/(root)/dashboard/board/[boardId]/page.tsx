@@ -40,7 +40,14 @@ export default async function Page({ params: { boardId } }: Params) {
          name: true,
          lists: {
             include: {
-               cards: true,
+               cards: {
+                  orderBy: {
+                     order: "asc",
+                  },
+               },
+            },
+            orderBy: {
+               order: "asc",
             },
          },
          organization: {
