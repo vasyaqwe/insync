@@ -15,6 +15,7 @@ export default authMiddleware({
 
       const locale = getLocaleOrDefault(req)
       req.nextUrl.pathname = `/${locale}/sign-in`
+
       return Response.redirect(req.nextUrl)
    },
    beforeAuth(req) {
