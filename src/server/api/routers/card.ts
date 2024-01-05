@@ -1,6 +1,8 @@
 import {
+   createCardCommentSchema,
    createCardSchema,
    deleteCardSchema,
+   getCardCommentsSchema,
    updateCardOrderSchema,
    updateCardSchema,
 } from "@/lib/validations/card"
@@ -19,6 +21,36 @@ export const cardRouter = createTRPCRouter({
                name,
                listId,
                order: cardsCount + 1,
+            },
+         })
+
+         return createdCard.id
+      }),
+   getComments: privateProcedure
+      .input(getCardCommentsSchema)
+      .query(async ({ ctx, input: { cardId } }) => {
+         const comments = await ctx.db.cardComment.findMany({
+            where: {
+               cardId,
+            },
+            include: {
+               author: true,
+            },
+            orderBy: {
+               createdAt: "desc",
+            },
+         })
+
+         return comments
+      }),
+   createComment: privateProcedure
+      .input(createCardCommentSchema)
+      .mutation(async ({ ctx, input: { content, cardId } }) => {
+         const createdCard = await ctx.db.cardComment.create({
+            data: {
+               authorId: ctx.session.userId!,
+               content,
+               cardId,
             },
          })
 

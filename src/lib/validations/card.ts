@@ -12,6 +12,15 @@ export const createCardSchema = z.object({
    listId: z.string(),
 })
 
+export const getCardCommentsSchema = z.object({
+   cardId: z.string(),
+})
+
+export const createCardCommentSchema = z.object({
+   cardId: z.string(),
+   content: z.string(),
+})
+
 export const deleteCardSchema = z.object({
    cardId: z.string(),
 })

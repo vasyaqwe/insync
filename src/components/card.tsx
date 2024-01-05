@@ -26,7 +26,7 @@ import {
    Pencil,
    Trash2,
 } from "lucide-react"
-import { useTranslations } from "next-intl"
+import { useFormatter, useTranslations } from "next-intl"
 import { type KeyboardEvent, startTransition, useState } from "react"
 import { toast } from "sonner"
 import {
@@ -40,6 +40,8 @@ import { Editor, EditorOutput } from "@/components/ui/editor"
 import { flushSync } from "react-dom"
 import Image from "next/image"
 import { useIsClient } from "@/hooks/use-is-client"
+import { UserAvatar } from "@/components/ui/user-avatar"
+import { useUser } from "@clerk/nextjs"
 
 type CardProps = {
    card: Card
@@ -52,8 +54,12 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
    const t = useTranslations("cards")
    const tCommon = useTranslations("common")
    const router = useRouter()
+   const format = useFormatter()
+   const { user } = useUser()
    const { isClient } = useIsClient()
    const [isEditing, setIsEditing] = useState(false)
+   const [isCreatingComment, setIsCreatingComment] = useState(false)
+   const [comment, setComment] = useState("")
 
    const [editDialogOpen, setEditDialogOpen] = useState(false)
    const [detailsDialogOpen, setDetailsDialogOpen] = useState(false)
@@ -68,6 +74,12 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
       cardId: card.id,
       description: card.description ?? "",
    })
+
+   const {
+      data: comments,
+      isError: isCommentsError,
+      isLoading: isCommentsLoading,
+   } = api.card.getComments.useQuery({ cardId: card.id })
 
    const { mutate: onDelete, isLoading } = api.card.delete.useMutation({
       onSuccess: ({ name, description }) => {
@@ -112,6 +124,24 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
          },
       })
 
+   const { mutate: onCreateComment, isLoading: isCreateCommentLoading } =
+      api.card.createComment.useMutation({
+         onSuccess: () => {
+            startTransition(() => {
+               setIsCreatingComment(false)
+               toast.success(t("create-comment-success"))
+            })
+            if (fileIdsToDeleteFromStorage.length > 0) {
+               onDeleteFiles({
+                  fileIds: fileIdsToDeleteFromStorage,
+               })
+            }
+         },
+         onError: () => {
+            return toast.error(t("update-error"))
+         },
+      })
+
    const { safeOnSubmit, errors } = useFormValidation({
       onSubmit: () => onUpdate(formData),
       formData,
@@ -132,7 +162,10 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
    }
 
    function onEditorEscape(e: KeyboardEvent<HTMLDivElement>) {
-      if (e.key === "Escape") onCancelEditing()
+      if (e.key === "Escape") {
+         onCancelEditing()
+         setIsCreatingComment(false)
+      }
    }
 
    function getLastImageSrcFromHTML(html: string | null) {
@@ -349,12 +382,95 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                            <MessageCircle className="-mt-0.5 mr-1 inline " />{" "}
                            {t("comments")}
                         </DialogTitle>
-                        <Button
-                           className="mt-4"
-                           variant={"secondary"}
+
+                        <div
+                           className={cn(
+                              "mt-4 flex gap-3",
+                              isCreatingComment ? "items-start" : "items-center"
+                           )}
                         >
-                           {t("add-description")}
-                        </Button>
+                           {isCreatingComment ? (
+                              <div className="w-full">
+                                 <Editor
+                                    setFileIdsToDeleteFromStorage={
+                                       setFileIdsToDeleteFromStorage
+                                    }
+                                    className="min-h-[90px]"
+                                    value={comment}
+                                    onKeyDown={onEditorEscape}
+                                    onChange={(comment) => setComment(comment)}
+                                 />
+                                 <Button
+                                    disabled={
+                                       comment.length < 1 ||
+                                       isCreateCommentLoading
+                                    }
+                                    className="mt-4"
+                                    onClick={() => {
+                                       onCreateComment({
+                                          content: comment,
+                                          cardId: card.id,
+                                       })
+                                    }}
+                                 >
+                                    {tCommon("create")}
+                                    {isCreateCommentLoading && <Loading />}
+                                 </Button>
+                              </div>
+                           ) : (
+                              <>
+                                 <UserAvatar
+                                    className="[--avatar-size:32px]"
+                                    user={{
+                                       email: user?.emailAddresses[0]
+                                          ?.emailAddress,
+                                       firstName: user?.firstName ?? undefined,
+                                       imageUrl: user?.imageUrl,
+                                    }}
+                                 />
+                                 <Button
+                                    onClick={() => setIsCreatingComment(true)}
+                                    variant={"secondary"}
+                                 >
+                                    {t("add-comment")}
+                                 </Button>
+                              </>
+                           )}
+                        </div>
+                        {isCommentsLoading ? (
+                           ""
+                        ) : isCommentsError ? (
+                           <p className="mt-4 font-medium text-destructive">
+                              {t("get-comments-error")}
+                           </p>
+                        ) : (
+                           <>
+                              {comments.map((c) => (
+                                 <div
+                                    key={c.id}
+                                    className="mt-4 flex gap-3"
+                                 >
+                                    <UserAvatar
+                                       className="[--avatar-size:32px]"
+                                       user={c.author}
+                                    />
+                                    <div>
+                                       <p className="text-sm font-medium">
+                                          {c.author.firstName}{" "}
+                                          {c.author.lastName}{" "}
+                                          <span
+                                             className="text-xs font-normal text-muted-foreground"
+                                             suppressHydrationWarning
+                                          >
+                                             {format.relativeTime(c.createdAt)}
+                                          </span>
+                                       </p>
+                                       <EditorOutput html={c.content ?? ""} />
+                                    </div>
+                                 </div>
+                              ))}
+                           </>
+                        )}
                      </section>
                      <section>
                         <DialogTitle className="mt-8 font-medium">

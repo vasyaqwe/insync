@@ -197,7 +197,7 @@ export const Editor = ({
 
    return (
       <div
-         className="w-full rounded-lg border border-input bg-background
+         className="w-full rounded-lg border border-input/75 bg-background
       ring-ring ring-offset-2 ring-offset-background focus-within:outline-none focus-within:ring-2"
          {...props}
       >
@@ -365,12 +365,14 @@ export const Editor = ({
                content={t("9")}
             >
                <button
+                  type="button"
                   onMouseOver={() => setIsAnyTooltipVisible(true)}
                   onMouseLeave={() => setIsAnyTooltipVisible(false)}
                   className={cn(
                      toggleVariants({ size: "sm" }),
                      "text-foreground"
                   )}
+                  disabled={!editor.can().undo()}
                   aria-label={t("9")}
                   onClick={() => editor.chain().focus().undo().run()}
                >
@@ -385,12 +387,14 @@ export const Editor = ({
                content={t("10")}
             >
                <button
+                  type="button"
                   onMouseOver={() => setIsAnyTooltipVisible(true)}
                   onMouseLeave={() => setIsAnyTooltipVisible(false)}
                   className={cn(
                      toggleVariants({ size: "sm" }),
                      "text-foreground"
                   )}
+                  disabled={!editor.can().redo()}
                   aria-label={t("10")}
                   onClick={() => editor.chain().focus().redo().run()}
                >

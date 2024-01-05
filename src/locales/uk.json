@@ -84,7 +84,15 @@
       "in-list": "У списку",
       "description": "Опис",
       "add-description": "Додати детальніший опис",
+      "add-comment": "Напишіть коментар",
       "comments": "Коментарі",
+      "get-comments-error": "Не вдалося завантажити коментарі",
+      "create-comment-success": "Коментар створений",
+      "create-comment-error": "Не вдалося створити коментар, щось пішло не так",
+      "update-comment-success": "Коментар оновлено",
+      "update-comment-error": "Не вдалося оновити коментар, щось пішло не так",
+      "delete-comment-success": "Коментар видалено",
+      "delete-comment-error": "Не вдалося видалити коментар, щось пішло не так",
       "activity": "Лог активності"
    },
    "members": {

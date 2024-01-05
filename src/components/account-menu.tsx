@@ -57,7 +57,7 @@ export function AccountMenu({ className, ...props }: ComponentProps<"div">) {
                         user={{
                            email: user.emailAddresses[0]?.emailAddress,
                            firstName: user.firstName ?? undefined,
-                           imageUrl: user.imageUrl ?? undefined,
+                           imageUrl: user.imageUrl,
                         }}
                      />
                      <span className="max-sm:hidden"> {user.firstName}</span>
