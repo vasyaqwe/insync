@@ -410,10 +410,13 @@ export const Editor = ({
    )
 }
 
-export function EditorOutput({ html }: { html: string }) {
+export function EditorOutput({
+   html,
+   className,
+}: { html: string } & ComponentProps<"div">) {
    return (
       <div
-         className={"prose dark:prose-invert"}
+         className={cn("prose dark:prose-invert", className)}
          dangerouslySetInnerHTML={{
             __html: html,
          }}

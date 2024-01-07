@@ -1,6 +1,7 @@
 import {
    createCardCommentSchema,
    createCardSchema,
+   deleteCardCommentSchema,
    deleteCardSchema,
    getCardCommentsSchema,
    updateCardOrderSchema,
@@ -46,7 +47,7 @@ export const cardRouter = createTRPCRouter({
    createComment: privateProcedure
       .input(createCardCommentSchema)
       .mutation(async ({ ctx, input: { content, cardId } }) => {
-         const createdCard = await ctx.db.cardComment.create({
+         const createdComment = await ctx.db.cardComment.create({
             data: {
                authorId: ctx.session.userId!,
                content,
@@ -54,7 +55,19 @@ export const cardRouter = createTRPCRouter({
             },
          })
 
-         return createdCard.id
+         return createdComment.id
+      }),
+   deleteComment: privateProcedure
+      .input(deleteCardCommentSchema)
+      .mutation(async ({ ctx, input: { commentId } }) => {
+         const deletedComment = await ctx.db.cardComment.delete({
+            where: {
+               id: commentId,
+               authorId: ctx.session.userId,
+            },
+         })
+
+         return { content: deletedComment.content }
       }),
    updateOrder: privateProcedure
       .input(updateCardOrderSchema)

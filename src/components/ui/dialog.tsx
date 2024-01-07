@@ -48,7 +48,7 @@ const DialogContent = React.forwardRef<
          <Drawer.Content
             ref={ref}
             className={cn(
-               "fixed bottom-0 left-0 right-0 z-[51] flex !max-w-full flex-col rounded-t-2xl border-t border-border bg-popover pt-4 focus-visible:outline-none",
+               "fixed bottom-0 left-0 right-0 z-50 flex !max-w-full flex-col rounded-t-2xl border-t border-border bg-popover pt-4 focus-visible:outline-none",
                className
             )}
             {...props}

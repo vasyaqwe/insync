@@ -20,6 +20,9 @@ export const createCardCommentSchema = z.object({
    cardId: z.string(),
    content: z.string(),
 })
+export const deleteCardCommentSchema = z.object({
+   commentId: z.string(),
+})
 
 export const deleteCardSchema = z.object({
    cardId: z.string(),

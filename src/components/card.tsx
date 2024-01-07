@@ -42,6 +42,7 @@ import Image from "next/image"
 import { useIsClient } from "@/hooks/use-is-client"
 import { UserAvatar } from "@/components/ui/user-avatar"
 import { useUser } from "@clerk/nextjs"
+import { Skeleton } from "@/components/ui/skeleton"
 
 type CardProps = {
    card: Card
@@ -55,6 +56,7 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
    const tCommon = useTranslations("common")
    const router = useRouter()
    const format = useFormatter()
+
    const { user } = useUser()
    const { isClient } = useIsClient()
    const [isEditing, setIsEditing] = useState(false)
@@ -75,11 +77,16 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
       description: card.description ?? "",
    })
 
+   const utils = api.useUtils()
+
    const {
       data: comments,
       isError: isCommentsError,
       isLoading: isCommentsLoading,
-   } = api.card.getComments.useQuery({ cardId: card.id })
+   } = api.card.getComments.useQuery(
+      { cardId: card.id },
+      { enabled: detailsDialogOpen }
+   )
 
    const { mutate: onDelete, isLoading } = api.card.delete.useMutation({
       onSuccess: ({ name, description }) => {
@@ -136,10 +143,29 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                   fileIds: fileIdsToDeleteFromStorage,
                })
             }
+            setComment("")
          },
          onError: () => {
-            return toast.error(t("update-error"))
+            return toast.error(t("create-comment-error"))
          },
+         onSettled: () => utils.card.getComments.invalidate(),
+      })
+
+   const { mutate: onDeleteComment, isLoading: isDeleteCommentLoading } =
+      api.card.deleteComment.useMutation({
+         onSuccess: ({ content }) => {
+            toast.success(t.rich("delete-comment-success"))
+            const filesToDelete = getUploadthingFileIdsFromHTML(content)
+            if (filesToDelete && filesToDelete.length > 0) {
+               onDeleteFiles({
+                  fileIds: filesToDelete,
+               })
+            }
+         },
+         onError: () => {
+            return toast.error(t("delete-comment-error"))
+         },
+         onSettled: () => utils.card.getComments.invalidate(),
       })
 
    const { safeOnSubmit, errors } = useFormValidation({
@@ -184,6 +210,23 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
       return imgSrc
    }
 
+   function formatDate(dateInput: Date) {
+      const date = Number(dateInput)
+      if (!isNaN(date)) {
+         const diffInMinutes = Math.floor((Date.now() - date) / 60000)
+         if (diffInMinutes < 2) {
+            return tCommon("just-now")
+         } else if (diffInMinutes <= 1440) {
+            // less than 24 hours
+            return format.relativeTime(date)
+         } else {
+            return format.dateTime(date)
+         }
+      } else {
+         return "Invalid date"
+      }
+   }
+
    const lastImageSrc = getLastImageSrcFromHTML(card.description)
 
    return (
@@ -199,9 +242,7 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                   onOpenChange={setDetailsDialogOpen}
                >
                   <li
-                     onClick={() => {
-                        setDetailsDialogOpen(true)
-                     }}
+                     onClick={() => setDetailsDialogOpen(true)}
                      className={cn(
                         "group mt-2 w-full !cursor-pointer rounded-lg bg-border/30 text-start backdrop-blur-sm transition-opacity hover:opacity-80",
                         !lastImageSrc ? "border" : ""
@@ -241,8 +282,8 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                                  variant={"ghost"}
                                  size={"icon"}
                                  className={cn(
-                                    "ml-auto h-7 w-7 flex-shrink-0 self-start hover:bg-primary/10 group-hover:visible group-focus:visible",
-                                    !menuOpen ? "invisible" : ""
+                                    "ml-auto h-7 w-7 flex-shrink-0 self-start hover:bg-primary/10 focus:opacity-100 group-hover:opacity-100 group-focus:opacity-100",
+                                    !menuOpen ? "opacity-0" : ""
                                  )}
                               >
                                  <MoreHorizontal
@@ -257,12 +298,8 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                            <DropdownMenuContent align="end">
                               <DropdownMenuItem
                                  disabled={isLoading}
-                                 onClick={(e) => {
-                                    e.stopPropagation()
-                                 }}
-                                 onSelect={() => {
-                                    setEditDialogOpen(true)
-                                 }}
+                                 onClick={(e) => e.stopPropagation()}
+                                 onSelect={() => setEditDialogOpen(true)}
                               >
                                  <Pencil
                                     className="mr-1"
@@ -272,9 +309,7 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                  disabled={isLoading}
-                                 onClick={(e) => {
-                                    e.stopPropagation()
-                                 }}
+                                 onClick={(e) => e.stopPropagation()}
                                  onSelect={(e) => {
                                     e.preventDefault()
                                     onDelete({ cardId: card.id })
@@ -311,6 +346,7 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                            </strong>
                         </p>
                      </DialogHeader>
+
                      <section>
                         <DialogTitle className="mt-8 flex items-center gap-2 font-medium">
                            <AlignLeft className="inline" /> {t("description")}
@@ -377,6 +413,7 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                            )}
                         </div>
                      </section>
+
                      <section className="mt-8">
                         <DialogTitle className="font-medium">
                            <MessageCircle className="-mt-0.5 mr-1 inline " />{" "}
@@ -406,12 +443,12 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                                        isCreateCommentLoading
                                     }
                                     className="mt-4"
-                                    onClick={() => {
+                                    onClick={() =>
                                        onCreateComment({
                                           content: comment,
                                           cardId: card.id,
                                        })
-                                    }}
+                                    }
                                  >
                                     {tCommon("create")}
                                     {isCreateCommentLoading && <Loading />}
@@ -437,24 +474,41 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                               </>
                            )}
                         </div>
-                        {isCommentsLoading ? (
-                           ""
-                        ) : isCommentsError ? (
-                           <p className="mt-4 font-medium text-destructive">
-                              {t("get-comments-error")}
-                           </p>
-                        ) : (
-                           <>
-                              {comments.map((c) => (
+                        <div className="mt-5 w-full [--avatar-size:32px]">
+                           {isCommentsLoading ? (
+                              <>
+                                 {[...new Array(3)].map((_, idx) => (
+                                    <div
+                                       key={idx}
+                                       className="mt-5 flex w-full gap-3"
+                                    >
+                                       <Skeleton className="size-[var(--avatar-size)] flex-shrink-0 rounded-full" />
+                                       <div className="w-full">
+                                          <div className="flex items-end gap-2">
+                                             <Skeleton className="h-4 w-28" />
+                                             <Skeleton className="mb-[1px] h-3 w-20" />
+                                          </div>
+                                          <Skeleton className="mt-3 h-4 w-[80%]" />
+                                          <Skeleton className="mt-2 h-4 w-[70%]" />
+                                       </div>
+                                    </div>
+                                 ))}
+                              </>
+                           ) : isCommentsError ? (
+                              <p className="font-medium text-destructive">
+                                 {t("get-comments-error")}
+                              </p>
+                           ) : (
+                              comments.map((c) => (
                                  <div
                                     key={c.id}
-                                    className="mt-4 flex gap-3"
+                                    className="group mt-4 flex gap-3"
                                  >
                                     <UserAvatar
-                                       className="[--avatar-size:32px]"
+                                       className="mt-1.5"
                                        user={c.author}
                                     />
-                                    <div>
+                                    <div className="w-full">
                                        <p className="text-sm font-medium">
                                           {c.author.firstName}{" "}
                                           {c.author.lastName}{" "}
@@ -462,16 +516,70 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                                              className="text-xs font-normal text-muted-foreground"
                                              suppressHydrationWarning
                                           >
-                                             {format.relativeTime(c.createdAt)}
+                                             {formatDate(c.createdAt)}
                                           </span>
                                        </p>
                                        <EditorOutput html={c.content ?? ""} />
                                     </div>
+                                    {c.authorId === user?.id && (
+                                       <DropdownMenu>
+                                          <DropdownMenuTrigger asChild>
+                                             <Button
+                                                onClick={(e) => {
+                                                   e.preventDefault()
+                                                }}
+                                                variant={"ghost"}
+                                                size={"icon"}
+                                                className={cn(
+                                                   "ml-auto h-7 w-7 flex-shrink-0 self-start hover:bg-primary/10 data-[state=open]:opacity-100 md:opacity-0 md:focus:opacity-100 md:group-hover:opacity-100"
+                                                )}
+                                             >
+                                                <MoreHorizontal
+                                                   size={20}
+                                                   className="pointer-events-none"
+                                                />
+                                                <span className="sr-only">
+                                                   Show more options
+                                                </span>
+                                             </Button>
+                                          </DropdownMenuTrigger>
+                                          <DropdownMenuContent align="end">
+                                             <DropdownMenuItem
+                                                disabled={
+                                                   isDeleteCommentLoading
+                                                }
+                                                onClick={(e) => {
+                                                   e.stopPropagation()
+                                                }}
+                                                onSelect={(e) => {
+                                                   e.preventDefault()
+                                                   onDeleteComment({
+                                                      commentId: c.id,
+                                                   })
+                                                }}
+                                                className="!text-destructive"
+                                             >
+                                                {isDeleteCommentLoading ? (
+                                                   <Loading className="mx-auto" />
+                                                ) : (
+                                                   <>
+                                                      <Trash2
+                                                         className="mr-1"
+                                                         size={20}
+                                                      />
+                                                      {tCommon("delete")}
+                                                   </>
+                                                )}
+                                             </DropdownMenuItem>
+                                          </DropdownMenuContent>
+                                       </DropdownMenu>
+                                    )}
                                  </div>
-                              ))}
-                           </>
-                        )}
+                              ))
+                           )}
+                        </div>
                      </section>
+
                      <section>
                         <DialogTitle className="mt-8 font-medium">
                            <GanttChart className="-mt-0.5 mr-1 inline " />{" "}

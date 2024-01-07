@@ -42,7 +42,8 @@
       "update": "Update",
       "not-found": "This page could not be found.",
       "go-to-dashboard": "Go to dashboard",
-      "card": "card"
+      "card": "card",
+      "just-now": "just now"
    },
    "boards": {
       "title": "Boards",
