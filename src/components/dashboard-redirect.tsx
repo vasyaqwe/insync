@@ -11,8 +11,7 @@ export function DashboardRedirect() {
    const { isHydrated } = useIsHydrated()
 
    useEffect(() => {
-      if (lastVisitedOrganizationId.length > 0 && isHydrated)
-         router.push(`/dashboard/${lastVisitedOrganizationId}`)
+      if (isHydrated) router.push(`/dashboard/${lastVisitedOrganizationId}`)
    }, [router, lastVisitedOrganizationId, isHydrated])
 
    return null
