@@ -5,6 +5,6 @@ export const metadataConfig = {
    icons: [{ rel: "icon", url: "/favicon.ico" }],
 }
 
-export const primaryColor = "#2664eb"
+export const primaryColor = "#4d80ef"
 
 export const MOBILE_BREAKPOINT = 768

@@ -48,7 +48,7 @@ export const organizationRouter = createTRPCRouter({
                },
             })
 
-            if (invitedUsers.length > 0) {
+            if (invitedUsers.length > 0 && createdOrganization) {
                for (const invitedUser of invitedUsers) {
                   const createdInvitation =
                      await tx.organizationInvitation.create({
@@ -118,12 +118,14 @@ export const organizationRouter = createTRPCRouter({
                         },
                      })
 
-                  await sendInviteEmail({
-                     ctx,
-                     invitedUserEmail: invitedUser.email,
-                     organizationName: organizationName,
-                     token: createdInvitation.token,
-                  })
+               if (createdInvitation) {
+                     await sendInviteEmail({
+                        ctx,
+                        invitedUserEmail: invitedUser.email,
+                        organizationName: organizationName,
+                        token: createdInvitation.token,
+                     })
+               }
                }
             }
 

@@ -12,19 +12,16 @@ export const userRouter = createTRPCRouter({
                   {
                      firstName: {
                         startsWith: query,
-                        mode: "insensitive",
                      },
                   },
                   {
                      lastName: {
                         startsWith: query,
-                        mode: "insensitive",
                      },
                   },
                   {
                      email: {
                         startsWith: query,
-                        mode: "insensitive",
                      },
                   },
                ],
