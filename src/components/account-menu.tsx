@@ -27,6 +27,7 @@ import { type ComponentProps } from "react"
 import { cn } from "@/lib/utils"
 import { useOrganizationHelpersStore } from "@/stores/use-organization-helpers-store"
 import { useIsHydrated } from "@/hooks/use-is-hydrated"
+import { UserSettingsDialog } from "@/components/dialogs/user-settings-dialog"
 
 export function AccountMenu({ className, ...props }: ComponentProps<"div">) {
    const { lastVisitedOrganizationId } = useOrganizationHelpersStore()
@@ -45,6 +46,7 @@ export function AccountMenu({ className, ...props }: ComponentProps<"div">) {
    return (
       <>
          <CreateOrganizationDialog />
+         <UserSettingsDialog />
          <DropdownMenu>
             {isLoaded && user ? (
                <div
@@ -138,8 +140,8 @@ export function AccountMenu({ className, ...props }: ComponentProps<"div">) {
                      </DropdownMenuPortal>
                   </DropdownMenuSub>
 
-                  <DropdownMenuItem asChild>
-                     <Link href={"/settings"}>{t("item4")}</Link>
+                  <DropdownMenuItem onClick={() => openDialog("userSettings")}>
+                     {t("item4")}
                   </DropdownMenuItem>
 
                   <DropdownMenuSeparator />

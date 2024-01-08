@@ -34,11 +34,11 @@ export function CreateOrganizationDialog() {
    const { setLastVisitedOrganizationId, setExpandedOrganizations } =
       useOrganizationHelpersStore()
 
-   const { dialogs, closeDialog, openDialog } = useGlobalStore(
+   const { open, closeDialog, openDialog } = useGlobalStore(
       useShallow((state) => ({
          closeDialog: state.closeDialog,
          openDialog: state.openDialog,
-         dialogs: state.dialogs,
+         open: state.dialogs.createOrganization,
       }))
    )
 
@@ -82,7 +82,7 @@ export function CreateOrganizationDialog() {
 
    return (
       <Dialog
-         open={dialogs.createOrganization}
+         open={open}
          onOpenChange={(open) => {
             if (!open) {
                closeDialog("createOrganization")

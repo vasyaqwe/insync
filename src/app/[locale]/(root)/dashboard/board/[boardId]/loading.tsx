@@ -14,7 +14,7 @@ export default function Page() {
             </h1>
             <div className="flex h-full items-start gap-4 overflow-x-auto pr-4">
                <div className="mt-6 flex items-start gap-4">
-                  <Skeleton className="w-[18rem] space-y-2 border bg-card p-3">
+                  <div className="w-[18rem] space-y-2 p-3">
                      <div className="flex items-center justify-between">
                         <Skeleton className="h-5 w-36 rounded-lg" />
                         <Skeleton className="h-9 w-9 rounded-lg" />
@@ -23,8 +23,8 @@ export default function Page() {
                      <Skeleton className="h-[46px] w-full rounded-lg" />
                      <Skeleton className="h-[46px] w-full rounded-lg" />
                      <Skeleton className="h-[150px] w-full rounded-lg" />
-                  </Skeleton>
-                  <Skeleton className="w-[18rem] space-y-2 border bg-card p-3">
+                  </div>
+                  <div className="w-[18rem] space-y-2 p-3">
                      <div className="flex items-center justify-between">
                         <Skeleton className="h-5 w-36 rounded-lg" />
                         <Skeleton className="h-9 w-9 rounded-lg" />
@@ -37,8 +37,8 @@ export default function Page() {
                      <Skeleton className="h-[46px] w-full rounded-lg" />
                      <Skeleton className="h-[150px] w-full rounded-lg" />
                      <Skeleton className="h-[46px] w-full rounded-lg" />
-                  </Skeleton>
-                  <Skeleton className="w-[18rem] space-y-2 border bg-card p-3">
+                  </div>
+                  <div className="w-[18rem] space-y-2 p-3">
                      <div className="flex items-center justify-between">
                         <Skeleton className="h-5 w-36 rounded-lg" />
                         <Skeleton className="h-9 w-9 rounded-lg" />
@@ -49,8 +49,8 @@ export default function Page() {
                      <Skeleton className="h-[46px] w-full rounded-lg" />
                      <Skeleton className="h-[46px] w-full rounded-lg" />
                      <Skeleton className="h-[46px] w-full rounded-lg" />
-                  </Skeleton>
-                  <Skeleton className="w-[18rem] space-y-2 border bg-card p-3">
+                  </div>
+                  <div className="w-[18rem] space-y-2 p-3">
                      <div className="flex items-center justify-between">
                         <Skeleton className="h-5 w-36 rounded-lg" />
                         <Skeleton className="h-9 w-9 rounded-lg" />
@@ -58,7 +58,7 @@ export default function Page() {
                      <Skeleton className="h-[46px] w-full rounded-lg" />
                      <Skeleton className="h-[46px] w-full rounded-lg" />
                      <Skeleton className="h-[46px] w-full rounded-lg" />
-                  </Skeleton>
+                  </div>
                </div>
             </div>
          </div>

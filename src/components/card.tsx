@@ -11,6 +11,7 @@ import {
    cn,
    focusContentEditableElement,
    getUploadthingFileIdsFromHTML,
+   isDateToday,
 } from "@/lib/utils"
 import { NAME_CHARS_LIMIT, updateCardSchema } from "@/lib/validations/card"
 import { useRouter } from "@/navigation"
@@ -216,11 +217,16 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
          const diffInMinutes = Math.floor((Date.now() - date) / 60000)
          if (diffInMinutes < 2) {
             return tCommon("just-now")
-         } else if (diffInMinutes <= 1440) {
-            // less than 24 hours
+         } else if (isDateToday(dateInput)) {
             return format.relativeTime(date)
          } else {
-            return format.dateTime(date)
+            return format.dateTime(date, {
+               day: "numeric",
+               month: "short",
+               hour: "numeric",
+               minute: "numeric",
+               hour12: false,
+            })
          }
       } else {
          return "Invalid date"
@@ -333,7 +339,7 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                      </div>
                   </li>
 
-                  <DialogContent className="max-w-xl">
+                  <DialogContent className="min-h-[600px] max-w-xl">
                      <DialogHeader>
                         <DialogTitle className="font-medium">
                            <AppWindow className="-mt-0.5 mr-1 inline " />{" "}
@@ -348,7 +354,7 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                      </DialogHeader>
 
                      <section>
-                        <DialogTitle className="mt-8 flex items-center gap-2 font-medium">
+                        <DialogTitle className="mt-10 flex items-center gap-2 font-medium">
                            <AlignLeft className="inline" /> {t("description")}
                            {!isEditing && formData.description.length > 0 && (
                               <Button
@@ -362,7 +368,7 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                               </Button>
                            )}
                         </DialogTitle>
-                        <div className="mt-4">
+                        <div className="mt-6">
                            {isEditing ? (
                               <>
                                  <Editor
@@ -414,7 +420,7 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                         </div>
                      </section>
 
-                     <section className="mt-8">
+                     <section className="mb-8 mt-10">
                         <DialogTitle className="font-medium">
                            <MessageCircle className="-mt-0.5 mr-1 inline " />{" "}
                            {t("comments")}
@@ -422,7 +428,7 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
 
                         <div
                            className={cn(
-                              "mt-4 flex gap-3",
+                              "mt-6 flex gap-3",
                               isCreatingComment ? "items-start" : "items-center"
                            )}
                         >
@@ -477,7 +483,7 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                         <div className="mt-5 w-full [--avatar-size:32px]">
                            {isCommentsLoading ? (
                               <>
-                                 {[...new Array(3)].map((_, idx) => (
+                                 {[...new Array(2)].map((_, idx) => (
                                     <div
                                        key={idx}
                                        className="mt-5 flex w-full gap-3"
@@ -580,8 +586,8 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                         </div>
                      </section>
 
-                     <section>
-                        <DialogTitle className="mt-8 font-medium">
+                     <section className="mt-auto">
+                        <DialogTitle className="font-medium">
                            <GanttChart className="-mt-0.5 mr-1 inline " />{" "}
                            {t("activity")}
                         </DialogTitle>

@@ -3,6 +3,7 @@ import { create } from "zustand"
 const dialogs = {
    createOrganization: false,
    mobileSidebar: false,
+   userSettings: false,
 }
 
 export type Dialog = keyof typeof dialogs

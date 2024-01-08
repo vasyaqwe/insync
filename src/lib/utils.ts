@@ -60,3 +60,20 @@ export function getUploadthingFileIdsFromHTML(html: string | null) {
 export function getUploadThingFileIdFromUrl(url: string | undefined | null) {
    return url?.split("/f/")[1]
 }
+
+export function isDateToday(dateInput: Date) {
+   const date = new Date(dateInput)
+
+   const now = new Date()
+   const yesterday = new Date(now)
+
+   yesterday.setDate(now.getDate() - 1)
+
+   const beforeYesterday = new Date(now)
+   beforeYesterday.setDate(now.getDate() - 2)
+
+   if (date.toDateString() === now.toDateString()) {
+      return true
+   }
+   return false
+}
