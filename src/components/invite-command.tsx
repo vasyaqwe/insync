@@ -222,7 +222,7 @@ function UserItem({
             <p className="truncate">
                {user.firstName} {user.lastName}{" "}
             </p>
-            <p className="flex w-full items-center text-muted-foreground">
+            <p className="flex w-full items-center text-foreground/75">
                <span className="line-clamp-1 break-all">{user.email}</span>
                <span
                   className={cn(
