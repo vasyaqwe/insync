@@ -45,6 +45,15 @@
       "card": "card",
       "just-now": "just now"
    },
+   "user-settings": {
+      "title": "Settings",
+      "description": "Edit your public information here.",
+      "first-name": "First name",
+      "last-name": "Last name",
+      "avatar": "Avatar",
+      "update-success": "Settings updated",
+      "update-error": "Failed to update settings, something went wrong"
+   },
    "boards": {
       "title": "Boards",
       "new-board": "New board",
@@ -107,7 +116,7 @@
       "remove": "Remove",
       "back": "Back to members",
       "empty": "No results found.",
-      "members-to-invite-empty": "Selected members will appear here.",
+      "users-to-invite-empty": "Selected users will appear here.",
       "members-to-remove-empty": "Select members to remove from organization.",
       "success-invites": "Invites are sent!",
       "error-invites": "Couldn't send invites, something went wrong",

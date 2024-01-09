@@ -32,6 +32,7 @@ export default async function RootLayout({
                "header",
                "account-menu",
                "create-organization",
+               "user-settings",
                "invite-command",
                "common",
             ])}

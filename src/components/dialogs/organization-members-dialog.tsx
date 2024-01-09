@@ -115,6 +115,7 @@ export function OrganizationMembersDialog({
             </DialogTrigger>
          </Hint>
          <DialogContent
+            className="max-md:min-h-[90svh]"
             onAnimationEndCapture={() => {
                setTab("members")
                setUsersToInvite([])
@@ -140,7 +141,7 @@ export function OrganizationMembersDialog({
                </DialogTitle>
             </DialogHeader>
             {tab === "members" ? (
-               <Command className="mt-5 h-[50vh] rounded-sm border shadow-sm md:h-[355px]">
+               <Command className="mt-5 flex-grow md:h-[355px]">
                   <CommandInput
                      autoFocus={innerWidth > MOBILE_BREAKPOINT}
                      placeholder={t("search")}
@@ -252,7 +253,7 @@ export function OrganizationMembersDialog({
                <div className="mt-5 flex min-h-[var(--avatar-size)] items-center justify-between gap-3">
                   {usersToInvite.length < 1 ? (
                      <p className="text-sm text-muted-foreground">
-                        {t("members-to-invite-empty")}
+                        {t("users-to-invite-empty")}
                      </p>
                   ) : (
                      <div className="flex items-center pl-3">

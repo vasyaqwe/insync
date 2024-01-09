@@ -91,12 +91,12 @@ export function CreateOrganizationDialog() {
             }
          }}
       >
-         <DialogContent>
+         <DialogContent className="max-md:min-h-[90svh]">
             <DialogHeader>
                <DialogTitle>{t("title")}</DialogTitle>
             </DialogHeader>
             <form
-               className="w-full"
+               className="flex w-full flex-grow flex-col"
                onSubmit={(e) => {
                   e.preventDefault()
                   safeOnSubmit()

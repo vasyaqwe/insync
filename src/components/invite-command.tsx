@@ -124,10 +124,7 @@ export function InviteCommand({
                return 1
             return 0
          }}
-         className={cn(
-            "h-[50vh] rounded-sm border shadow-sm md:h-[355px]",
-            className
-         )}
+         className={cn("flex-grow md:h-[355px]", className)}
          {...props}
       >
          <CommandInput

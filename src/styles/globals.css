@@ -146,3 +146,13 @@ body {
 .scroll-x::-webkit-scrollbar {
     display: none;
 }
+
+[lang=uk] input::file-selector-button {
+    font-weight: 400;
+    font-family: var(--font-inter-latin);
+}
+
+[lang=en] input::file-selector-button {
+    font-weight: 400;
+    font-family: var(--font-geist-sans);
+}

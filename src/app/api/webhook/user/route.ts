@@ -30,7 +30,7 @@ async function handler(request: Request) {
    const eventType: EventType = evt.type
    // eslint-disable-next-line @typescript-eslint/no-explicit-any
    const { id, ...attributes } = evt.data as any
-   console.log(attributes)
+
    if (eventType === "user.created" || eventType === "user.updated") {
       await db.user.upsert({
          where: { id: id as string },

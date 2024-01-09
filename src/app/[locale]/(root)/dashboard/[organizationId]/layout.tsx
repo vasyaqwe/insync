@@ -55,6 +55,7 @@ export default async function RootLayout({
             messages={pick(messages, [
                "account-menu",
                "create-organization",
+               "user-settings",
                "invite-command",
                "common",
             ])}

@@ -339,7 +339,7 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                      </div>
                   </li>
 
-                  <DialogContent className="min-h-[600px] max-w-xl">
+                  <DialogContent className="min-h-[90svh] max-w-xl md:min-h-[600px]">
                      <DialogHeader>
                         <DialogTitle className="font-medium">
                            <AppWindow className="-mt-0.5 mr-1 inline " />{" "}
@@ -505,7 +505,7 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                                  {t("get-comments-error")}
                               </p>
                            ) : (
-                              comments.map((c) => (
+                              comments?.map((c) => (
                                  <div
                                     key={c.id}
                                     className="group mt-4 flex gap-3"
