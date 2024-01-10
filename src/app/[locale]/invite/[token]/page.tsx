@@ -10,6 +10,8 @@ import { XCircle } from "lucide-react"
 import { NextIntlClientProvider } from "next-intl"
 import { getMessages, getTranslations } from "next-intl/server"
 
+export const dynamic = "force-dynamic"
+
 export default async function Page({
    params: { token, locale },
 }: {
@@ -29,9 +31,9 @@ export default async function Page({
    })
 
    if (
-      !user ||
       !invitation ||
-      invitation.invitedUserEmail !== user.emailAddresses[0]?.emailAddress
+      (user &&
+         invitation.invitedUserEmail !== user.emailAddresses[0]?.emailAddress)
    ) {
       return (
          <div className="flex flex-col items-center justify-center px-6 py-10 text-center">

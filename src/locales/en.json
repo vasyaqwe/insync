@@ -136,7 +136,7 @@
       "invited-you": "<strong>{name}</strong> invited you to collaborate in <strong>{organization}</strong> organization.",
       "accept": "Accept invitation",
       "error-title": "Oops.. Invitation not found.",
-      "error-1": "It seems that the organization invitation you are trying to access is either already accepted, was sent to somebody else, or the link is incorrect.",
+      "error-1": "It seems that the organization invitation you are trying to access is either already accepted, doesn't exist anymore, or was sent to somebody else.",
       "error-2": "If you believe this is an error, please reach out to the organizer or the person who initially extended the invitation to you.",
       "error-button": "Go to dashboard",
       "success-toast": "Invitation accepted",
