@@ -49,28 +49,33 @@ export const organizationRouter = createTRPCRouter({
             })
 
             if (invitedUsers.length > 0 && createdOrganization) {
-               for (const invitedUser of invitedUsers) {
-                  const createdInvitation =
-                     await tx.organizationInvitation.create({
-                        data: {
-                           senderId: ctx.session.userId!,
-                           invitedUserEmail: invitedUser.email,
-                           invitedUserId:
-                              invitedUser.id === GUEST_USER_ID
-                                 ? null
-                                 : invitedUser.id,
-                           token: crypto.randomBytes(16).toString("hex"),
-                           organizationId: createdOrganization.id,
-                        },
-                     })
+               const invitationPromises = invitedUsers.map(
+                  async (invitedUser) => {
+                     return tx.organizationInvitation
+                        .create({
+                           data: {
+                              senderId: ctx.session.userId!,
+                              invitedUserEmail: invitedUser.email,
+                              invitedUserId:
+                                 invitedUser.id === GUEST_USER_ID
+                                    ? null
+                                    : invitedUser.id,
+                              token: crypto.randomBytes(16).toString("hex"),
+                              organizationId: createdOrganization.id,
+                           },
+                        })
+                        .then((createdInvitation) => {
+                           return sendInviteEmail({
+                              ctx,
+                              invitedUserEmail: invitedUser.email,
+                              organizationName: createdOrganization.name,
+                              token: createdInvitation.token,
+                           })
+                        })
+                  }
+               )
 
-                  await sendInviteEmail({
-                     ctx,
-                     invitedUserEmail: invitedUser.email,
-                     organizationName: createdOrganization.name,
-                     token: createdInvitation.token,
-                  })
-               }
+               await Promise.all(invitationPromises)
             }
 
             return createdOrganization
@@ -85,49 +90,40 @@ export const organizationRouter = createTRPCRouter({
             ctx,
             input: { invitedUsers, organizationId, organizationName },
          }) => {
-            for (const invitedUser of invitedUsers) {
-               const existingInvitation =
-                  await ctx.db.organizationInvitation.findFirst({
+            const invitationPromises = invitedUsers.map(async (invitedUser) => {
+               const token = crypto.randomBytes(16).toString("hex")
+
+               return ctx.db.organizationInvitation
+                  .upsert({
                      where: {
                         invitedUserEmail: invitedUser.email,
+                        organizationId: organizationId,
                      },
-                     select: {
-                        token: true,
+                     update: {
+                        token: token,
+                     },
+                     create: {
+                        senderId: ctx.session.userId!,
+                        invitedUserEmail: invitedUser.email,
+                        invitedUserId:
+                           invitedUser.id === GUEST_USER_ID
+                              ? null
+                              : invitedUser.id,
+                        token: token,
+                        organizationId: organizationId,
                      },
                   })
-
-               if (existingInvitation) {
-                  await sendInviteEmail({
-                     ctx,
-                     invitedUserEmail: invitedUser.email,
-                     organizationName: organizationName,
-                     token: existingInvitation.token,
-                  })
-               } else {
-                  const createdInvitation =
-                     await ctx.db.organizationInvitation.create({
-                        data: {
-                           senderId: ctx.session.userId!,
-                           invitedUserEmail: invitedUser.email,
-                           invitedUserId:
-                              invitedUser.id === GUEST_USER_ID
-                                 ? null
-                                 : invitedUser.id,
-                           token: crypto.randomBytes(16).toString("hex"),
-                           organizationId: organizationId,
-                        },
-                     })
-
-               if (createdInvitation) {
-                     await sendInviteEmail({
+                  .then(() => {
+                     return sendInviteEmail({
                         ctx,
                         invitedUserEmail: invitedUser.email,
                         organizationName: organizationName,
-                        token: createdInvitation.token,
+                        token: token,
                      })
-               }
-               }
-            }
+                  })
+            })
+
+            await Promise.all(invitationPromises)
 
             return "OK"
          }

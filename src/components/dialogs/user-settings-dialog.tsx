@@ -12,6 +12,7 @@ import { Loading } from "@/components/ui/loading"
 import { UserAvatar } from "@/components/ui/user-avatar"
 import { useFormValidation } from "@/hooks/use-form-validation"
 import { useUploadThing } from "@/lib/uploadthing"
+import { convertImageToBase64 } from "@/lib/utils"
 import { NAME_CHARS_LIMIT, updateUserSchema } from "@/lib/validations/user"
 import { useRouter } from "@/navigation"
 import { useGlobalStore } from "@/stores/use-global-store"
@@ -19,7 +20,7 @@ import { api } from "@/trpc/react"
 import { useUser } from "@clerk/nextjs"
 import { useTranslations } from "next-intl"
 import Image from "next/image"
-import { useEffect, useState } from "react"
+import { type ChangeEvent, useEffect, useState } from "react"
 import { toast } from "sonner"
 import { useShallow } from "zustand/react/shallow"
 
@@ -32,7 +33,7 @@ export function UserSettingsDialog() {
    const [formData, setFormData] = useState({
       firstName: user?.firstName ?? "",
       lastName: user?.lastName ?? "",
-      imageUrl: user?.imageUrl,
+      imageUrl: user?.imageUrl ?? "",
    })
 
    useEffect(() => {
@@ -53,13 +54,15 @@ export function UserSettingsDialog() {
    )
 
    const { mutate: onUpdate, isLoading } = api.user.update.useMutation({
-      onSuccess: () => {
+      onSuccess: (newImageUrl) => {
+         if (newImageUrl && user?.imageUrl !== newImageUrl) {
+            convertImageToBase64(newImageUrl)
+               .then((base64) => void user?.setProfileImage({ file: base64 }))
+               .catch((error) => console.error(error))
+         }
          void user?.reload()
          toast.success(t("update-success"))
-         // TODO: use pusher to refresh router on user update
-         setTimeout(() => {
-            router.refresh()
-         }, 2000)
+         router.refresh()
       },
       onError: () => {
          return toast.error(t("update-error"))
@@ -79,17 +82,42 @@ export function UserSettingsDialog() {
 
    const { startUpload, isUploading } = useUploadThing("imageUploader")
 
-   async function onImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+   async function onImageChange(e: ChangeEvent<HTMLInputElement>) {
       if (e.target.files?.[0]) {
-         const uploadedImage = await startUpload([e.target.files[0]])
+         uploadImage(e.target.files[0])
+      }
+   }
 
-         if (uploadedImage) {
-            setFormData((prev) => ({
-               ...prev,
-               imageUrl: uploadedImage[0]?.url,
-            }))
+   function uploadImage(file: File) {
+      const upload = async () => {
+         try {
+            const response = await startUpload([file])
+
+            if (!response) {
+               throw new Error("Error")
+            }
+            return response
+         } catch (error) {
+            throw error
          }
       }
+
+      toast.promise(upload, {
+         loading: tCommon("uploading"),
+         success: (uploadedImage) => {
+            if (uploadedImage?.[0]?.url) {
+               const imageUrl = uploadedImage[0].url
+               setFormData((prev) => ({
+                  ...prev,
+                  imageUrl,
+               }))
+            }
+            return tCommon("uploaded")
+         },
+         error: () => {
+            return tCommon("upload-error")
+         },
+      })
    }
 
    return (
@@ -105,6 +133,7 @@ export function UserSettingsDialog() {
       >
          <DialogContent
             onAnimationEndCapture={() => {
+               toast.dismiss()
                if (user) {
                   setFormData({
                      firstName: user.firstName!,
@@ -150,7 +179,7 @@ export function UserSettingsDialog() {
 
                <Label
                   className="mt-5"
-                  htmlFor="firstName"
+                  htmlFor="lastName"
                >
                   {t("last-name")}
                </Label>

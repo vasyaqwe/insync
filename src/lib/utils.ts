@@ -77,3 +77,28 @@ export function isDateToday(dateInput: Date) {
    }
    return false
 }
+
+export async function convertImageToBase64(
+   url: string
+): Promise<string | null> {
+   try {
+      const response = await fetch(url)
+      if (!response.ok) {
+         throw new Error("Network response was not ok")
+      }
+      const blob = await response.blob()
+
+      return new Promise((resolve, reject) => {
+         const reader = new FileReader()
+         reader.onloadend = () => {
+            const base64data = reader.result
+            resolve(base64data as string)
+         }
+         reader.onerror = reject
+         reader.readAsDataURL(blob)
+      })
+   } catch (error) {
+      console.error("Error in converting image to base64:", error)
+      return null
+   }
+}

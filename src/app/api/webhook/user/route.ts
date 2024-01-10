@@ -31,10 +31,9 @@ async function handler(request: Request) {
    // eslint-disable-next-line @typescript-eslint/no-explicit-any
    const { id, ...attributes } = evt.data as any
 
-   if (eventType === "user.created" || eventType === "user.updated") {
-      await db.user.upsert({
-         where: { id: id as string },
-         create: {
+   if (eventType === "user.created") {
+      await db.user.create({
+         data: {
             id: id as string,
             firstName: attributes.first_name as string,
             lastName: attributes.last_name as string,
@@ -43,12 +42,12 @@ async function handler(request: Request) {
             createdAt: new Date(attributes.created_at),
             updatedAt: new Date(attributes.updated_at),
          },
-         update: {
-            firstName: attributes.first_name as string,
-            lastName: attributes.last_name as string,
-            email: attributes?.email_addresses?.[0]?.email_address as string,
-            imageUrl: attributes.image_url,
-         },
+         // update: {
+         //    firstName: attributes.first_name as string,
+         //    lastName: attributes.last_name as string,
+         //    email: attributes?.email_addresses?.[0]?.email_address as string,
+         //    imageUrl: attributes.image_url,
+         // },
       })
    } else if (eventType === "user.deleted") {
       await db.user.delete({

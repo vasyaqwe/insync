@@ -11,4 +11,5 @@ export const updateUserSchema = z.object({
       .string()
       .min(1, { message: "required" })
       .max(NAME_CHARS_LIMIT, { message: "max-limit" }),
+   imageUrl: z.string().url(),
 })

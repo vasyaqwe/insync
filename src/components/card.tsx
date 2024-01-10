@@ -339,7 +339,12 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                      </div>
                   </li>
 
-                  <DialogContent className="min-h-[90svh] max-w-xl md:min-h-[600px]">
+                  <DialogContent
+                     className="min-h-[90svh] max-w-xl md:min-h-[600px]"
+                     onAnimationEndCapture={() => {
+                        toast.dismiss()
+                     }}
+                  >
                      <DialogHeader>
                         <DialogTitle className="font-medium">
                            <AppWindow className="-mt-0.5 mr-1 inline " />{" "}

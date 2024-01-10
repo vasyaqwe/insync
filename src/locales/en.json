@@ -22,12 +22,12 @@
       "7": "Bullet list",
       "8": "Image",
       "9": "Undo",
-      "10": "Redo",
-      "uploading": "Uploading your image...",
-      "uploaded": "Image is uploaded",
-      "upload-error": "Failed to upload image, something went wrong"
+      "10": "Redo"
    },
    "common": {
+      "uploading": "Uploading your image...",
+      "uploaded": "Image is uploaded",
+      "upload-error": "Failed to upload image, something went wrong",
       "cancel": "Cancel",
       "save": "Save",
       "free-plan": "Free plan",

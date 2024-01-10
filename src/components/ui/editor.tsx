@@ -54,6 +54,7 @@ export const Editor = ({
    ...props
 }: EditorProps) => {
    const t = useTranslations("editor")
+   const tCommon = useTranslations("common")
    const [isAnyTooltipVisible, setIsAnyTooltipVisible] = useState(false)
    const [isMounted, setIsMounted] = useState(false)
 
@@ -173,7 +174,7 @@ export const Editor = ({
       editor?.setOptions({ editable: false })
 
       toast.promise(upload, {
-         loading: t("uploading"),
+         loading: tCommon("uploading"),
          success: (uploadedImage) => {
             if (uploadedImage?.[0]?.url) {
                editor
@@ -185,12 +186,12 @@ export const Editor = ({
             editor?.setOptions({ editable: true })
             editor?.chain().focus("end").run()
             editor?.commands.createParagraphNear()
-            return t("uploaded")
+            return tCommon("uploaded")
          },
          error: () => {
             editor?.setOptions({ editable: true })
             editor?.chain().focus("end").run()
-            return t("upload-error")
+            return tCommon("upload-error")
          },
       })
    }

@@ -67,7 +67,7 @@ export function OrganizationInviteEmail({
                      </Text>
                      <Button
                         target="_blank"
-                        className="mt-4 rounded-lg px-6 py-4 text-sm text-white"
+                        className="mt-4 rounded-lg px-5 py-3 text-sm text-white"
                         href={`${baseUrl}/invite/${token}`}
                         style={{ backgroundColor: primaryColor }}
                      >
