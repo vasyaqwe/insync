@@ -29,9 +29,9 @@ export default async function Page({
    })
 
    if (
+      !user ||
       !invitation ||
-      (invitation.invitedUserEmail !== user?.emailAddresses[0]?.emailAddress &&
-         user)
+      invitation.invitedUserEmail !== user.emailAddresses[0]?.emailAddress
    ) {
       return (
          <div className="flex flex-col items-center justify-center px-6 py-10 text-center">
@@ -48,7 +48,7 @@ export default async function Page({
                size={100}
                className="mx-auto mt-10 stroke-destructive/80"
             />
-            <h1 className="text-balance mt-5 text-2xl font-semibold sm:text-3xl md:text-5xl">
+            <h1 className="mt-5 text-balance text-2xl font-semibold sm:text-3xl md:text-5xl">
                {t("error-title")}
             </h1>
             <div className="mx-auto max-w-[65ch]">
@@ -78,7 +78,7 @@ export default async function Page({
             />
          </Link>
          <h1
-            className="text-balance mt-10 text-2xl font-semibold sm:text-3xl md:text-5xl"
+            className="mt-10 text-balance text-2xl font-semibold sm:text-3xl md:text-5xl"
             dangerouslySetInnerHTML={{
                __html: t.markup("title", {
                   organizationName: organizationName,
