@@ -9,7 +9,7 @@ import { SignIn, SignUp, SignedIn, SignedOut } from "@clerk/nextjs"
 import { useTranslations } from "next-intl"
 import { toast } from "sonner"
 import { useSearchParams } from "next/navigation"
-import { ClerkWrapper } from "@/components/clerk-wrapper"
+import { ClerkWrapper } from "@/components/clerk-helpers"
 import { useOrganizationHelpersStore } from "@/stores/use-organization-helpers-store"
 
 function InvitationActions({

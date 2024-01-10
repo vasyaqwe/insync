@@ -21,10 +21,10 @@ import {
 import { cn, isEmail } from "@/lib/utils"
 import { useDebounce } from "@/hooks/use-debounce"
 import { api } from "@/trpc/react"
-import { useUser } from "@clerk/nextjs"
 import { UserAvatar } from "@/components/ui/user-avatar"
 import { useTranslations } from "next-intl"
 import { MOBILE_BREAKPOINT } from "@/config"
+import { useUser } from "@clerk/nextjs"
 
 type InviteCommandProps = {
    existingUserEmails?: string[]
@@ -70,7 +70,7 @@ export function InviteCommand({
    }, [debouncedInput])
 
    function onUserSelect(selectedUser: CommandItemUser) {
-      if (isEmail(selectedUser?.email ?? "")) {
+      if (isEmail(selectedUser.email)) {
          setIsEmailHintVisible(false)
 
          if (

@@ -20,7 +20,6 @@ import {
    CommandInput,
    CommandEmpty,
 } from "@/components/ui/command"
-import { useUser } from "@clerk/nextjs"
 import { useState } from "react"
 import { InviteCommand } from "@/components/invite-command"
 import { type CommandItemUser } from "@/lib/validations/organization"
@@ -31,6 +30,7 @@ import { Loading } from "@/components/ui/loading"
 import { cn } from "@/lib/utils"
 import { useRouter } from "@/navigation"
 import { MOBILE_BREAKPOINT } from "@/config"
+import { useUser } from "@clerk/nextjs"
 
 type MembersProps = {
    members: User[]
@@ -45,8 +45,8 @@ export function OrganizationMembersDialog({
 }: MembersProps) {
    const t = useTranslations("members")
    const [open, setOpen] = useState(false)
-   const { user: currentUser } = useUser()
    const router = useRouter()
+   const {user:currentUser} = useUser()
 
    const [usersToInvite, setUsersToInvite] = useState<CommandItemUser[]>([])
    const [membersToRemove, setMembersToRemove] = useState<CommandItemUser[]>([])

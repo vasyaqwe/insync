@@ -9,13 +9,16 @@ import { cn } from "@/lib/utils"
 import { Link } from "@/navigation"
 import { useGlobalStore } from "@/stores/use-global-store"
 import { useOrganizationHelpersStore } from "@/stores/use-organization-helpers-store"
+import { type User } from "@prisma/client"
 import { Menu } from "lucide-react"
 import { useShallow } from "zustand/react/shallow"
 
 export function OrganizationHeader({
-   organizationsCount,
+   isNoOrganizations = false,
+   user,
 }: {
-   organizationsCount: number
+   isNoOrganizations?: boolean
+   user: User
 }) {
    const { isHydrated } = useIsHydrated()
    const { openDialog } = useGlobalStore(
@@ -23,10 +26,9 @@ export function OrganizationHeader({
          openDialog: state.openDialog,
       }))
    )
+   console.log(user.imageUrl)
 
    const { lastVisitedOrganizationId } = useOrganizationHelpersStore()
-
-   const isNoOrganizations = organizationsCount < 1
 
    return (
       <header className="sticky top-0 z-[50] flex min-h-[var(--header-height)] items-center bg-background/50 py-2 shadow-sm shadow-border backdrop-blur-md">
@@ -58,7 +60,10 @@ export function OrganizationHeader({
                   <span className="sr-only">Switch organization</span>
                </Button>
             )}
-            <AccountMenu className="ml-auto" />
+            <AccountMenu
+               user={user}
+               className="ml-auto"
+            />
          </div>
       </header>
    )

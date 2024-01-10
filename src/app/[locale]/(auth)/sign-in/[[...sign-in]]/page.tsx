@@ -2,7 +2,7 @@ import { type Locale } from "@/navigation"
 import { SignIn } from "@clerk/nextjs"
 import { unstable_setRequestLocale } from "next-intl/server"
 import { metadataConfig } from "@/config"
-import { ClerkWrapper } from "@/components/clerk-wrapper"
+import { ClerkWrapper } from "@/components/clerk-helpers"
 
 export const metadata = { ...metadataConfig, title: "insync. | Sign in" }
 

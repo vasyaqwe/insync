@@ -1,6 +1,8 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 import "@total-typescript/ts-reset"
+import { type User as ClerkUserType } from "@clerk/nextjs/server"
+import { type User as DbUserType } from "@prisma/client"
 
 export function cn(...inputs: ClassValue[]) {
    return twMerge(clsx(inputs))
@@ -100,5 +102,17 @@ export async function convertImageToBase64(
    } catch (error) {
       console.error("Error in converting image to base64:", error)
       return null
+   }
+}
+
+export function convertClerkUserToDbUser(user: ClerkUserType): DbUserType {
+   return {
+      email: user.emailAddresses[0]?.emailAddress ?? "",
+      firstName: user.firstName ?? "",
+      lastName: user.lastName ?? "",
+      imageUrl: user.imageUrl,
+      id: user.id,
+      createdAt: new Date(user.createdAt),
+      updatedAt: new Date(user.createdAt),
    }
 }

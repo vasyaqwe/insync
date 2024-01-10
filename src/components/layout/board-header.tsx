@@ -13,8 +13,9 @@ import { ColorAvatar } from "@/components/ui/color-avatar"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useOrganizationHelpersStore } from "@/stores/use-organization-helpers-store"
 import { useIsHydrated } from "@/hooks/use-is-hydrated"
+import { type User } from "@prisma/client"
 
-export function BoardHeader() {
+export function BoardHeader({ user }: { user: User }) {
    const { openDialog } = useGlobalStore(
       useShallow((state) => ({
          openDialog: state.openDialog,
@@ -86,7 +87,7 @@ export function BoardHeader() {
                )}
             </div>
 
-            <AccountMenu />
+            <AccountMenu user={user} />
          </div>
       </header>
    )

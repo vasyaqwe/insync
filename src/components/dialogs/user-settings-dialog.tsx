@@ -27,23 +27,22 @@ import { useShallow } from "zustand/react/shallow"
 export function UserSettingsDialog() {
    const t = useTranslations("user-settings")
    const tCommon = useTranslations("common")
-   const { user, isLoaded } = useUser()
    const router = useRouter()
+   const { user } = useUser()
 
    const [formData, setFormData] = useState({
-      firstName: user?.firstName ?? "",
-      lastName: user?.lastName ?? "",
-      imageUrl: user?.imageUrl ?? "",
+      firstName: "",
+      lastName: "",
+      imageUrl: "",
    })
 
    useEffect(() => {
-      if (isLoaded && user)
-         setFormData({
-            firstName: user.firstName!,
-            lastName: user.lastName!,
-            imageUrl: user.imageUrl,
-         })
-   }, [isLoaded, user])
+      setFormData({
+         firstName: user?.firstName ?? "",
+         lastName: user?.lastName ?? "",
+         imageUrl: user?.imageUrl ?? "",
+      })
+   }, [user])
 
    const { open, closeDialog, openDialog } = useGlobalStore(
       useShallow((state) => ({
@@ -54,15 +53,20 @@ export function UserSettingsDialog() {
    )
 
    const { mutate: onUpdate, isLoading } = api.user.update.useMutation({
-      onSuccess: (newImageUrl) => {
-         if (newImageUrl && user?.imageUrl !== newImageUrl) {
-            convertImageToBase64(newImageUrl)
-               .then((base64) => void user?.setProfileImage({ file: base64 }))
-               .catch((error) => console.error(error))
-         }
+      onMutate: () => {
+         convertImageToBase64(formData.imageUrl)
+            .then(async (base64) => {
+               await user?.setProfileImage({ file: base64 })
+            })
+            .catch((error) => console.error(error))
+      },
+      onSuccess: async () => {
+         router.refresh()
          void user?.reload()
          toast.success(t("update-success"))
-         router.refresh()
+
+         //close dialog
+         document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }))
       },
       onError: () => {
          return toast.error(t("update-error"))
@@ -123,7 +127,7 @@ export function UserSettingsDialog() {
    return (
       <Dialog
          onOpenChange={(open) => {
-            if (!open) {
+            if (!open && !isUploading) {
                closeDialog("userSettings")
             } else {
                openDialog("userSettings")
@@ -133,12 +137,11 @@ export function UserSettingsDialog() {
       >
          <DialogContent
             onAnimationEndCapture={() => {
-               toast.dismiss()
                if (user) {
                   setFormData({
-                     firstName: user.firstName!,
-                     lastName: user.lastName!,
-                     imageUrl: user.imageUrl,
+                     firstName: user?.firstName ?? "",
+                     lastName: user?.lastName ?? "",
+                     imageUrl: user.imageUrl ?? "",
                   })
                }
             }}
@@ -200,7 +203,7 @@ export function UserSettingsDialog() {
                   className="mt-5"
                   htmlFor="image"
                >
-                  Image
+                  {t("avatar")}
                </Label>
                <div className="mt-2 flex items-center gap-4">
                   <label
@@ -223,7 +226,7 @@ export function UserSettingsDialog() {
                         </div>
                      ) : (
                         <UserAvatar
-                           showActiveIndicator={false}
+                           // showActiveIndicator={false}
                            user={{
                               email: user?.emailAddresses[0]?.emailAddress,
                               imageUrl: formData.imageUrl,

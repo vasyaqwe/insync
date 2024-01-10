@@ -13,12 +13,8 @@ import { NextIntlClientProvider } from "next-intl"
 import { ThemeProvider } from "@/components/theme-provider"
 import { type ReactNode } from "react"
 import { Toaster } from "@/components/ui/toaster"
-import { enUS, ukUA } from "@clerk/localizations"
-import { ClerkProvider } from "@clerk/nextjs"
 import { type Viewport } from "next"
-import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin"
-import { extractRouterConfig } from "uploadthing/server"
-import { ourFileRouter } from "@/app/api/uploadthing/core"
+import { ClerkProvider } from "@/components/clerk-helpers"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter-latin" })
 
@@ -46,39 +42,34 @@ export default async function RootLayout({
    const messages = (await getMessages()) as Messages
 
    return (
-      <html
-         suppressHydrationWarning
-         lang={locale}
-         className={cn(
-            locale === "uk" ? "font-primary-uk" : "font-primary-en",
-            GeistSans.variable,
-            inter.variable
-         )}
-      >
-         <body
-            className={`grainy-bg flex flex-col bg-background text-foreground`}
+      <ClerkProvider locale={locale}>
+         <html
+            suppressHydrationWarning
+            lang={locale}
+            className={cn(
+               locale === "uk" ? "font-primary-uk" : "font-primary-en",
+               GeistSans.variable,
+               inter.variable
+            )}
          >
-            <TRPCReactProvider cookies={cookies().toString()}>
-               <ClerkProvider localization={locale === "uk" ? ukUA : enUS}>
+            <body
+               className={`grainy-bg flex flex-col bg-background text-foreground`}
+            >
+               <NextIntlClientProvider messages={pick(messages, ["common"])}>
                   <ThemeProvider
                      attribute="class"
                      defaultTheme="system"
                      enableSystem
                      disableTransitionOnChange
                   >
-                     <NextIntlClientProvider
-                        messages={pick(messages, ["common"])}
-                     >
-                        <NextSSRPlugin
-                           routerConfig={extractRouterConfig(ourFileRouter)}
-                        />
+                     <TRPCReactProvider cookies={cookies().toString()}>
                         {children}
-                     </NextIntlClientProvider>
-                     <Toaster />
+                        <Toaster />
+                     </TRPCReactProvider>
                   </ThemeProvider>
-               </ClerkProvider>
-            </TRPCReactProvider>
-         </body>
-      </html>
+               </NextIntlClientProvider>
+            </body>
+         </html>
+      </ClerkProvider>
    )
 }

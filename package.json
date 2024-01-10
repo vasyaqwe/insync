@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@clerk/localizations": "^1.26.9",
-    "@clerk/nextjs": "^4.27.1",
+    "@clerk/nextjs": "^4.29.2",
     "@clerk/themes": "^1.7.9",
     "@hello-pangea/dnd": "^16.5.0",
     "@pinecone-database/pinecone": "^1.1.2",
@@ -51,7 +51,7 @@
     "lucide-react": "^0.292.0",
     "negotiator": "^0.6.3",
     "next": "^14.0.3",
-    "next-intl": "^3.1.0",
+    "next-intl": "^3.4.2",
     "next-themes": "^0.2.1",
     "node-html-parser": "^6.1.12",
     "openai": "^4.18.0",

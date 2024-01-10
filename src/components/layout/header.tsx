@@ -5,13 +5,13 @@ import { Icons } from "@/components/ui/icons"
 import { useIsHydrated } from "@/hooks/use-is-hydrated"
 import { Link } from "@/navigation"
 import { useOrganizationHelpersStore } from "@/stores/use-organization-helpers-store"
-import { useUser } from "@clerk/nextjs"
+import { useAuth } from "@clerk/nextjs"
 import { ArrowUpRight } from "lucide-react"
 import { useTranslations } from "next-intl"
 
 export function Header() {
    const t = useTranslations("header")
-   const { isSignedIn } = useUser()
+   const { isSignedIn } = useAuth()
 
    const { lastVisitedOrganizationId } = useOrganizationHelpersStore()
    const { isHydrated } = useIsHydrated()

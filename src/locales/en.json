@@ -149,8 +149,11 @@
       "item3:1": "Light",
       "item3:2": "Dark",
       "item3:3": "System",
-      "item4": "Settings",
-      "item5": "Sign out"
+      "item4": "Language",
+      "item4:1": "English",
+      "item4:2": "Ukrainian",
+      "item5": "Settings",
+      "item6": "Sign out"
    },
    "header": {
       "button": "Get started"

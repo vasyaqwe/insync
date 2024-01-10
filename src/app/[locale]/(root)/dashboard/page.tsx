@@ -1,16 +1,18 @@
 import { OrganizationHeader } from "@/components/layout/organization-header"
 import { OrganizationEmpty } from "@/components/organization-empty"
-import { pick } from "@/lib/utils"
+import { convertClerkUserToDbUser, pick } from "@/lib/utils"
 import { redirect } from "@/navigation"
 import { db } from "@/server/db"
 import { currentUser } from "@clerk/nextjs"
+import { type User } from "@clerk/nextjs/server"
 import { NextIntlClientProvider } from "next-intl"
 import { getMessages } from "next-intl/server"
 
 export default async function Page() {
-   const user = await currentUser()
+   // eslint-disable-next-line @typescript-eslint/non-nullable-type-assertion-style
+   const user = (await currentUser()) as User
 
-   const organizations = await db.organization.findMany({
+   const organization = await db.organization.findFirst({
       where: {
          members: {
             some: {
@@ -23,8 +25,7 @@ export default async function Page() {
       },
    })
 
-   if (organizations.length > 0)
-      return redirect(`/dashboard/${organizations[0]?.id}`)
+   if (organization) return redirect(`/dashboard/${organization.id}`)
 
    const messages = (await getMessages()) as Messages
 
@@ -38,7 +39,7 @@ export default async function Page() {
                "common",
             ])}
          >
-            <OrganizationHeader organizationsCount={organizations.length} />
+            <OrganizationHeader user={convertClerkUserToDbUser(user)} />
          </NextIntlClientProvider>
          <main className="container mt-12">
             <NextIntlClientProvider messages={pick(messages, ["sidebar"])}>

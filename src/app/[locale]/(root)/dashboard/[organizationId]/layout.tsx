@@ -1,6 +1,6 @@
 import { Sidebar } from "@/components/layout/sidebar"
 import { NextIntlClientProvider } from "next-intl"
-import { cn, pick } from "@/lib/utils"
+import { cn, convertClerkUserToDbUser, pick } from "@/lib/utils"
 import { getMessages, getTranslations } from "next-intl/server"
 import { db } from "@/server/db"
 import { currentUser } from "@clerk/nextjs"
@@ -10,6 +10,7 @@ import { ColorAvatar } from "@/components/ui/color-avatar"
 import { CreditCard } from "lucide-react"
 import { notFound } from "next/navigation"
 import { type ReactNode } from "react"
+import { type User } from "@clerk/nextjs/server"
 
 export default async function RootLayout({
    children,
@@ -18,7 +19,8 @@ export default async function RootLayout({
    children: ReactNode
    params: { organizationId: string }
 }) {
-   const user = await currentUser()
+   // eslint-disable-next-line @typescript-eslint/non-nullable-type-assertion-style
+   const user = (await currentUser()) as User
 
    const organizations = await db.organization.findMany({
       where: {
@@ -60,7 +62,7 @@ export default async function RootLayout({
                "common",
             ])}
          >
-            <OrganizationHeader organizationsCount={organizations.length} />
+            <OrganizationHeader user={convertClerkUserToDbUser(user)} />
          </NextIntlClientProvider>
          <main
             className={cn(

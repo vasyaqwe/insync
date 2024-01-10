@@ -13,23 +13,27 @@ import {
    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { UserAvatar } from "@/components/ui/user-avatar"
-import { useClerk, useUser } from "@clerk/nextjs"
-import { Link, useRouter } from "@/navigation"
-import { useTranslations } from "next-intl"
+import { useClerk } from "@clerk/nextjs"
+import { Link, useRouter, usePathname } from "@/navigation"
+import { useLocale, useTranslations } from "next-intl"
 import { useGlobalStore } from "@/stores/use-global-store"
 import { useShallow } from "zustand/react/shallow"
-import { Skeleton } from "@/components/ui/skeleton"
 import { CreateOrganizationDialog } from "@/components/dialogs/create-organization-dialog"
 import { ChevronsUpDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useTheme } from "next-themes"
-import { type ComponentProps } from "react"
+import { startTransition, type ComponentProps } from "react"
 import { cn } from "@/lib/utils"
 import { useOrganizationHelpersStore } from "@/stores/use-organization-helpers-store"
 import { useIsHydrated } from "@/hooks/use-is-hydrated"
 import { UserSettingsDialog } from "@/components/dialogs/user-settings-dialog"
+import { type User } from "@prisma/client"
 
-export function AccountMenu({ className, ...props }: ComponentProps<"div">) {
+export function AccountMenu({
+   className,
+   user,
+   ...props
+}: ComponentProps<"div"> & { user: User }) {
    const { lastVisitedOrganizationId } = useOrganizationHelpersStore()
    const { isHydrated } = useIsHydrated()
    const { signOut } = useClerk()
@@ -39,52 +43,51 @@ export function AccountMenu({ className, ...props }: ComponentProps<"div">) {
          openDialog: state.openDialog,
       }))
    )
-   const { user, isLoaded } = useUser()
+
+   const locale = useLocale()
    const t = useTranslations("account-menu")
    const router = useRouter()
+   const pathname = usePathname()
 
    return (
       <>
          <CreateOrganizationDialog />
          <UserSettingsDialog />
          <DropdownMenu>
-            {isLoaded && user ? (
-               <div
-                  className={cn("flex items-center gap-2", className)}
-                  {...props}
-               >
-                  <p className="flex items-center gap-2 font-medium text-foreground/75">
-                     <UserAvatar
-                        className="[--avatar-size:29px]"
-                        user={{
-                           email: user.emailAddresses[0]?.emailAddress,
-                           firstName: user.firstName ?? undefined,
-                           imageUrl: user.imageUrl,
-                        }}
+            <div
+               className={cn("flex items-center gap-2", className)}
+               {...props}
+            >
+               <p className="flex items-center gap-2 font-medium text-foreground/75">
+                  <UserAvatar
+                     className="[--avatar-size:29px]"
+                     user={{
+                        email: user.email,
+                        firstName: user.firstName ?? undefined,
+                        imageUrl: user.imageUrl,
+                     }}
+                  />
+                  <span className="max-sm:hidden"> {user.firstName}</span>
+               </p>
+               <DropdownMenuTrigger asChild>
+                  <Button
+                     variant={"ghost"}
+                     size={"icon"}
+                  >
+                     <ChevronsUpDown
+                        size={18}
+                        className="stroke-foreground/75"
                      />
-                     <span className="max-sm:hidden"> {user.firstName}</span>
-                  </p>
-                  <DropdownMenuTrigger asChild>
-                     <Button
-                        variant={"ghost"}
-                        size={"icon"}
-                     >
-                        <ChevronsUpDown
-                           size={18}
-                           className="stroke-foreground/75"
-                        />
-                        <span className="sr-only">More...</span>
-                     </Button>
-                  </DropdownMenuTrigger>
-               </div>
-            ) : (
-               <div className="ml-auto flex items-center gap-2 font-medium">
+                     <span className="sr-only">More...</span>
+                  </Button>
+               </DropdownMenuTrigger>
+            </div>
+            {/* <div className="ml-auto flex items-center gap-2 font-medium">
                   <Skeleton className="h-[var(--color-avatar-size)] w-[var(--color-avatar-size)] rounded-full" />
                   <Skeleton className="h-3 w-20 max-sm:hidden" />
                   <Skeleton className="mx-2 h-4 w-4" />
-               </div>
-            )}
-            {user && isHydrated && (
+               </div> */}
+            {isHydrated && (
                <DropdownMenuContent
                   align="end"
                   className="px-3 pb-2"
@@ -94,7 +97,7 @@ export function AccountMenu({ className, ...props }: ComponentProps<"div">) {
                         {user.firstName} {user.lastName}
                      </p>
                      <p className="truncate text-sm text-foreground/60">
-                        {user.emailAddresses[0]?.emailAddress}
+                        {user.email}
                      </p>
                   </div>
                   <DropdownMenuSeparator />
@@ -140,8 +143,38 @@ export function AccountMenu({ className, ...props }: ComponentProps<"div">) {
                      </DropdownMenuPortal>
                   </DropdownMenuSub>
 
+                  <DropdownMenuSub>
+                     <DropdownMenuSubTrigger>
+                        {t("item4")}
+                     </DropdownMenuSubTrigger>
+                     <DropdownMenuPortal>
+                        <DropdownMenuSubContent>
+                           <DropdownMenuCheckboxItem
+                              onCheckedChange={() => {
+                                 startTransition(() =>
+                                    router.replace(pathname, { locale: "en" })
+                                 )
+                              }}
+                              checked={locale === "en"}
+                           >
+                              {t("item4:1")}
+                           </DropdownMenuCheckboxItem>
+                           <DropdownMenuCheckboxItem
+                              onCheckedChange={() => {
+                                 startTransition(() =>
+                                    router.replace(pathname, { locale: "uk" })
+                                 )
+                              }}
+                              checked={locale === "uk"}
+                           >
+                              {t("item4:2")}
+                           </DropdownMenuCheckboxItem>
+                        </DropdownMenuSubContent>
+                     </DropdownMenuPortal>
+                  </DropdownMenuSub>
+
                   <DropdownMenuItem onClick={() => openDialog("userSettings")}>
-                     {t("item4")}
+                     {t("item5")}
                   </DropdownMenuItem>
 
                   <DropdownMenuSeparator />
@@ -151,7 +184,7 @@ export function AccountMenu({ className, ...props }: ComponentProps<"div">) {
                         await signOut(() => router.push("/"))
                      }}
                   >
-                     {t("item5")}
+                     {t("item6")}
                   </DropdownMenuItem>
                </DropdownMenuContent>
             )}

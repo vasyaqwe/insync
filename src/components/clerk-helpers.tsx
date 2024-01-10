@@ -9,11 +9,14 @@ import { primaryColor } from "@/config"
 import { inputVariants } from "@/components/ui/input"
 import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { ClerkProvider as Clerk_ClerkProvider } from "@clerk/nextjs"
 import { dark } from "@clerk/themes"
+import { type Locale } from "@/navigation"
+import { enUS, ukUA } from "@clerk/localizations"
 
 type ClerkWrapperProps = ComponentProps<typeof SignIn> & { children: ReactNode }
 
-export function ClerkWrapper({ ...props }: ClerkWrapperProps) {
+function ClerkWrapper({ ...props }: ClerkWrapperProps) {
    const { resolvedTheme } = useTheme()
    const { isClient } = useIsClient()
 
@@ -52,3 +55,19 @@ export function ClerkWrapper({ ...props }: ClerkWrapperProps) {
       />
    )
 }
+
+function ClerkProvider({
+   children,
+   locale,
+}: {
+   children: ReactNode
+   locale: Locale
+}) {
+   return (
+      <Clerk_ClerkProvider localization={locale === "uk" ? ukUA : enUS}>
+         {children}
+      </Clerk_ClerkProvider>
+   )
+}
+
+export { ClerkWrapper, ClerkProvider }
