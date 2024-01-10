@@ -93,6 +93,10 @@ export const Editor = ({
    const previousImages = useRef<HTMLImageElement[]>([])
 
    useEffect(() => {
+      if (editor) editor.commands.focus()
+   }, [editor])
+
+   useEffect(() => {
       if (!isMounted && editor) {
          onImageNodesAddDelete({ editor })
          setIsMounted(true)
