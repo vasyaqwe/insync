@@ -38,6 +38,7 @@ export default async function Page({ params: { boardId } }: Params) {
       select: {
          id: true,
          name: true,
+         organizationId: true,
          lists: {
             include: {
                cards: {

@@ -4,6 +4,7 @@ import {
    updateBoardSchema,
 } from "@/lib/validations/board"
 import { createTRPCRouter, privateProcedure } from "@/server/api/trpc"
+import { createAuditLog } from "@/server/api/utils"
 
 export const boardRouter = createTRPCRouter({
    create: privateProcedure
@@ -14,6 +15,15 @@ export const boardRouter = createTRPCRouter({
                name,
                organizationId,
             },
+         })
+
+         await createAuditLog({
+            action: "CREATE",
+            entityId: createdBoard.id,
+            entityName: createdBoard.name,
+            entityType: "BOARD",
+            organizationId,
+            userId: ctx.session.userId!,
          })
 
          return createdBoard.id
@@ -30,6 +40,15 @@ export const boardRouter = createTRPCRouter({
             },
          })
 
+         await createAuditLog({
+            action: "UPDATE",
+            entityId: updatedBoard.id,
+            entityName: updatedBoard.name,
+            entityType: "BOARD",
+            organizationId: updatedBoard.organizationId,
+            userId: ctx.session.userId!,
+         })
+
          return updatedBoard.name
       }),
    delete: privateProcedure
@@ -40,7 +59,9 @@ export const boardRouter = createTRPCRouter({
                id: boardId,
             },
             select: {
+               id: true,
                name: true,
+               organizationId: true,
                lists: {
                   select: {
                      cards: {
@@ -58,6 +79,15 @@ export const boardRouter = createTRPCRouter({
          const deletedDescriptions = deletedCards.map(
             (card) => card.description ?? ""
          )
+
+         await createAuditLog({
+            action: "DELETE",
+            entityId: deletedBoard.id,
+            entityName: deletedBoard.name,
+            entityType: "BOARD",
+            organizationId: deletedBoard.organizationId,
+            userId: ctx.session.userId!,
+         })
 
          return {
             name: deletedBoard.name,

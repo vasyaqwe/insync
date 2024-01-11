@@ -36,6 +36,8 @@ model Organization {
 
     auditLogs AuditLog[]
     boards    Board[]
+    lists     List[]
+    cards     Card[]
     members   User[]     @relation("OrganizationMembers")
 
     ownerId String
@@ -94,6 +96,9 @@ model List {
     name  String
     order Int
 
+    organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+    organizationId String
+
     boardId String
     board   Board  @relation(fields: [boardId], references: [id], onDelete: Cascade)
 
@@ -103,6 +108,7 @@ model List {
     updatedAt DateTime @updatedAt
 
     @@index([boardId])
+    @@index([organizationId])
 }
 
 model Card {
@@ -110,6 +116,9 @@ model Card {
     name        String
     order       Int
     description String? @db.Text
+
+    organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+    organizationId String
 
     listId String
     list   List   @relation(fields: [listId], references: [id], onDelete: Cascade)
@@ -120,6 +129,7 @@ model Card {
     updatedAt DateTime @updatedAt
 
     @@index([listId])
+    @@index([organizationId])
 }
 
 model CardComment {
@@ -154,12 +164,12 @@ enum ENTITY_TYPE {
 model AuditLog {
     id String @id @default(cuid())
 
-    action      ACTION
-    entityId    String
-    entityType  ENTITY_TYPE
-    entityTitle String
+    action     ACTION
+    entityId   String
+    entityType ENTITY_TYPE
+    entityName String
 
-    organization   Organization @relation(fields: [organizationId], references: [id])
+    organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
     organizationId String
 
     user   User   @relation(fields: [userId], references: [id])

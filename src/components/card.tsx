@@ -11,7 +11,6 @@ import {
    cn,
    focusContentEditableElement,
    getUploadthingFileIdsFromHTML,
-   isDateToday,
 } from "@/lib/utils"
 import { NAME_CHARS_LIMIT, updateCardSchema } from "@/lib/validations/card"
 import { useRouter } from "@/navigation"
@@ -27,7 +26,7 @@ import {
    Pencil,
    Trash2,
 } from "lucide-react"
-import { useFormatter, useTranslations } from "next-intl"
+import { useTranslations } from "next-intl"
 import { type KeyboardEvent, startTransition, useState } from "react"
 import { toast } from "sonner"
 import {
@@ -44,6 +43,7 @@ import { useIsClient } from "@/hooks/use-is-client"
 import { UserAvatar } from "@/components/ui/user-avatar"
 import { useUser } from "@clerk/nextjs"
 import { Skeleton } from "@/components/ui/skeleton"
+import { DateDisplay } from "@/components/date-display"
 
 type CardProps = {
    card: Card
@@ -56,7 +56,6 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
    const t = useTranslations("cards")
    const tCommon = useTranslations("common")
    const router = useRouter()
-   const format = useFormatter()
 
    const { user } = useUser()
    const { isClient } = useIsClient()
@@ -209,28 +208,6 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
       const imgSrc = lastImg ? lastImg.getAttribute("src") : null
 
       return imgSrc
-   }
-
-   function formatDate(dateInput: Date) {
-      const date = Number(dateInput)
-      if (!isNaN(date)) {
-         const diffInMinutes = Math.floor((Date.now() - date) / 60000)
-         if (diffInMinutes < 2) {
-            return tCommon("just-now")
-         } else if (isDateToday(dateInput)) {
-            return format.relativeTime(date)
-         } else {
-            return format.dateTime(date, {
-               day: "numeric",
-               month: "short",
-               hour: "numeric",
-               minute: "numeric",
-               hour12: false,
-            })
-         }
-      } else {
-         return "Invalid date"
-      }
    }
 
    const lastImageSrc = getLastImageSrcFromHTML(card.description)
@@ -523,12 +500,12 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                                        <p className="text-sm font-medium">
                                           {c.author.firstName}{" "}
                                           {c.author.lastName}{" "}
-                                          <span
+                                          <DateDisplay
+                                             justNowText={tCommon("just-now")}
                                              className="text-xs font-normal text-muted-foreground"
-                                             suppressHydrationWarning
                                           >
-                                             {formatDate(c.createdAt)}
-                                          </span>
+                                             {c.createdAt}
+                                          </DateDisplay>
                                        </p>
                                        <EditorOutput html={c.content ?? ""} />
                                     </div>

@@ -160,15 +160,7 @@ export const organizationRouter = createTRPCRouter({
             },
             select: {
                id: true,
-               boards: {
-                  select: {
-                     lists: {
-                        select: {
-                           cards: true,
-                        },
-                     },
-                  },
-               },
+               cards: true,
             },
          })
 
@@ -182,9 +174,8 @@ export const organizationRouter = createTRPCRouter({
             },
          })
 
-         const deletedCards = deletedOrganization.boards.flatMap((board) =>
-            board.lists.flatMap((list) => list.cards)
-         )
+         const deletedCards = deletedOrganization.cards
+
          const deletedDescriptions = deletedCards.map(
             (card) => card.description ?? ""
          )

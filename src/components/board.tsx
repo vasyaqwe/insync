@@ -1,6 +1,5 @@
 "use client"
 
-import { DateDisplay } from "@/components/date"
 import { Button } from "@/components/ui/button"
 import { Link, useRouter } from "@/navigation"
 import { type Board } from "@prisma/client"
@@ -11,7 +10,7 @@ import {
    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { CalendarPlus, MoreHorizontal, Pencil, Trash2 } from "lucide-react"
-import { useTranslations } from "next-intl"
+import { useFormatter, useTranslations } from "next-intl"
 import { api } from "@/trpc/react"
 import { toast } from "sonner"
 import { Loading } from "@/components/ui/loading"
@@ -34,6 +33,7 @@ export function Board({ board }: BoardProps) {
    const t = useTranslations("boards")
    const tCommon = useTranslations("common")
    const router = useRouter()
+   const format = useFormatter()
    const [dialogOpen, setDialogOpen] = useState(false)
    const [menuOpen, setMenuOpen] = useState(false)
    const [formData, setFormData] = useState({
@@ -104,7 +104,13 @@ export function Board({ board }: BoardProps) {
                         className="mr-1 inline align-sub"
                         size={18}
                      />
-                     {t("created")} <DateDisplay date={board.createdAt} />
+                     {t("created")}{" "}
+                     <span suppressHydrationWarning>
+                        {format.dateTime(board.createdAt, {
+                           month: "short",
+                           day: "numeric",
+                        })}
+                     </span>
                   </p>
                   <DropdownMenu
                      open={menuOpen}

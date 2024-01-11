@@ -183,6 +183,16 @@
       "leave-success-toast": "You are no longer a member of {name}",
       "leave-error-toast": "Couldn't leave organization, something went wrong"
    },
+   "activity": {
+      "title": "Activity",
+      "created": "created",
+      "updated": "updated",
+      "deleted": "deleted",
+      "board": "board",
+      "list": "list",
+      "card": "card",
+      "empty": "There hasn't been any activity in this organization yet."
+   },
    "create-organization": {
       "success": "Organization created",
       "error": "Couldn't create organization, something went wrong",

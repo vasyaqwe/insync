@@ -6,6 +6,8 @@ import {
    updateListSchema,
 } from "@/lib/validations/list"
 import { createTRPCRouter, privateProcedure } from "@/server/api/trpc"
+import { createAuditLog } from "@/server/api/utils"
+import { TRPCError } from "@trpc/server"
 
 export const listRouter = createTRPCRouter({
    getAll: privateProcedure
@@ -34,12 +36,42 @@ export const listRouter = createTRPCRouter({
             where: { boardId: boardId },
          })
 
+         const organization = await ctx.db.organization.findFirst({
+            where: {
+               boards: {
+                  some: {
+                     id: boardId,
+                  },
+               },
+            },
+            select: {
+               id: true,
+            },
+         })
+
+         if (!organization) {
+            throw new TRPCError({
+               code: "BAD_REQUEST",
+               message: "Organization not found",
+            })
+         }
+
          const createdList = await ctx.db.list.create({
             data: {
                name,
                boardId,
                order: listsCount + 1,
+               organizationId: organization.id,
             },
+         })
+
+         await createAuditLog({
+            action: "CREATE",
+            entityId: createdList.id,
+            entityName: createdList.name,
+            entityType: "LIST",
+            organizationId: createdList.organizationId,
+            userId: ctx.session.userId!,
          })
 
          return createdList.id
@@ -74,6 +106,15 @@ export const listRouter = createTRPCRouter({
             },
          })
 
+         await createAuditLog({
+            action: "UPDATE",
+            entityId: updatedList.id,
+            entityName: updatedList.name,
+            entityType: "LIST",
+            organizationId: updatedList.organizationId,
+            userId: ctx.session.userId!,
+         })
+
          return updatedList.name
       }),
    delete: privateProcedure
@@ -85,12 +126,23 @@ export const listRouter = createTRPCRouter({
             },
             select: {
                name: true,
+               id: true,
+               organizationId: true,
                cards: {
                   select: {
                      description: true,
                   },
                },
             },
+         })
+
+         await createAuditLog({
+            action: "DELETE",
+            entityId: deletedList.id,
+            entityName: deletedList.name,
+            entityType: "LIST",
+            organizationId: deletedList.organizationId,
+            userId: ctx.session.userId!,
          })
 
          const deletedDescriptions = deletedList.cards.map(

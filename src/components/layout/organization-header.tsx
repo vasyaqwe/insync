@@ -26,7 +26,6 @@ export function OrganizationHeader({
          openDialog: state.openDialog,
       }))
    )
-   console.log(user.imageUrl)
 
    const { lastVisitedOrganizationId } = useOrganizationHelpersStore()
 

@@ -8,6 +8,8 @@ import {
    updateCardSchema,
 } from "@/lib/validations/card"
 import { createTRPCRouter, privateProcedure } from "@/server/api/trpc"
+import { createAuditLog } from "@/server/api/utils"
+import { TRPCError } from "@trpc/server"
 
 export const cardRouter = createTRPCRouter({
    create: privateProcedure
@@ -17,12 +19,46 @@ export const cardRouter = createTRPCRouter({
             where: { listId: listId },
          })
 
+         const organization = await ctx.db.organization.findFirst({
+            where: {
+               boards: {
+                  some: {
+                     lists: {
+                        some: {
+                           id: listId,
+                        },
+                     },
+                  },
+               },
+            },
+            select: {
+               id: true,
+            },
+         })
+
+         if (!organization) {
+            throw new TRPCError({
+               code: "BAD_REQUEST",
+               message: "Organization not found",
+            })
+         }
+
          const createdCard = await ctx.db.card.create({
             data: {
                name,
                listId,
                order: cardsCount + 1,
+               organizationId: organization.id,
             },
+         })
+
+         await createAuditLog({
+            action: "CREATE",
+            entityId: createdCard.id,
+            entityName: createdCard.name,
+            entityType: "CARD",
+            organizationId: createdCard.organizationId,
+            userId: ctx.session.userId!,
          })
 
          return createdCard.id
@@ -100,6 +136,15 @@ export const cardRouter = createTRPCRouter({
             },
          })
 
+         await createAuditLog({
+            action: "UPDATE",
+            entityId: updatedCard.id,
+            entityName: updatedCard.name,
+            entityType: "CARD",
+            organizationId: updatedCard.organizationId,
+            userId: ctx.session.userId!,
+         })
+
          return { name: updatedCard.name, description: updatedCard.description }
       }),
    delete: privateProcedure
@@ -110,9 +155,20 @@ export const cardRouter = createTRPCRouter({
                id: cardId,
             },
             select: {
+               id: true,
+               organizationId: true,
                description: true,
                name: true,
             },
+         })
+
+         await createAuditLog({
+            action: "DELETE",
+            entityId: deletedCard.id,
+            entityName: deletedCard.name,
+            entityType: "CARD",
+            organizationId: deletedCard.organizationId,
+            userId: ctx.session.userId!,
          })
 
          return { name: deletedCard.name, description: deletedCard.description }
