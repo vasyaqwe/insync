@@ -1,7 +1,7 @@
 "use client"
 
 import { isDateToday } from "@/lib/utils"
-import { useFormatter } from "next-intl"
+import { useFormatter, useNow } from "next-intl"
 
 type DateProps = Omit<React.ComponentProps<"small">, "children"> & {
    children: Date
@@ -10,6 +10,10 @@ type DateProps = Omit<React.ComponentProps<"small">, "children"> & {
 
 export function DateDisplay({ children, justNowText, ...props }: DateProps) {
    const format = useFormatter()
+   const now = useNow({
+      // Update every minute
+      updateInterval: 1000 * 60,
+   })
 
    function formatDate(dateInput: Date) {
       const date = Number(dateInput)
@@ -18,7 +22,7 @@ export function DateDisplay({ children, justNowText, ...props }: DateProps) {
          if (diffInMinutes < 2) {
             return justNowText
          } else if (isDateToday(dateInput)) {
-            return format.relativeTime(date)
+            return format.relativeTime(date, { now })
          } else {
             return format.dateTime(date, {
                day: "numeric",
