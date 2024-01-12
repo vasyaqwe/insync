@@ -2,6 +2,7 @@
 
 import { isDateToday } from "@/lib/utils"
 import { useFormatter, useNow } from "next-intl"
+import { useEffect, useState } from "react"
 
 type DateProps = Omit<React.ComponentProps<"small">, "children"> & {
    children: Date
@@ -14,15 +15,26 @@ export function DateDisplay({ children, justNowText, ...props }: DateProps) {
       // Update every minute
       updateInterval: 1000 * 60,
    })
+   const [currentDate, setCurrentDate] = useState(new Date())
+
+   useEffect(() => {
+      setCurrentDate(new Date())
+   }, [])
 
    function formatDate(dateInput: Date) {
       const date = Number(dateInput)
       if (!isNaN(date)) {
-         const diffInMinutes = Math.floor((Date.now() - date) / 60000)
+         const diffInMinutes = Math.floor(
+            (currentDate.getTime() - date) / 60000
+         )
+
          if (diffInMinutes < 2) {
             return justNowText
          } else if (isDateToday(dateInput)) {
-            return format.relativeTime(date, { now })
+            //sometimes now value is a few mins early, this is a workarond
+            return format.relativeTime(date, {
+               now: currentDate <= now ? now : currentDate,
+            })
          } else {
             return format.dateTime(date, {
                day: "numeric",
@@ -42,6 +54,7 @@ export function DateDisplay({ children, justNowText, ...props }: DateProps) {
          suppressHydrationWarning
          {...props}
       >
+         {JSON.stringify(currentDate)} <br />
          {formatDate(children)}
       </span>
    )
