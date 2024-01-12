@@ -152,6 +152,7 @@ model CardComment {
 enum ACTION {
     CREATE
     UPDATE
+    MOVE
     DELETE
 }
 
@@ -164,10 +165,12 @@ enum ENTITY_TYPE {
 model AuditLog {
     id String @id @default(cuid())
 
-    action     ACTION
-    entityId   String
-    entityType ENTITY_TYPE
-    entityName String
+    action                ACTION
+    entityId              String
+    entityType            ENTITY_TYPE
+    entityName            String
+    destinationEntityName String?
+    sourceEntityName      String?
 
     organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
     organizationId String

@@ -42,8 +42,17 @@
       "update": "Update",
       "not-found": "This page could not be found.",
       "go-to-dashboard": "Go to dashboard",
+      "just-now": "just now",
+      "created": "created",
+      "moved": "moved",
+      "from": "from",
+      "to": "to",
+      "updated": "updated",
+      "deleted": "deleted",
+      "board": "board",
+      "list": "list",
       "card": "card",
-      "just-now": "just now"
+      "this": "this"
    },
    "user-settings": {
       "title": "Settings",
@@ -103,7 +112,8 @@
       "update-comment-error": "Failed to update comment, something went wrong",
       "delete-comment-success": "Comment deleted",
       "delete-comment-error": "Failed to delete comment, something went wrong",
-      "activity": "Activity"
+      "activity": "Activity",
+      "get-audit-logs-error": "Failed to load activity"
    },
    "members": {
       "tooltip": "View all members",
@@ -185,12 +195,6 @@
    },
    "activity": {
       "title": "Activity",
-      "created": "created",
-      "updated": "updated",
-      "deleted": "deleted",
-      "board": "board",
-      "list": "list",
-      "card": "card",
       "empty": "There hasn't been any activity in this organization yet."
    },
    "create-organization": {

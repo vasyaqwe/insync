@@ -44,6 +44,7 @@ import { UserAvatar } from "@/components/ui/user-avatar"
 import { useUser } from "@clerk/nextjs"
 import { Skeleton } from "@/components/ui/skeleton"
 import { DateDisplay } from "@/components/date-display"
+import { actionLookup, entityTypeLookup } from "@/config"
 
 type CardProps = {
    card: Card
@@ -84,6 +85,15 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
       isError: isCommentsError,
       isLoading: isCommentsLoading,
    } = api.card.getComments.useQuery(
+      { cardId: card.id },
+      { enabled: detailsDialogOpen }
+   )
+
+   const {
+      data: auditLogs,
+      isError: isAuditLogsError,
+      isLoading: isAuditLogsLoading,
+   } = api.card.getAuditLogs.useQuery(
       { cardId: card.id },
       { enabled: detailsDialogOpen }
    )
@@ -129,6 +139,9 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
          onError: () => {
             return toast.error(t("update-error"))
          },
+         onSettled: () => {
+            void utils.card.getAuditLogs.invalidate()
+         },
       })
 
    const { mutate: onCreateComment, isLoading: isCreateCommentLoading } =
@@ -148,7 +161,10 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
          onError: () => {
             return toast.error(t("create-comment-error"))
          },
-         onSettled: () => utils.card.getComments.invalidate(),
+         onSettled: () => {
+            void utils.card.getAuditLogs.invalidate()
+            void utils.card.getComments.invalidate()
+         },
       })
 
    const { mutate: onDeleteComment, isLoading: isDeleteCommentLoading } =
@@ -165,7 +181,10 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
          onError: () => {
             return toast.error(t("delete-comment-error"))
          },
-         onSettled: () => utils.card.getComments.invalidate(),
+         onSettled: () => {
+            void utils.card.getAuditLogs.invalidate()
+            void utils.card.getComments.invalidate()
+         },
       })
 
    const { safeOnSubmit, errors } = useFormValidation({
@@ -317,7 +336,7 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                   </li>
 
                   <DialogContent
-                     className="min-h-[90svh] max-w-xl md:min-h-[600px]"
+                     className="min-h-[90svh] max-w-xl md:min-h-[612px]"
                      onAnimationEndCapture={() => {
                         toast.dismiss()
                      }}
@@ -402,7 +421,7 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                         </div>
                      </section>
 
-                     <section className="mb-8 mt-10">
+                     <section className="mt-10">
                         <DialogTitle className="font-medium">
                            <MessageCircle className="-mt-0.5 mr-1 inline " />{" "}
                            {t("comments")}
@@ -464,24 +483,17 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                         </div>
                         <div className="mt-5 w-full [--avatar-size:32px]">
                            {isCommentsLoading ? (
-                              <>
-                                 {[...new Array(2)].map((_, idx) => (
-                                    <div
-                                       key={idx}
-                                       className="mt-5 flex w-full gap-3"
-                                    >
-                                       <Skeleton className="size-[var(--avatar-size)] flex-shrink-0 rounded-full" />
-                                       <div className="w-full">
-                                          <div className="flex items-end gap-2">
-                                             <Skeleton className="h-4 w-28" />
-                                             <Skeleton className="mb-[1px] h-3 w-20" />
-                                          </div>
-                                          <Skeleton className="mt-3 h-4 w-[80%]" />
-                                          <Skeleton className="mt-2 h-4 w-[70%]" />
-                                       </div>
+                              <div className="mt-5 flex w-full gap-3">
+                                 <Skeleton className="size-[var(--avatar-size)] flex-shrink-0 rounded-full" />
+                                 <div className="w-full">
+                                    <div className="flex items-end gap-2">
+                                       <Skeleton className="h-3 w-28" />
+                                       <Skeleton className="mb-[1px] h-2 w-20" />
                                     </div>
-                                 ))}
-                              </>
+                                    <Skeleton className="mt-3 h-3 w-[80%]" />
+                                    <Skeleton className="mt-2 h-3 w-[70%]" />
+                                 </div>
+                              </div>
                            ) : isCommentsError ? (
                               <p className="font-medium text-destructive">
                                  {t("get-comments-error")}
@@ -568,11 +580,77 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                         </div>
                      </section>
 
-                     <section className="mt-auto">
+                     <section className="mt-10">
                         <DialogTitle className="font-medium">
                            <GanttChart className="-mt-0.5 mr-1 inline " />{" "}
                            {t("activity")}
                         </DialogTitle>
+
+                        <div className="mt-5 w-full [--avatar-size:32px]">
+                           {isAuditLogsLoading ? (
+                              <>
+                                 {[...new Array(2)].map((_, idx) => (
+                                    <div
+                                       key={idx}
+                                       className="mt-5 flex w-full gap-3"
+                                    >
+                                       <Skeleton className="size-[var(--avatar-size)] flex-shrink-0 rounded-full" />
+                                       <div className="w-full">
+                                          <Skeleton className="h-3 w-[60%]" />
+                                          <Skeleton className="mt-3 h-2 w-[40%]" />
+                                       </div>
+                                    </div>
+                                 ))}
+                              </>
+                           ) : isAuditLogsError ? (
+                              <p className="font-medium text-destructive">
+                                 {t("get-audit-logs-error")}
+                              </p>
+                           ) : (
+                              auditLogs?.map((log) => (
+                                 <div
+                                    className="mt-3 flex items-start gap-2"
+                                    key={log.id}
+                                 >
+                                    <UserAvatar
+                                       className="mt-0.5"
+                                       user={log.user}
+                                    />
+                                    <div>
+                                       <p className="text-sm leading-none text-foreground/75">
+                                          <strong className="font-medium">
+                                             {log.user.firstName}{" "}
+                                             {log.user.lastName}
+                                          </strong>{" "}
+                                          {tCommon(actionLookup[log.action])}{" "}
+                                          {tCommon("this")}{" "}
+                                          {tCommon(
+                                             entityTypeLookup[log.entityType]
+                                          )}{" "}
+                                          {log.action === "MOVE" && (
+                                             <>
+                                                {tCommon("from")}{" "}
+                                                <strong className="font-medium">
+                                                   "{log.sourceEntityName}"
+                                                </strong>{" "}
+                                                {tCommon("to")}{" "}
+                                                <strong className="font-medium">
+                                                   "{log.destinationEntityName}"
+                                                </strong>
+                                             </>
+                                          )}
+                                       </p>
+                                       <DateDisplay
+                                          className="text-xs font-normal text-muted-foreground"
+                                          justNowText={tCommon("just-now")}
+                                       >
+                                          {log.createdAt}
+                                       </DateDisplay>
+                                    </div>
+                                 </div>
+                              ))
+                           )}
+                        </div>
                      </section>
                   </DialogContent>
                </Dialog>

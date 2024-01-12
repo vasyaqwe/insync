@@ -7,6 +7,8 @@ export const createAuditLog = async ({
    entityId,
    entityType,
    entityName,
+   sourceEntityName,
+   destinationEntityName,
    action,
 }: Omit<Prisma.AuditLogCreateInput, "organization" | "user"> & {
    organizationId: string
@@ -19,9 +21,11 @@ export const createAuditLog = async ({
          entityId,
          entityType,
          entityName,
+         destinationEntityName,
+         sourceEntityName,
          action,
       },
    })
-   console.log(res)
+
    return res
 }

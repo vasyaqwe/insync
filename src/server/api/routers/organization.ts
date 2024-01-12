@@ -160,7 +160,11 @@ export const organizationRouter = createTRPCRouter({
             },
             select: {
                id: true,
-               cards: true,
+               cards: {
+                  select: {
+                     description: true,
+                  },
+               },
             },
          })
 

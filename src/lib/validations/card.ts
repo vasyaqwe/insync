@@ -12,7 +12,7 @@ export const createCardSchema = z.object({
    listId: z.string(),
 })
 
-export const getCardCommentsSchema = z.object({
+export const getCardItemsSchema = z.object({
    cardId: z.string(),
 })
 
@@ -38,4 +38,13 @@ export const updateCardOrderSchema = z.object({
    items: z.array(
       z.object({ order: z.number(), id: z.string(), listId: z.string() })
    ),
+   destinationListName: z.string().optional(),
+   sourceListName: z.string().optional(),
+   movedCard: z
+      .object({
+         id: z.string(),
+         name: z.string(),
+         organizationId: z.string(),
+      })
+      .optional(),
 })

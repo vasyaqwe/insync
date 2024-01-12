@@ -2,8 +2,8 @@ import { Card } from "@/components/ui/card"
 import { getTranslations } from "next-intl/server"
 import { db } from "@/server/db"
 import { UserAvatar } from "@/components/ui/user-avatar"
-import { type ACTION, type ENTITY_TYPE } from "@prisma/client"
 import { DateDisplay } from "@/components/date-display"
+import { actionLookup, entityTypeLookup } from "@/config"
 
 export default async function Page({
    params: { organizationId },
@@ -24,18 +24,6 @@ export default async function Page({
 
    const t = await getTranslations("activity")
    const tCommon = await getTranslations("common")
-
-   const actionLookup: Record<ACTION, string> = {
-      CREATE: t("created"),
-      UPDATE: t("updated"),
-      DELETE: t("deleted"),
-   }
-
-   const entityTypeLookup: Record<ENTITY_TYPE, string> = {
-      BOARD: t("board"),
-      LIST: t("list"),
-      CARD: t("card"),
-   }
 
    return (
       <div>
@@ -72,15 +60,27 @@ export default async function Page({
                         user={log.user}
                      />
                      <div>
-                        <p className="leading-snug text-foreground/80">
+                        <p className="leading-snug text-foreground/75">
                            <strong className="font-medium">
                               {log.user.firstName} {log.user.lastName}
                            </strong>{" "}
-                           {actionLookup[log.action]}{" "}
-                           {entityTypeLookup[log.entityType]}{" "}
+                           {tCommon(actionLookup[log.action])}{" "}
+                           {tCommon(entityTypeLookup[log.entityType])}{" "}
                            <strong className="font-medium">
                               "{log.entityName}"
-                           </strong>
+                           </strong>{" "}
+                           {log.action === "MOVE" && (
+                              <>
+                                 {tCommon("from")}{" "}
+                                 <strong className="font-medium">
+                                    "{log.sourceEntityName}"
+                                 </strong>{" "}
+                                 {tCommon("to")}{" "}
+                                 <strong className="font-medium">
+                                    "{log.destinationEntityName}"
+                                 </strong>
+                              </>
+                           )}
                         </p>
                         <DateDisplay
                            className="text-sm font-normal text-muted-foreground"

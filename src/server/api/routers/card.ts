@@ -3,7 +3,7 @@ import {
    createCardSchema,
    deleteCardCommentSchema,
    deleteCardSchema,
-   getCardCommentsSchema,
+   getCardItemsSchema,
    updateCardOrderSchema,
    updateCardSchema,
 } from "@/lib/validations/card"
@@ -64,7 +64,7 @@ export const cardRouter = createTRPCRouter({
          return createdCard.id
       }),
    getComments: privateProcedure
-      .input(getCardCommentsSchema)
+      .input(getCardItemsSchema)
       .query(async ({ ctx, input: { cardId } }) => {
          const comments = await ctx.db.cardComment.findMany({
             where: {
@@ -80,6 +80,24 @@ export const cardRouter = createTRPCRouter({
 
          return comments
       }),
+   getAuditLogs: privateProcedure
+      .input(getCardItemsSchema)
+      .query(async ({ ctx, input: { cardId } }) => {
+         const auditLogs = await ctx.db.auditLog.findMany({
+            where: {
+               entityId: cardId,
+               entityType: "CARD",
+            },
+            include: {
+               user: true,
+            },
+            orderBy: {
+               createdAt: "desc",
+            },
+         })
+
+         return auditLogs
+      }),
    createComment: privateProcedure
       .input(createCardCommentSchema)
       .mutation(async ({ ctx, input: { content, cardId } }) => {
@@ -89,9 +107,27 @@ export const cardRouter = createTRPCRouter({
                content,
                cardId,
             },
+            select: {
+               card: {
+                  select: {
+                     id: true,
+                     name: true,
+                     organizationId: true,
+                  },
+               },
+            },
          })
 
-         return createdComment.id
+         await createAuditLog({
+            action: "UPDATE",
+            entityId: createdComment.card.id,
+            entityName: createdComment.card.name,
+            entityType: "CARD",
+            organizationId: createdComment.card.organizationId,
+            userId: ctx.session.userId!,
+         })
+
+         return "OK"
       }),
    deleteComment: privateProcedure
       .input(deleteCardCommentSchema)
@@ -101,29 +137,66 @@ export const cardRouter = createTRPCRouter({
                id: commentId,
                authorId: ctx.session.userId,
             },
+            select: {
+               content: true,
+               card: {
+                  select: {
+                     id: true,
+                     name: true,
+                     organizationId: true,
+                  },
+               },
+            },
+         })
+
+         await createAuditLog({
+            action: "UPDATE",
+            entityId: deletedComment.card.id,
+            entityName: deletedComment.card.name,
+            entityType: "CARD",
+            organizationId: deletedComment.card.organizationId,
+            userId: ctx.session.userId!,
          })
 
          return { content: deletedComment.content }
       }),
    updateOrder: privateProcedure
       .input(updateCardOrderSchema)
-      .mutation(async ({ ctx, input: { items } }) => {
-         const transaction = items.map((item) =>
-            ctx.db.card.update({
-               where: {
-                  id: item.id,
-               },
-               data: {
-                  order: item.order,
-                  listId: item.listId,
-               },
-            })
-         )
+      .mutation(
+         async ({
+            ctx,
+            input: { items, destinationListName, sourceListName, movedCard },
+         }) => {
+            const transaction = items.map((item) =>
+               ctx.db.card.update({
+                  where: {
+                     id: item.id,
+                  },
+                  data: {
+                     order: item.order,
+                     listId: item.listId,
+                  },
+               })
+            )
 
-         await ctx.db.$transaction(transaction)
+            await ctx.db.$transaction(transaction)
 
-         return "OK"
-      }),
+            if (destinationListName && movedCard) {
+               await createAuditLog({
+                  action: "MOVE",
+                  entityId: movedCard.id,
+                  entityName: movedCard.name,
+                  destinationEntityName: destinationListName,
+                  sourceEntityName: sourceListName,
+                  entityType: "CARD",
+                  organizationId: movedCard.organizationId,
+                  userId: ctx.session.userId!,
+               })
+            }
+
+            return "OK"
+         }
+      ),
    update: privateProcedure
       .input(updateCardSchema)
       .mutation(async ({ ctx, input: { cardId, ...rest } }) => {

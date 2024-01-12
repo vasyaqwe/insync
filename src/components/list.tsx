@@ -320,11 +320,11 @@ export function ListsWrapper({
          const sourceList = newOrderedData.find(
             (list) => list.id === source.droppableId
          )
-         const destList = newOrderedData.find(
+         const destinationList = newOrderedData.find(
             (list) => list.id === destination.droppableId
          )
 
-         if (!sourceList || !destList) {
+         if (!sourceList || !destinationList) {
             return
          }
 
@@ -333,9 +333,9 @@ export function ListsWrapper({
             sourceList.cards = []
          }
 
-         // Check if cards exists on the destList
-         if (!destList.cards) {
-            destList.cards = []
+         // Check if cards exists on the destinationList
+         if (!destinationList.cards) {
+            destinationList.cards = []
          }
 
          // Moving the card in the same list
@@ -365,19 +365,25 @@ export function ListsWrapper({
             movedCard.listId = destination.droppableId
 
             // Add card to the destination list
-            destList.cards.splice(destination.index, 0, movedCard)
+            destinationList.cards.splice(destination.index, 0, movedCard)
 
             sourceList.cards.forEach((card, idx) => {
                card.order = idx
             })
 
             // Update the order for each card in the destination list
-            destList.cards.forEach((card, idx) => {
+            destinationList.cards.forEach((card, idx) => {
                card.order = idx
             })
 
             setOrderedData(newOrderedData)
-            onUpdateCardOrder({ items: destList.cards })
+
+            onUpdateCardOrder({
+               items: destinationList.cards,
+               destinationListName: destinationList.name,
+               sourceListName: sourceList.name,
+               movedCard,
+            })
          }
       }
    }
