@@ -263,6 +263,7 @@ export function ListsWrapper({
 }: { lists: ExtendedList[] } & ComponentProps<"ol">) {
    const t = useTranslations("lists")
    const tCards = useTranslations("cards")
+   const utils = api.useUtils()
 
    const [orderedData, setOrderedData] = useState(lists ?? [])
 
@@ -289,6 +290,9 @@ export function ListsWrapper({
          },
          onError: () => {
             tCards("update-error")
+         },
+         onSettled: () => {
+            void utils.card.getAuditLogs.invalidate()
          },
       })
 

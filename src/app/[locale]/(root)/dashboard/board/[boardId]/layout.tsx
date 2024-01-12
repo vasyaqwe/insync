@@ -41,7 +41,7 @@ export default async function RootLayout({
          >
             <BoardHeader user={convertClerkUserToDbUser(user)} />
          </NextIntlClientProvider>
-         <main className="h-[calc(100%-var(--header-height))]">
+         <main className="h-[calc(100svh-var(--header-height))]">
             <NextIntlClientProvider
                messages={pick(messages, [
                   "sidebar",

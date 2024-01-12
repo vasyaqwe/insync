@@ -46,7 +46,10 @@ export function Sidebar({
          <Card asChild>
             <Aside
                organizations={organizations}
-               className={cn("max-w-xs self-start max-lg:hidden", className)}
+               className={cn(
+                  "sticky top-[125px] max-w-xs self-start max-lg:hidden",
+                  className
+               )}
             />
          </Card>
          <Sheet

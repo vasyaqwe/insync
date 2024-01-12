@@ -54,7 +54,6 @@ export function DateDisplay({ children, justNowText, ...props }: DateProps) {
          suppressHydrationWarning
          {...props}
       >
-         {JSON.stringify(currentDate)} <br />
          {formatDate(children)}
       </span>
    )

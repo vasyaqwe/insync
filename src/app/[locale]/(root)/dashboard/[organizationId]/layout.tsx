@@ -66,7 +66,7 @@ export default async function RootLayout({
          </NextIntlClientProvider>
          <main
             className={cn(
-               "container py-6 lg:py-14",
+               "container min-h-[calc(100svh-var(--header-height))] py-6 lg:py-0 lg:pb-14",
                organizations.length > 0
                   ? "gap-10 lg:grid lg:grid-cols-[320px,1fr]"
                   : ""
@@ -83,7 +83,7 @@ export default async function RootLayout({
                   <Sidebar organizations={organizations} />
                </NextIntlClientProvider>
             )}
-            <div>
+            <div className="lg:mt-14">
                <NextIntlClientProvider
                   messages={pick(messages, ["members", "invite-command"])}
                >
