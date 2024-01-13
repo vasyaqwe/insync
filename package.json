@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@clerk/localizations": "^1.26.9",
-    "@clerk/nextjs": "^4.29.2",
+    "@clerk/nextjs": "^4.29.3",
     "@clerk/themes": "^1.7.9",
     "@hello-pangea/dnd": "^16.5.0",
     "@pinecone-database/pinecone": "^1.1.2",
