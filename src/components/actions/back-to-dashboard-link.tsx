@@ -16,7 +16,7 @@ export function BackToDashboardLink({
    return isHydrated ? (
       <Button asChild>
          <Link
-            className={cn("", className)}
+            className={cn(className)}
             href={`/dashboard/${lastVisitedOrganizationId}`}
          >
             {text}
