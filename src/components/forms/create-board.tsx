@@ -15,7 +15,7 @@ import { useRouter } from "@/navigation"
 import { api } from "@/trpc/react"
 import { Plus } from "lucide-react"
 import { useTranslations } from "next-intl"
-import { useState } from "react"
+import { useState, useTransition } from "react"
 import { toast } from "sonner"
 import useMeasure from "react-use-measure"
 
@@ -27,6 +27,7 @@ export function CreateBoard({
    const t = useTranslations("boards")
    const tCommon = useTranslations("common")
    const router = useRouter()
+   const [isPending, startTransition] = useTransition()
    const [triggerRef, { width: triggerWidth }] = useMeasure()
    const [formData, setFormData] = useState({
       name: "",
@@ -35,12 +36,11 @@ export function CreateBoard({
 
    const { mutate: onSubmit, isLoading } = api.board.create.useMutation({
       onSuccess: (createdBoardId) => {
-         router.push(`/dashboard/board/${createdBoardId}`)
+         startTransition(() => {
+            router.push(`/dashboard/board/${createdBoardId}`)
+            toast.success(t("create-success"))
+         })
          router.refresh()
-         toast.success(t("create-success"))
-
-         //close popover
-         document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }))
       },
       onError: () => {
          return toast.error(t("create-error"))
@@ -87,10 +87,10 @@ export function CreateBoard({
                   }}
                />
                <Button
-                  disabled={isLoading}
+                  disabled={isLoading || isPending}
                   className="mt-3 w-full"
                >
-                  {isLoading ? <Loading /> : tCommon("create")}
+                  {isLoading || isPending ? <Loading /> : tCommon("create")}
                </Button>
             </form>
          </PopoverContent>

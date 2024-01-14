@@ -53,19 +53,19 @@ export function UserSettingsDialog() {
    )
 
    const { mutate: onUpdate, isLoading } = api.user.update.useMutation({
-      onMutate: () => {
-         convertImageToBase64(formData.imageUrl)
-            .then(async (base64) => {
-               await user?.setProfileImage({ file: base64 })
-            })
-            .catch((error) => console.error(error))
+      onMutate: async () => {
+         try {
+            const base64 = await convertImageToBase64(formData.imageUrl)
+            await user?.setProfileImage({ file: base64 })
+            await user?.reload()
+         } catch (error) {
+            toast.error(t("update-error"))
+         }
       },
-      onSuccess: async () => {
+      onSuccess: () => {
          router.refresh()
-         void user?.reload()
-         toast.success(t("update-success"))
 
-         //close dialog
+         toast.success(t("update-success"))
          document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }))
       },
       onError: () => {
@@ -218,6 +218,7 @@ export function UserSettingsDialog() {
                      {formData.imageUrl ? (
                         <div className="relative h-[var(--avatar-size)] w-[var(--avatar-size)] flex-shrink-0">
                            <Image
+                              loading="eager"
                               className="rounded-full object-cover object-top"
                               src={formData.imageUrl}
                               alt={formData.firstName}
@@ -244,7 +245,7 @@ export function UserSettingsDialog() {
 
                <Button
                   className="mt-9 w-full"
-                  disabled={isLoading}
+                  disabled={isLoading || isUploading}
                >
                   {isLoading ? <Loading /> : tCommon("save")}
                </Button>
