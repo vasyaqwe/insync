@@ -3,12 +3,14 @@
  * for Docker builds.
  */
 await import("./src/env.mjs")
-
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import withPlugins from "next-compose-plugins"
 import withNextIntl from "next-intl/plugin"
 const withNextIntlInstance = withNextIntl()
 
 /** @type {import("next").NextConfig} */
-const config = withNextIntlInstance({
+const config = withPlugins([withNextIntlInstance], {
    images: {
       remotePatterns: [
          {

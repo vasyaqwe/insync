@@ -28,7 +28,7 @@ import { InviteCommand } from "@/components/invite-command"
 import { useShallow } from "zustand/react/shallow"
 import { useOrganizationHelpersStore } from "@/stores/use-organization-helpers-store"
 
-export function CreateOrganizationDialog() {
+export default function CreateOrganizationDialog() {
    const t = useTranslations("create-organization")
    const router = useRouter()
    const { setLastVisitedOrganizationId, setExpandedOrganizations } =

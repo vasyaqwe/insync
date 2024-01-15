@@ -21,6 +21,7 @@ import {
    useState,
    useEffect,
    type ComponentProps,
+   useTransition,
 } from "react"
 import { Textarea } from "@/components/ui/textarea"
 import { cn, getUploadthingFileIdsFromHTML } from "@/lib/utils"
@@ -46,6 +47,7 @@ type ListProps = {
 function List({ list, index, isLoading: isDragLoading }: ListProps) {
    const t = useTranslations("lists")
    const tCommon = useTranslations("common")
+   const [isPending, startTransition] = useTransition()
    const router = useRouter()
 
    const [menuOpen, setMenuOpen] = useState(false)
@@ -62,8 +64,12 @@ function List({ list, index, isLoading: isDragLoading }: ListProps) {
 
    const { mutate: onDelete, isLoading } = api.list.delete.useMutation({
       onSuccess: ({ name, editorContents }) => {
-         router.refresh()
-         toast.success(t.rich("delete-success", { name }))
+         startTransition(() => {
+            router.refresh()
+         })
+         setTimeout(() => {
+            toast.success(t.rich("delete-success", { name }))
+         }, 300)
 
          const filesToDelete = editorContents.flatMap((d) =>
             getUploadthingFileIdsFromHTML(d)
@@ -193,10 +199,10 @@ function List({ list, index, isLoading: isDragLoading }: ListProps) {
                                  e.preventDefault()
                                  onDelete({ listId: list.id })
                               }}
-                              disabled={isLoading}
+                              disabled={isLoading || isPending}
                               className="!text-destructive"
                            >
-                              {isLoading ? (
+                              {isLoading || isPending ? (
                                  <Loading className="mx-auto" />
                               ) : (
                                  <>

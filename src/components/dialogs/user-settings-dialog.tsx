@@ -24,7 +24,7 @@ import { type ChangeEvent, useEffect, useState } from "react"
 import { toast } from "sonner"
 import { useShallow } from "zustand/react/shallow"
 
-export function UserSettingsDialog() {
+export default function UserSettingsDialog() {
    const t = useTranslations("user-settings")
    const tCommon = useTranslations("common")
    const router = useRouter()

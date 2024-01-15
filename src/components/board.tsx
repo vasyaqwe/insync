@@ -15,7 +15,7 @@ import { api } from "@/trpc/react"
 import { toast } from "sonner"
 import { Loading } from "@/components/ui/loading"
 import { ErrorMessage, Input } from "@/components/ui/input"
-import { useState } from "react"
+import { useState, useTransition } from "react"
 import { NAME_CHARS_LIMIT, updateBoardSchema } from "@/lib/validations/board"
 import { useFormValidation } from "@/hooks/use-form-validation"
 import {
@@ -33,6 +33,7 @@ export function Board({ board }: BoardProps) {
    const t = useTranslations("boards")
    const tCommon = useTranslations("common")
    const router = useRouter()
+   const [isPending, startTransition] = useTransition()
    const format = useFormatter()
    const [dialogOpen, setDialogOpen] = useState(false)
    const [menuOpen, setMenuOpen] = useState(false)
@@ -45,8 +46,12 @@ export function Board({ board }: BoardProps) {
 
    const { mutate: onDelete, isLoading } = api.board.delete.useMutation({
       onSuccess: ({ name, editorContents }) => {
-         router.refresh()
-         toast.success(t.rich("delete-success", { name }))
+         startTransition(() => {
+            router.refresh()
+         })
+         setTimeout(() => {
+            toast.success(t.rich("delete-success", { name }))
+         }, 300)
 
          const filesToDelete = editorContents.flatMap((d) =>
             getUploadthingFileIdsFromHTML(d)
@@ -66,8 +71,14 @@ export function Board({ board }: BoardProps) {
    const { mutate: onUpdate, isLoading: isUpdateLoading } =
       api.board.update.useMutation({
          onSuccess: (updatedBoardName) => {
-            router.refresh()
-            toast.success(t.rich("update-success", { name: updatedBoardName }))
+            startTransition(() => {
+               router.refresh()
+            })
+            setTimeout(() => {
+               toast.success(
+                  t.rich("update-success", { name: updatedBoardName })
+               )
+            }, 300)
             setDialogOpen(false)
             setMenuOpen(false)
          },
@@ -137,7 +148,7 @@ export function Board({ board }: BoardProps) {
                         align="end"
                      >
                         <DropdownMenuItem
-                           disabled={isLoading}
+                           disabled={isLoading || isPending}
                            onSelect={() => {
                               setDialogOpen(true)
                            }}
@@ -153,10 +164,10 @@ export function Board({ board }: BoardProps) {
                               e.preventDefault()
                               onDelete({ boardId: board.id })
                            }}
-                           disabled={isLoading}
+                           disabled={isLoading || isPending}
                            className="!text-destructive"
                         >
-                           {isLoading ? (
+                           {isLoading || isPending ? (
                               <Loading className="mx-auto" />
                            ) : (
                               <>
@@ -218,10 +229,14 @@ export function Board({ board }: BoardProps) {
                   />
                   <Button
                      type={"submit"}
-                     disabled={isUpdateLoading}
+                     disabled={isUpdateLoading || isPending}
                      className="mt-3 w-full"
                   >
-                     {isUpdateLoading ? <Loading /> : tCommon("update")}
+                     {isUpdateLoading || isPending ? (
+                        <Loading />
+                     ) : (
+                        tCommon("update")
+                     )}
                   </Button>
                </form>
             </DialogContent>

@@ -6,9 +6,9 @@ import { db } from "@/server/db"
 import { NextIntlClientProvider } from "next-intl"
 import { pick } from "@/lib/utils"
 import { notFound } from "next/navigation"
+import { currentUser } from "@clerk/nextjs"
 import { DeleteOrganizationDialog } from "@/components/dialogs/delete-organization-dialog"
 import { LeaveOrganizationDialog } from "@/components/dialogs/leave-organization-dialog"
-import { currentUser } from "@clerk/nextjs"
 
 export default async function Page({
    params: { organizationId },

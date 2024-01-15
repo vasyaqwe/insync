@@ -18,7 +18,6 @@ import { Link, useRouter, usePathname } from "@/navigation"
 import { useLocale, useTranslations } from "next-intl"
 import { useGlobalStore } from "@/stores/use-global-store"
 import { useShallow } from "zustand/react/shallow"
-import { CreateOrganizationDialog } from "@/components/dialogs/create-organization-dialog"
 import { ChevronsUpDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useTheme } from "next-themes"
@@ -26,8 +25,21 @@ import { startTransition, type ComponentProps } from "react"
 import { cn } from "@/lib/utils"
 import { useOrganizationHelpersStore } from "@/stores/use-organization-helpers-store"
 import { useIsHydrated } from "@/hooks/use-is-hydrated"
-import { UserSettingsDialog } from "@/components/dialogs/user-settings-dialog"
 import { type User } from "@prisma/client"
+import dynamic from "next/dynamic"
+
+const CreateOrganizationDialog = dynamic(
+   () => import("@/components/dialogs/create-organization-dialog"),
+   {
+      ssr: false,
+   }
+)
+const UserSettingsDialog = dynamic(
+   () => import("@/components/dialogs/user-settings-dialog"),
+   {
+      ssr: false,
+   }
+)
 
 export function AccountMenu({
    className,

@@ -38,8 +38,10 @@ export function CreateBoard({
       onSuccess: (createdBoardId) => {
          startTransition(() => {
             router.push(`/dashboard/board/${createdBoardId}`)
-            toast.success(t("create-success"))
          })
+         setTimeout(() => {
+            toast.success(t("create-success"))
+         }, 300)
          router.refresh()
       },
       onError: () => {

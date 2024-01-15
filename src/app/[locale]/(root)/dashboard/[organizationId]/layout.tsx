@@ -5,12 +5,12 @@ import { getMessages, getTranslations } from "next-intl/server"
 import { db } from "@/server/db"
 import { currentUser } from "@clerk/nextjs"
 import { OrganizationHeader } from "@/components/layout/organization-header"
-import { OrganizationMembersDialog } from "@/components/dialogs/organization-members-dialog"
 import { ColorAvatar } from "@/components/ui/color-avatar"
 import { CreditCard } from "lucide-react"
 import { notFound } from "next/navigation"
 import { type ReactNode } from "react"
 import { type User } from "@clerk/nextjs/server"
+import { OrganizationMembersDialog } from "@/components/dialogs/organization-members-dialog"
 
 export default async function RootLayout({
    children,

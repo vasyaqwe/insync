@@ -15,7 +15,7 @@ import { useRouter } from "@/navigation"
 import { api } from "@/trpc/react"
 import { Plus } from "lucide-react"
 import { useTranslations } from "next-intl"
-import { useState } from "react"
+import { useState, useTransition } from "react"
 import { toast } from "sonner"
 import useMeasure from "react-use-measure"
 
@@ -27,6 +27,7 @@ export function CreateCard({
    const t = useTranslations("cards")
    const tCommon = useTranslations("common")
    const router = useRouter()
+   const [isPending, startTransition] = useTransition()
    const [triggerRef, { width: triggerWidth }] = useMeasure()
    const [formData, setFormData] = useState({
       name: "",
@@ -35,12 +36,16 @@ export function CreateCard({
 
    const { mutate: onSubmit, isLoading } = api.card.create.useMutation({
       onSuccess: () => {
-         router.refresh()
-         toast.success(t("create-success"))
-         setFormData((prev) => ({ ...prev, name: "" }))
-
-         //close popover
-         document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }))
+         startTransition(() => {
+            router.refresh()
+         })
+         setTimeout(() => {
+            toast.success(t("create-success"))
+            //close popover
+            document.dispatchEvent(
+               new KeyboardEvent("keydown", { key: "Escape" })
+            )
+         }, 300)
       },
       onError: () => {
          return toast.error(t("create-error"))
@@ -66,7 +71,12 @@ export function CreateCard({
                <Plus size={18} /> {t("new-card")}
             </Button>
          </PopoverTrigger>
-         <PopoverContent style={{ width: triggerWidth }}>
+         <PopoverContent
+            onAnimationEndCapture={() => {
+               setFormData((prev) => ({ ...prev, name: "" }))
+            }}
+            style={{ width: triggerWidth }}
+         >
             <form
                onSubmit={(e) => {
                   e.preventDefault()
@@ -90,10 +100,10 @@ export function CreateCard({
                />
                <Button
                   size={"sm"}
-                  disabled={isLoading}
+                  disabled={isLoading || isPending}
                   className="mt-3 w-full"
                >
-                  {isLoading ? <Loading /> : tCommon("create")}
+                  {isLoading || isPending ? <Loading /> : tCommon("create")}
                </Button>
             </form>
          </PopoverContent>
