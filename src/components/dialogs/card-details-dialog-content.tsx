@@ -81,7 +81,9 @@ export default function CardDetailsDialogContent({
 
    const { isUpdateLoading, formData, onUpdate, setFormData } = useUpdateCard({
       card,
-      onSuccess: () => {
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      onSuccess: async () => {
+         await utils.card.getAuditLogs.invalidate()
          setIsEditingDescription(false)
          if (fileIdsToDeleteFromStorage.length > 0) {
             onDeleteFiles({

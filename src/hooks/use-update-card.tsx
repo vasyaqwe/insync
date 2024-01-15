@@ -16,7 +16,7 @@ export function useUpdateCard({
 }) {
    const t = useTranslations("cards")
    const router = useRouter()
-   const utils = api.useUtils()
+
    const [formData, setFormData] = useState({
       name: card.name,
       cardId: card.id,
@@ -26,7 +26,6 @@ export function useUpdateCard({
    const { mutate: onUpdate, isLoading: isUpdateLoading } =
       api.card.update.useMutation({
          onSuccess: async ({ name, description }) => {
-            void utils.card.getAuditLogs.invalidate()
             if (description) {
                setFormData((prev) => ({ ...prev, description }))
             }
