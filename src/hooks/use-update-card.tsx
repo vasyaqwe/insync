@@ -30,8 +30,8 @@ export function useUpdateCard({
                setFormData((prev) => ({ ...prev, description }))
             }
             onSuccess?.()
-            toast.success(t.rich("update-success", { name }))
             router.refresh()
+            toast.success(t.rich("update-success", { name }))
          },
          onError: () => {
             return toast.error(t("update-error"))

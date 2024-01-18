@@ -4,7 +4,8 @@ import { useIsClient } from "@/hooks/use-is-client"
 import { useTheme } from "next-themes"
 import { Slot } from "@radix-ui/react-slot"
 import { type ReactNode, type ComponentProps } from "react"
-import { type SignIn } from "@clerk/nextjs"
+import { type SignIn as SignInType, SignIn as ClerkSignIn } from "@clerk/nextjs"
+import { SignUp as ClerkSignUp } from "@clerk/nextjs"
 import { primaryColor } from "@/config"
 import { inputVariants } from "@/components/ui/input"
 import { buttonVariants } from "@/components/ui/button"
@@ -13,8 +14,11 @@ import { ClerkProvider as Clerk_ClerkProvider } from "@clerk/nextjs"
 import { dark } from "@clerk/themes"
 import { type Locale } from "@/navigation"
 import { enUS, ukUA } from "@clerk/localizations"
+import { useOrganizationHelpersStore } from "@/stores/use-organization-helpers-store"
 
-type ClerkWrapperProps = ComponentProps<typeof SignIn> & { children: ReactNode }
+type ClerkWrapperProps = ComponentProps<typeof SignInType> & {
+   children: ReactNode
+}
 
 function ClerkWrapper({ ...props }: ClerkWrapperProps) {
    const { resolvedTheme } = useTheme()
@@ -46,13 +50,38 @@ function ClerkWrapper({ ...props }: ClerkWrapperProps) {
    }
 
    //hoping all clerk components can accept appearence prop..
-   const Comp = Slot as typeof SignIn
+   const Comp = Slot as typeof SignInType
 
    return (
       <Comp
          {...props}
          appearance={appearance}
       />
+   )
+}
+
+function SignIn({ locale }: { locale: Locale }) {
+   const { lastVisitedOrganizationId } = useOrganizationHelpersStore()
+   return (
+      <ClerkWrapper>
+         <ClerkSignIn
+            afterSignInUrl={`/${locale}/dashboard/${lastVisitedOrganizationId}`}
+            afterSignUpUrl={`/${locale}/dashboard`}
+            signUpUrl={`/${locale}/sign-up`}
+         />
+      </ClerkWrapper>
+   )
+}
+function SignUp({ locale }: { locale: Locale }) {
+   const { lastVisitedOrganizationId } = useOrganizationHelpersStore()
+   return (
+      <ClerkWrapper>
+         <ClerkSignUp
+            afterSignInUrl={`/${locale}/dashboard/${lastVisitedOrganizationId}`}
+            afterSignUpUrl={`/${locale}/dashboard`}
+            signInUrl={`/${locale}/sign-in`}
+         />
+      </ClerkWrapper>
    )
 }
 
@@ -70,4 +99,4 @@ function ClerkProvider({
    )
 }
 
-export { ClerkWrapper, ClerkProvider }
+export { ClerkWrapper, ClerkProvider, SignIn, SignUp }

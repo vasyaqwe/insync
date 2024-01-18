@@ -53,7 +53,7 @@ export default async function RootLayout({
             )}
          >
             <body
-               className={`grainy-bg flex flex-col bg-background text-foreground`}
+               className={`grainy-bg flex min-h-svh flex-col bg-background text-foreground`}
             >
                <NextIntlClientProvider messages={pick(messages, ["common"])}>
                   <ThemeProvider

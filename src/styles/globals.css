@@ -2,12 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-    min-height: 100svh;
-    min-height: 100vh;
-    /* pointer-events: auto !important; */
-}
-
 @layer base {
     :root {
         --header-height: 70px;

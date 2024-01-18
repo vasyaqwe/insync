@@ -51,7 +51,7 @@ export default function CardEditDialog({
             }
          }}
       >
-         <DialogContent>
+         <DialogContent className="max-w-sm">
             <DialogHeader>
                <DialogTitle>
                   {tCommon("edit")} {tCommon("card")}

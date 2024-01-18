@@ -195,7 +195,7 @@ export function Board({ board }: BoardProps) {
                }
             }}
          >
-            <DialogContent>
+            <DialogContent className="max-w-sm">
                <DialogHeader>
                   <DialogTitle>
                      {tCommon("edit")} {board.name}
