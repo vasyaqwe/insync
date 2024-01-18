@@ -2,7 +2,6 @@
 
 import { Button, type ButtonProps } from "@/components/ui/button"
 import { ErrorMessage, Input } from "@/components/ui/input"
-import { Loading } from "@/components/ui/loading"
 import {
    Popover,
    PopoverContent,
@@ -11,44 +10,77 @@ import {
 import { useFormValidation } from "@/hooks/use-form-validation"
 import { cn } from "@/lib/utils"
 import { NAME_CHARS_LIMIT, createCardSchema } from "@/lib/validations/card"
-import { useRouter } from "@/navigation"
 import { api } from "@/trpc/react"
 import { Plus } from "lucide-react"
 import { useTranslations } from "next-intl"
-import { useState, useTransition } from "react"
+import { useState } from "react"
 import { toast } from "sonner"
 import useMeasure from "react-use-measure"
 
 export function CreateCard({
    listId,
    className,
+   boardId,
+   organizationId,
    ...props
-}: { listId: string } & ButtonProps) {
+}: { listId: string; boardId: string; organizationId: string } & ButtonProps) {
    const t = useTranslations("cards")
    const tCommon = useTranslations("common")
-   const router = useRouter()
-   const [isPending, startTransition] = useTransition()
+   const utils = api.useUtils()
    const [triggerRef, { width: triggerWidth }] = useMeasure()
    const [formData, setFormData] = useState({
       name: "",
       listId,
    })
 
-   const { mutate: onSubmit, isLoading } = api.card.create.useMutation({
-      onSuccess: () => {
-         startTransition(() => {
-            router.refresh()
+   const { mutate: onSubmit } = api.card.create.useMutation({
+      onMutate: async () => {
+         await utils.list.getAll.cancel()
+         const previousLists = utils.list.getAll.getData({
+            boardId,
          })
+
+         toast.success(t("create-success"))
+         //close popover
+         document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }))
+
+         //wait for popover exit animation to finish
          setTimeout(() => {
-            toast.success(t("create-success"))
-            //close popover
-            document.dispatchEvent(
-               new KeyboardEvent("keydown", { key: "Escape" })
+            utils.list.getAll.setData(
+               { boardId },
+               (oldQueryData) =>
+                  oldQueryData?.map((oldList) =>
+                     oldList.id === listId
+                        ? {
+                             ...oldList,
+                             cards: [
+                                ...oldList.cards,
+                                {
+                                   ...formData,
+                                   id: "optimistic",
+                                   createdAt: new Date(),
+                                   updatedAt: new Date(),
+                                   order: oldList.cards.length + 1,
+                                   listId,
+                                   description: "",
+                                   organizationId,
+                                },
+                             ],
+                          }
+                        : oldList
+                  )
             )
-         }, 300)
+         }, 100)
+
+         return { previousLists }
       },
-      onError: () => {
+      onError: (_err, _data, context) => {
+         utils.list.getAll.setData({ boardId }, context?.previousLists)
+         toast.dismiss()
          return toast.error(t("create-error"))
+      },
+      onSettled: () => {
+         void utils.list.getAll.invalidate()
       },
    })
 
@@ -100,10 +132,9 @@ export function CreateCard({
                />
                <Button
                   size={"sm"}
-                  disabled={isLoading || isPending}
                   className="mt-3 w-full"
                >
-                  {isLoading || isPending ? <Loading /> : tCommon("create")}
+                  {tCommon("create")}
                </Button>
             </form>
          </PopoverContent>

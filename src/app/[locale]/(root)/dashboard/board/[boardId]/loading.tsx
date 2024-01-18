@@ -15,49 +15,16 @@ export default function Page() {
             <div className="flex h-full items-start gap-4 overflow-x-auto pr-4">
                <div className="mt-6 flex items-start gap-4">
                   <div className="w-[18rem] space-y-2 p-3">
-                     <div className="flex items-center justify-between">
-                        <Skeleton className="h-5 w-36 rounded-lg" />
-                        <Skeleton className="h-9 w-9 rounded-lg" />
-                     </div>
-                     <Skeleton className="h-[46px] w-full rounded-lg" />
-                     <Skeleton className="h-[46px] w-full rounded-lg" />
-                     <Skeleton className="h-[46px] w-full rounded-lg" />
-                     <Skeleton className="h-[150px] w-full rounded-lg" />
+                     <Skeleton className="h-[20vh] w-full rounded-lg" />
                   </div>
                   <div className="w-[18rem] space-y-2 p-3">
-                     <div className="flex items-center justify-between">
-                        <Skeleton className="h-5 w-36 rounded-lg" />
-                        <Skeleton className="h-9 w-9 rounded-lg" />
-                     </div>
-                     <Skeleton className="h-[46px] w-full rounded-lg" />
-                     <Skeleton className="h-[150px] w-full rounded-lg" />
-                     <Skeleton className="h-[46px] w-full rounded-lg" />
-                     <Skeleton className="h-[46px] w-full rounded-lg" />
-                     <Skeleton className="h-[46px] w-full rounded-lg" />
-                     <Skeleton className="h-[46px] w-full rounded-lg" />
-                     <Skeleton className="h-[150px] w-full rounded-lg" />
-                     <Skeleton className="h-[46px] w-full rounded-lg" />
+                     <Skeleton className="h-[40vh] w-full rounded-lg" />
                   </div>
                   <div className="w-[18rem] space-y-2 p-3">
-                     <div className="flex items-center justify-between">
-                        <Skeleton className="h-5 w-36 rounded-lg" />
-                        <Skeleton className="h-9 w-9 rounded-lg" />
-                     </div>
-                     <Skeleton className="h-[46px] w-full rounded-lg" />
-                     <Skeleton className="h-[46px] w-full rounded-lg" />
-                     <Skeleton className="h-[150px] w-full rounded-lg" />
-                     <Skeleton className="h-[46px] w-full rounded-lg" />
-                     <Skeleton className="h-[46px] w-full rounded-lg" />
-                     <Skeleton className="h-[46px] w-full rounded-lg" />
+                     <Skeleton className="h-[30vh] w-full rounded-lg" />
                   </div>
                   <div className="w-[18rem] space-y-2 p-3">
-                     <div className="flex items-center justify-between">
-                        <Skeleton className="h-5 w-36 rounded-lg" />
-                        <Skeleton className="h-9 w-9 rounded-lg" />
-                     </div>
-                     <Skeleton className="h-[46px] w-full rounded-lg" />
-                     <Skeleton className="h-[46px] w-full rounded-lg" />
-                     <Skeleton className="h-[46px] w-full rounded-lg" />
+                     <Skeleton className="h-[45vh] w-full rounded-lg" />
                   </div>
                </div>
             </div>

@@ -27,6 +27,7 @@ export function CreateBoard({
    const t = useTranslations("boards")
    const tCommon = useTranslations("common")
    const router = useRouter()
+   const utils = api.useUtils()
    const [isPending, startTransition] = useTransition()
    const [triggerRef, { width: triggerWidth }] = useMeasure()
    const [formData, setFormData] = useState({
@@ -41,8 +42,8 @@ export function CreateBoard({
          })
          setTimeout(() => {
             toast.success(t("create-success"))
-         }, 300)
-         router.refresh()
+            void utils.board.getAll.invalidate()
+         }, 500)
       },
       onError: () => {
          return toast.error(t("create-error"))

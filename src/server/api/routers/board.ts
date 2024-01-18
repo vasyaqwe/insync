@@ -5,8 +5,26 @@ import {
 } from "@/lib/validations/board"
 import { createTRPCRouter, privateProcedure } from "@/server/api/trpc"
 import { createAuditLog } from "@/server/api/utils"
+import { z } from "zod"
 
 export const boardRouter = createTRPCRouter({
+   getAll: privateProcedure
+      .input(
+         z.object({
+            organizationId: z.string(),
+         })
+      )
+      .query(async ({ ctx, input: { organizationId } }) => {
+         const boards = await ctx.db.board.findMany({
+            where: {
+               organizationId,
+            },
+            orderBy: {
+               updatedAt: "desc",
+            },
+         })
+         return boards
+      }),
    create: privateProcedure
       .input(createBoardSchema)
       .mutation(async ({ ctx, input: { name, organizationId } }) => {

@@ -5,15 +5,13 @@ import {
    DropdownMenuItem,
    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Loading } from "@/components/ui/loading"
 import { cn, getUploadthingFileIdsFromHTML } from "@/lib/utils"
-import { useRouter } from "@/navigation"
 import { api } from "@/trpc/react"
 import { Draggable } from "@hello-pangea/dnd"
 import { type List, type Card } from "@prisma/client"
 import { MoreHorizontal, Pencil, Trash2 } from "lucide-react"
 import { useTranslations } from "next-intl"
-import { useState, useTransition } from "react"
+import { useState } from "react"
 import { toast } from "sonner"
 import { Dialog } from "@/components/ui/dialog"
 
@@ -45,22 +43,39 @@ type CardProps = {
 export function Card({ card, index, list, isDragLoading }: CardProps) {
    const t = useTranslations("cards")
    const tCommon = useTranslations("common")
-   const router = useRouter()
-   const [isPending, startTransition] = useTransition()
    const { isClient } = useIsClient()
+   const utils = api.useUtils()
 
    const [detailsDialogOpen, setDetailsDialogOpen] = useState(false)
    const [editDialogOpen, setEditDialogOpen] = useState(false)
    const [menuOpen, setMenuOpen] = useState(false)
 
-   const { mutate: onDelete, isLoading } = api.card.delete.useMutation({
-      onSuccess: ({ name, description }) => {
-         startTransition(() => {
-            router.refresh()
+   const { mutate: onDelete } = api.card.delete.useMutation({
+      onMutate: async () => {
+         await utils.list.getAll.cancel()
+         const previousLists = utils.list.getAll.getData({
+            boardId: list.boardId,
          })
-         setTimeout(() => {
-            toast.success(t.rich("delete-success", { name }))
-         }, 300)
+
+         utils.list.getAll.setData(
+            { boardId: list.boardId },
+            (oldQueryData) =>
+               oldQueryData?.map((oldList) =>
+                  oldList.id === list.id
+                     ? {
+                          ...oldList,
+                          cards: oldList.cards.filter(
+                             (oldCard) => oldCard.id !== card.id
+                          ),
+                       }
+                     : oldList
+               )
+         )
+         toast.success(t.rich("delete-success", { name: card.name }))
+
+         return { previousLists }
+      },
+      onSuccess: ({ description }) => {
          const filesToDelete = getUploadthingFileIdsFromHTML(description)
          if (filesToDelete && filesToDelete.length > 0) {
             onDeleteFiles({
@@ -68,8 +83,16 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
             })
          }
       },
-      onError: () => {
+      onError: (_err, _data, context) => {
+         utils.list.getAll.setData(
+            { boardId: list.boardId },
+            context?.previousLists
+         )
+         toast.dismiss()
          return toast.error(t("delete-error"))
+      },
+      onSettled: () => {
+         void utils.list.getAll.invalidate()
       },
    })
 
@@ -139,6 +162,7 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                         >
                            <DropdownMenuTrigger asChild>
                               <Button
+                                 disabled={card.id === "optimistic"}
                                  onClick={(e) => {
                                     e.preventDefault()
                                     e.stopPropagation()
@@ -161,7 +185,6 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                            </DropdownMenuTrigger>
                            <DropdownMenuContent align="end">
                               <DropdownMenuItem
-                                 disabled={isLoading || isPending}
                                  onClick={(e) => e.stopPropagation()}
                                  onSelect={() => setEditDialogOpen(true)}
                               >
@@ -172,7 +195,6 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                                  {tCommon("edit")}
                               </DropdownMenuItem>
                               <DropdownMenuItem
-                                 disabled={isLoading || isPending}
                                  onClick={(e) => e.stopPropagation()}
                                  onSelect={(e) => {
                                     e.preventDefault()
@@ -180,17 +202,11 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                                  }}
                                  className="!text-destructive"
                               >
-                                 {isLoading || isPending ? (
-                                    <Loading className="mx-auto" />
-                                 ) : (
-                                    <>
-                                       <Trash2
-                                          className="mr-1"
-                                          size={20}
-                                       />
-                                       {tCommon("delete")}
-                                    </>
-                                 )}
+                                 <Trash2
+                                    className="mr-1"
+                                    size={20}
+                                 />
+                                 {tCommon("delete")}
                               </DropdownMenuItem>
                            </DropdownMenuContent>
                         </DropdownMenu>

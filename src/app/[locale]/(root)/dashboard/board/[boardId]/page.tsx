@@ -53,7 +53,9 @@ export default async function Page({ params: { boardId } }: Params) {
          },
          organization: {
             select: {
-               members: true,
+               members: {
+                  select: { id: true },
+               },
             },
          },
       },
@@ -85,9 +87,13 @@ export default async function Page({ params: { boardId } }: Params) {
                >
                   <ListsWrapper
                      className="mt-6"
-                     lists={board.lists}
+                     initialLists={board.lists}
+                     boardId={board.id}
                   />
-                  <CreateList boardId={boardId} />
+                  <CreateList
+                     boardId={boardId}
+                     organizationId={board.organizationId}
+                  />
                </NextIntlClientProvider>
             </div>
          </div>

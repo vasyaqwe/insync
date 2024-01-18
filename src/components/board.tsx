@@ -1,8 +1,8 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Link, useRouter } from "@/navigation"
-import { type Board } from "@prisma/client"
+import { Link } from "@/navigation"
+import { type Board as BoardType } from "@prisma/client"
 import {
    DropdownMenu,
    DropdownMenuContent,
@@ -13,9 +13,8 @@ import { CalendarPlus, MoreHorizontal, Pencil, Trash2 } from "lucide-react"
 import { useFormatter, useTranslations } from "next-intl"
 import { api } from "@/trpc/react"
 import { toast } from "sonner"
-import { Loading } from "@/components/ui/loading"
 import { ErrorMessage, Input } from "@/components/ui/input"
-import { useState, useTransition } from "react"
+import { useState } from "react"
 import { NAME_CHARS_LIMIT, updateBoardSchema } from "@/lib/validations/board"
 import { useFormValidation } from "@/hooks/use-form-validation"
 import {
@@ -27,32 +26,52 @@ import {
 import { getUploadthingFileIdsFromHTML } from "@/lib/utils"
 
 type BoardProps = {
-   board: Board
+   board: BoardType
 }
+
 export function Board({ board }: BoardProps) {
    const t = useTranslations("boards")
    const tCommon = useTranslations("common")
-   const router = useRouter()
-   const [isPending, startTransition] = useTransition()
    const format = useFormatter()
+   const utils = api.useUtils()
    const [dialogOpen, setDialogOpen] = useState(false)
-   const [menuOpen, setMenuOpen] = useState(false)
    const [formData, setFormData] = useState({
       name: board.name,
       boardId: board.id,
    })
 
+   function onMutateError(previousBoards: BoardType[] = []) {
+      utils.board.getAll.setData(
+         { organizationId: board.organizationId },
+         previousBoards
+      )
+      toast.dismiss()
+   }
+   async function onMutation() {
+      await utils.board.getAll.cancel()
+      const previousBoards = utils.board.getAll.getData({
+         organizationId: board.organizationId,
+      })
+
+      return { previousBoards }
+   }
+
    const { mutate: onDeleteFiles } = api.uploadthing.deleteFiles.useMutation()
 
-   const { mutate: onDelete, isLoading } = api.board.delete.useMutation({
-      onSuccess: ({ name, editorContents }) => {
-         startTransition(() => {
-            router.refresh()
-         })
-         setTimeout(() => {
-            toast.success(t.rich("delete-success", { name }))
-         }, 300)
+   const { mutate: onDelete } = api.board.delete.useMutation({
+      onMutate: async () => {
+         const { previousBoards } = await onMutation()
 
+         utils.board.getAll.setData(
+            { organizationId: board.organizationId },
+            (oldQueryData) =>
+               oldQueryData?.filter((oldBoard) => oldBoard.id !== board.id)
+         )
+         toast.success(t.rich("delete-success", { name: board.name }))
+
+         return { previousBoards }
+      },
+      onSuccess: ({ editorContents }) => {
          const filesToDelete = editorContents.flatMap((d) =>
             getUploadthingFileIdsFromHTML(d)
          )
@@ -63,29 +82,40 @@ export function Board({ board }: BoardProps) {
             })
          }
       },
-      onError: () => {
+      onError: (_err, _data, context) => {
+         onMutateError(context?.previousBoards)
          return toast.error(t("delete-error"))
+      },
+      onSettled: () => {
+         void utils.board.getAll.invalidate()
       },
    })
 
-   const { mutate: onUpdate, isLoading: isUpdateLoading } =
-      api.board.update.useMutation({
-         onSuccess: (updatedBoardName) => {
-            startTransition(() => {
-               router.refresh()
-            })
-            setTimeout(() => {
-               toast.success(
-                  t.rich("update-success", { name: updatedBoardName })
+   const { mutate: onUpdate } = api.board.update.useMutation({
+      onMutate: async ({ name, boardId }) => {
+         const { previousBoards } = await onMutation()
+
+         utils.board.getAll.setData(
+            { organizationId: board.organizationId },
+            (oldQueryData) =>
+               oldQueryData?.map((oldBoard) =>
+                  oldBoard.id === boardId ? { ...oldBoard, name } : oldBoard
                )
-            }, 300)
-            setDialogOpen(false)
-            setMenuOpen(false)
-         },
-         onError: () => {
-            return toast.error(t("update-error"))
-         },
-      })
+         )
+         toast.success(t.rich("update-success", { name }))
+         setDialogOpen(false)
+
+         return { previousBoards }
+      },
+      onError: (_err, _data, context) => {
+         onMutateError(context?.previousBoards)
+         setDialogOpen(true)
+         return toast.error(t("update-error"))
+      },
+      onSettled: () => {
+         void utils.board.getAll.invalidate()
+      },
+   })
 
    const { safeOnSubmit, errors } = useFormValidation({
       onSubmit: () => onUpdate(formData),
@@ -123,10 +153,7 @@ export function Board({ board }: BoardProps) {
                         })}
                      </span>
                   </p>
-                  <DropdownMenu
-                     open={menuOpen}
-                     onOpenChange={setMenuOpen}
-                  >
+                  <DropdownMenu>
                      <DropdownMenuTrigger asChild>
                         <Button
                            onClick={(e) => {
@@ -148,7 +175,6 @@ export function Board({ board }: BoardProps) {
                         align="end"
                      >
                         <DropdownMenuItem
-                           disabled={isLoading || isPending}
                            onSelect={() => {
                               setDialogOpen(true)
                            }}
@@ -164,20 +190,13 @@ export function Board({ board }: BoardProps) {
                               e.preventDefault()
                               onDelete({ boardId: board.id })
                            }}
-                           disabled={isLoading || isPending}
                            className="!text-destructive"
                         >
-                           {isLoading || isPending ? (
-                              <Loading className="mx-auto" />
-                           ) : (
-                              <>
-                                 <Trash2
-                                    className="mr-1"
-                                    size={20}
-                                 />
-                                 {tCommon("delete")}
-                              </>
-                           )}
+                           <Trash2
+                              className="mr-1"
+                              size={20}
+                           />
+                           {tCommon("delete")}
                         </DropdownMenuItem>
                      </DropdownMenuContent>
                   </DropdownMenu>
@@ -229,14 +248,9 @@ export function Board({ board }: BoardProps) {
                   />
                   <Button
                      type={"submit"}
-                     disabled={isUpdateLoading || isPending}
                      className="mt-3 w-full"
                   >
-                     {isUpdateLoading || isPending ? (
-                        <Loading />
-                     ) : (
-                        tCommon("update")
-                     )}
+                     {tCommon("update")}
                   </Button>
                </form>
             </DialogContent>

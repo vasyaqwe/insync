@@ -1,3 +1,4 @@
+import type { Card, List } from "@prisma/client"
 import { z } from "zod"
 
 export const NAME_CHARS_LIMIT = 48
@@ -27,3 +28,5 @@ export const updateListSchema = z.object({
 export const updateListOrderSchema = z.object({
    items: z.array(z.object({ order: z.number(), id: z.string() })),
 })
+
+export type ExtendedList = List & { cards: Card[] }

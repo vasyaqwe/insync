@@ -3,7 +3,6 @@
 import { Button } from "@/components/ui/button"
 import { Card as UICard } from "@/components/ui/card"
 import { useRouter } from "@/navigation"
-import { type Card as CardType, type List as ListType } from "@prisma/client"
 import {
    DropdownMenu,
    DropdownMenuContent,
@@ -14,14 +13,12 @@ import { MoreHorizontal, Trash2 } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { api } from "@/trpc/react"
 import { toast } from "sonner"
-import { Loading } from "@/components/ui/loading"
 import {
    type FocusEvent,
    useRef,
    useState,
    useEffect,
    type ComponentProps,
-   useTransition,
 } from "react"
 import { Textarea } from "@/components/ui/textarea"
 import { cn, getUploadthingFileIdsFromHTML } from "@/lib/utils"
@@ -34,9 +31,7 @@ import {
    Draggable,
 } from "@hello-pangea/dnd"
 import { Card } from "@/components/card"
-import { NAME_CHARS_LIMIT } from "@/lib/validations/list"
-
-type ExtendedList = ListType & { cards: CardType[] }
+import { type ExtendedList, NAME_CHARS_LIMIT } from "@/lib/validations/list"
 
 type ListProps = {
    list: ExtendedList
@@ -47,8 +42,7 @@ type ListProps = {
 function List({ list, index, isLoading: isDragLoading }: ListProps) {
    const t = useTranslations("lists")
    const tCommon = useTranslations("common")
-   const [isPending, startTransition] = useTransition()
-   const router = useRouter()
+   const utils = api.useUtils()
 
    const [menuOpen, setMenuOpen] = useState(false)
    const [isEditing, setIsEditing] = useState(false)
@@ -56,21 +50,39 @@ function List({ list, index, isLoading: isDragLoading }: ListProps) {
       name: list.name,
       listId: list.id,
    })
-   const [previousFormData, setPreviousFormData] = useState(formData)
 
    const textareaRef = useRef<HTMLTextAreaElement>(null)
 
+   function onMutateError(previousLists: ExtendedList[] = []) {
+      utils.list.getAll.setData({ boardId: list.boardId }, previousLists)
+      toast.dismiss()
+   }
+
+   async function onMutation() {
+      await utils.list.getAll.cancel()
+      const previousLists = utils.list.getAll.getData({
+         boardId: list.boardId,
+      })
+
+      return { previousLists }
+   }
+
    const { mutate: onDeleteFiles } = api.uploadthing.deleteFiles.useMutation()
 
-   const { mutate: onDelete, isLoading } = api.list.delete.useMutation({
-      onSuccess: ({ name, editorContents }) => {
-         startTransition(() => {
-            router.refresh()
-         })
-         setTimeout(() => {
-            toast.success(t.rich("delete-success", { name }))
-         }, 300)
+   const { mutate: onDelete } = api.list.delete.useMutation({
+      onMutate: async () => {
+         const { previousLists } = await onMutation()
 
+         utils.list.getAll.setData(
+            { boardId: list.boardId },
+            (oldQueryData) =>
+               oldQueryData?.filter((oldList) => oldList.id !== list.id)
+         )
+         toast.success(t.rich("delete-success", { name: list.name }))
+
+         return { previousLists }
+      },
+      onSuccess: ({ editorContents }) => {
          const filesToDelete = editorContents.flatMap((d) =>
             getUploadthingFileIdsFromHTML(d)
          )
@@ -81,18 +93,40 @@ function List({ list, index, isLoading: isDragLoading }: ListProps) {
             })
          }
       },
-      onError: () => {
+      onError: (_err, _data, context) => {
+         onMutateError(context?.previousLists)
          return toast.error(t("delete-error"))
+      },
+      onSettled: () => {
+         void utils.list.getAll.invalidate()
       },
    })
 
    const { mutate: onUpdate } = api.list.update.useMutation({
+      onMutate: async ({ name }) => {
+         const { previousLists } = await onMutation()
+
+         utils.list.getAll.setData(
+            { boardId: list.boardId },
+            (oldQueryData) =>
+               oldQueryData?.map((oldList) =>
+                  oldList.id === list.id ? { ...oldList, name } : oldList
+               )
+         )
+         toast.success(t.rich("update-success", { name: list.name }))
+
+         return { previousLists }
+      },
       onSuccess: () => {
-         router.refresh()
          setMenuOpen(false)
       },
-      onError: () => {
+      onError: (_err, _data, context) => {
+         onMutateError(context?.previousLists)
+         setMenuOpen(true)
          return toast.error(t("update-error"))
+      },
+      onSettled: () => {
+         void utils.list.getAll.invalidate()
       },
    })
 
@@ -100,20 +134,17 @@ function List({ list, index, isLoading: isDragLoading }: ListProps) {
       setIsEditing(false)
       if (formData.name.length < 1) {
          toast.error(tCommon("min-limit", { limit: NAME_CHARS_LIMIT }))
-         setFormData(previousFormData)
          return e.preventDefault()
       }
 
       if (formData.name.length > NAME_CHARS_LIMIT) {
          toast.error(tCommon("max-limit", { limit: NAME_CHARS_LIMIT }))
-         setFormData(previousFormData)
          return e.preventDefault()
       }
 
-      if (previousFormData.name !== formData.name) {
-         onUpdate(formData)
-         setPreviousFormData(formData)
-      }
+      if (list.name === formData.name) return e.preventDefault()
+
+      onUpdate(formData)
    }
 
    return (
@@ -185,6 +216,7 @@ function List({ list, index, isLoading: isDragLoading }: ListProps) {
                      >
                         <DropdownMenuTrigger asChild>
                            <Button
+                              disabled={list.id === "optimistic"}
                               variant={"ghost"}
                               size={"icon"}
                               className="ml-3 flex-shrink-0"
@@ -199,20 +231,13 @@ function List({ list, index, isLoading: isDragLoading }: ListProps) {
                                  e.preventDefault()
                                  onDelete({ listId: list.id })
                               }}
-                              disabled={isLoading || isPending}
                               className="!text-destructive"
                            >
-                              {isLoading || isPending ? (
-                                 <Loading className="mx-auto" />
-                              ) : (
-                                 <>
-                                    <Trash2
-                                       className="mr-1"
-                                       size={20}
-                                    />
-                                    {tCommon("delete")}
-                                 </>
-                              )}
+                              <Trash2
+                                 className="mr-1"
+                                 size={20}
+                              />
+                              {tCommon("delete")}
                            </DropdownMenuItem>
                         </DropdownMenuContent>
                      </DropdownMenu>
@@ -243,6 +268,8 @@ function List({ list, index, isLoading: isDragLoading }: ListProps) {
                   <CreateCard
                      className="mt-2"
                      listId={list.id}
+                     boardId={list.boardId}
+                     organizationId={list.organizationId}
                   />
                </li>
             </UICard>
@@ -263,14 +290,21 @@ function reorder<T>(list: T[], startIndex: number, endIndex: number) {
 }
 
 export function ListsWrapper({
-   lists,
+   initialLists,
+   boardId,
    className,
    ...props
-}: { lists: ExtendedList[] } & ComponentProps<"ol">) {
+}: { initialLists: ExtendedList[]; boardId: string } & ComponentProps<"ol">) {
    const t = useTranslations("lists")
    const tCards = useTranslations("cards")
    const utils = api.useUtils()
-
+   const { data: lists } = api.list.getAll.useQuery(
+      { boardId },
+      {
+         initialData: initialLists,
+         refetchOnMount: false,
+      }
+   )
    const [orderedData, setOrderedData] = useState(lists ?? [])
 
    const router = useRouter()
