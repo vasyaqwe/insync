@@ -40,9 +40,9 @@ export function CreateBoard({
          startTransition(() => {
             router.push(`/dashboard/board/${createdBoardId}`)
          })
+         void utils.board.getAll.invalidate()
          setTimeout(() => {
             toast.success(t("create-success"))
-            void utils.board.getAll.invalidate()
          }, 500)
       },
       onError: () => {

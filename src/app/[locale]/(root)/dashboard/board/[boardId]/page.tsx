@@ -42,6 +42,13 @@ export default async function Page({ params: { boardId } }: Params) {
          lists: {
             include: {
                cards: {
+                  include: {
+                     list: {
+                        select: {
+                           boardId: true,
+                        },
+                     },
+                  },
                   orderBy: {
                      order: "asc",
                   },

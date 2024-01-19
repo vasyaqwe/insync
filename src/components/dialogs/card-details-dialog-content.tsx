@@ -35,14 +35,14 @@ import {
 import { useTranslations } from "next-intl"
 import { toast } from "sonner"
 
-import { type Card } from "@prisma/client"
 import { useUser } from "@clerk/nextjs"
 import { actionLookup, entityTypeLookup } from "@/config"
 import { useDeleteUploadthingFiles } from "@/hooks/use-delete-uploadthing-files"
 import { useUpdateCard } from "@/hooks/use-update-card"
+import { type ExtendedCard } from "@/lib/validations/card"
 
 type CardDialogProps = {
-   card: Card
+   card: ExtendedCard
    open: boolean
    listName: string
 }
@@ -82,14 +82,18 @@ export default function CardDetailsDialogContent({
    const { isUpdateLoading, formData, onUpdate, setFormData } = useUpdateCard({
       card,
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      onSuccess: async () => {
+      onSettled: async () => {
          await utils.card.getAuditLogs.invalidate()
+         toast.success(t.rich("update-success", { name: card.name }))
          setIsEditingDescription(false)
          if (fileIdsToDeleteFromStorage.length > 0) {
             onDeleteFiles({
                fileIds: fileIdsToDeleteFromStorage,
             })
          }
+      },
+      onError: () => {
+         setIsEditingDescription(true)
       },
    })
 

@@ -5,17 +5,16 @@ import {
    DialogHeader,
    DialogTitle,
 } from "@/components/ui/dialog"
-import { Loading } from "@/components/ui/loading"
 
 import { useTranslations } from "next-intl"
 
-import { type Card } from "@prisma/client"
 import { useUpdateCard } from "@/hooks/use-update-card"
 import { ErrorMessage, Input } from "@/components/ui/input"
-import { NAME_CHARS_LIMIT } from "@/lib/validations/card"
+import { type ExtendedCard, NAME_CHARS_LIMIT } from "@/lib/validations/card"
+import { toast } from "sonner"
 
 type CardDialogProps = {
-   card: Card
+   card: ExtendedCard
    open: boolean
    setOpen: (open: boolean) => void
 }
@@ -28,13 +27,16 @@ export default function CardEditDialog({
    const t = useTranslations("cards")
    const tCommon = useTranslations("common")
 
-   const { isUpdateLoading, safeOnSubmit, errors, formData, setFormData } =
-      useUpdateCard({
-         card,
-         onSuccess: () => {
-            setOpen(false)
-         },
-      })
+   const { safeOnSubmit, errors, formData, setFormData } = useUpdateCard({
+      card,
+      onSuccess: () => {
+         toast.success(t.rich("update-success", { name: card.name }))
+         setOpen(false)
+      },
+      onError: () => {
+         setOpen(true)
+      },
+   })
 
    return (
       <Dialog
@@ -85,10 +87,9 @@ export default function CardEditDialog({
                />
                <Button
                   type={"submit"}
-                  disabled={isUpdateLoading}
                   className="mt-3 w-full"
                >
-                  {isUpdateLoading ? <Loading /> : tCommon("update")}
+                  {tCommon("update")}
                </Button>
             </form>
          </DialogContent>

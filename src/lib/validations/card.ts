@@ -1,3 +1,4 @@
+import type { Card } from "@prisma/client"
 import { z } from "zod"
 
 export const NAME_CHARS_LIMIT = 64
@@ -48,3 +49,5 @@ export const updateCardOrderSchema = z.object({
       })
       .optional(),
 })
+
+export type ExtendedCard = Card & { list: { boardId: string } }

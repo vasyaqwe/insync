@@ -8,7 +8,7 @@ import {
 import { cn, getUploadthingFileIdsFromHTML } from "@/lib/utils"
 import { api } from "@/trpc/react"
 import { Draggable } from "@hello-pangea/dnd"
-import { type List, type Card } from "@prisma/client"
+import { type List } from "@prisma/client"
 import { MoreHorizontal, Pencil, Trash2 } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { useState } from "react"
@@ -19,6 +19,7 @@ import Image from "next/image"
 import { useIsClient } from "@/hooks/use-is-client"
 import dynamic from "next/dynamic"
 import { useDeleteUploadthingFiles } from "@/hooks/use-delete-uploadthing-files"
+import { type ExtendedCard } from "@/lib/validations/card"
 
 const DetailsDialogContent = dynamic(
    () => import("@/components/dialogs/card-details-dialog-content"),
@@ -34,7 +35,7 @@ const EditDialog = dynamic(
 )
 
 type CardProps = {
-   card: Card
+   card: ExtendedCard
    list: List
    index: number
    isDragLoading: boolean

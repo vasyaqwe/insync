@@ -20,6 +20,13 @@ export const listRouter = createTRPCRouter({
             },
             include: {
                cards: {
+                  include: {
+                     list: {
+                        select: {
+                           boardId: true,
+                        },
+                     },
+                  },
                   orderBy: {
                      order: "asc",
                   },
