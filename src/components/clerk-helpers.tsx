@@ -46,7 +46,7 @@ function ClerkWrapper({ ...props }: ClerkWrapperProps) {
             "text-xs focus:shadow-none"
          ),
       },
-      baseTheme: resolvedTheme === "light" ? undefined : dark,
+      baseTheme: resolvedTheme === "dark" ? dark : undefined,
    }
 
    //hoping all clerk components can accept appearence prop..

@@ -1,5 +1,8 @@
 import { BackToDashboardLink } from "@/components/actions/back-to-dashboard-link"
-import { InvitationActions } from "@/components/forms/invitation-actions"
+import {
+   InvitationActions,
+   InvitationSignedOut,
+} from "@/components/forms/invitation-actions"
 import { Icons } from "@/components/ui/icons"
 import { UserAvatar } from "@/components/ui/user-avatar"
 import { pick } from "@/lib/utils"
@@ -112,14 +115,20 @@ export default async function Page({
             ></p>
          </div>
          <div className="mt-5 flex justify-center md:mt-8">
-            <NextIntlClientProvider messages={pick(messages, ["invite"])}>
-               <InvitationActions
+            {!user ? (
+               <InvitationSignedOut
                   locale={locale}
-                  invitationId={invitation.id}
                   token={invitation.token}
-                  organizationId={invitation.organizationId}
                />
-            </NextIntlClientProvider>
+            ) : (
+               <NextIntlClientProvider messages={pick(messages, ["invite"])}>
+                  <InvitationActions
+                     token={invitation.token}
+                     invitationId={invitation.id}
+                     organizationId={invitation.organizationId}
+                  />
+               </NextIntlClientProvider>
+            )}
          </div>
       </div>
    )

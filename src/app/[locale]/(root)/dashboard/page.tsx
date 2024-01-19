@@ -37,6 +37,7 @@ export default async function Page() {
                "create-organization",
                "invite-command",
                "common",
+               "user-settings",
             ])}
          >
             <OrganizationHeader user={convertClerkUserToDbUser(user)} />

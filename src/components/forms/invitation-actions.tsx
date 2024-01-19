@@ -5,7 +5,7 @@ import { Loading } from "@/components/ui/loading"
 import { type AcceptOrganizationInvitationSchema } from "@/lib/validations/organization"
 import { useRouter } from "@/navigation"
 import { api } from "@/trpc/react"
-import { SignIn, SignUp, SignedIn, SignedOut } from "@clerk/nextjs"
+import { SignIn, SignUp, useAuth } from "@clerk/nextjs"
 import { useTranslations } from "next-intl"
 import { toast } from "sonner"
 import { useSearchParams } from "next/navigation"
@@ -16,14 +16,10 @@ function InvitationActions({
    invitationId,
    organizationId,
    token,
-   locale,
-}: AcceptOrganizationInvitationSchema & { locale: string }) {
+}: AcceptOrganizationInvitationSchema) {
    const t = useTranslations("invite")
    const router = useRouter()
-   const searchParams = useSearchParams()
    const { setExpandedOrganizations } = useOrganizationHelpersStore()
-
-   const mode = searchParams.get("mode")
 
    const { isLoading, mutate: onAccept } = api.organization.join.useMutation({
       onSuccess: () => {
@@ -39,33 +35,49 @@ function InvitationActions({
 
    return (
       <>
-         <SignedOut>
-            <ClerkWrapper>
-               {mode === "sign-up" ? (
-                  <SignUp
-                     signInUrl={`/${locale}/invite/${token}?mode=sign-in`}
-                     redirectUrl={`/${locale}/invite/${token}`}
-                  />
-               ) : (
-                  <SignIn
-                     signUpUrl={`/${locale}/invite/${token}?mode=sign-up`}
-                     redirectUrl={`/${locale}/invite/${token}`}
-                  />
-               )}
-            </ClerkWrapper>
-         </SignedOut>
-         <SignedIn>
-            <Button
-               disabled={isLoading}
-               onClick={() => onAccept({ invitationId, organizationId, token })}
-               size={"lg"}
-            >
-               {t("accept")}
-               {isLoading && <Loading />}
-            </Button>
-         </SignedIn>
+         <Button
+            disabled={isLoading}
+            onClick={() => onAccept({ invitationId, organizationId, token })}
+            size={"lg"}
+         >
+            {t("accept")}
+            {isLoading && <Loading />}
+         </Button>
       </>
    )
 }
 
-export { InvitationActions }
+function InvitationSignedOut({
+   locale,
+   token,
+}: {
+   token: string
+   locale: string
+}) {
+   const searchParams = useSearchParams()
+   const { isLoaded, isSignedIn } = useAuth()
+
+   if (!isLoaded || isSignedIn) return null
+
+   const mode = searchParams.get("mode")
+
+   return (
+      <>
+         <ClerkWrapper>
+            {mode === "sign-up" ? (
+               <SignUp
+                  signInUrl={`/${locale}/invite/${token}?mode=sign-in`}
+                  redirectUrl={`/${locale}/invite/${token}`}
+               />
+            ) : (
+               <SignIn
+                  signUpUrl={`/${locale}/invite/${token}?mode=sign-up`}
+                  redirectUrl={`/${locale}/invite/${token}`}
+               />
+            )}
+         </ClerkWrapper>
+      </>
+   )
+}
+
+export { InvitationActions, InvitationSignedOut }

@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@clerk/localizations": "^1.26.9",
-    "@clerk/nextjs": "^4.29.3",
+    "@clerk/nextjs": "^4.29.4",
     "@clerk/themes": "^1.7.9",
     "@hello-pangea/dnd": "^16.5.0",
     "@next/bundle-analyzer": "^14.0.4",
@@ -43,7 +43,7 @@
     "@trpc/next": "^10.44.0",
     "@trpc/react-query": "^10.44.0",
     "@trpc/server": "^10.44.0",
-    "@uploadthing/react": "^6.0.2",
+    "@uploadthing/react": "^6.2.0",
     "ai": "^2.2.23",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
@@ -67,7 +67,7 @@
     "svix": "^1.14.0",
     "tailwind-merge": "^2.0.0",
     "tailwindcss-animate": "^1.0.7",
-    "uploadthing": "^6.1.0",
+    "uploadthing": "^6.2.0",
     "vaul": "^0.7.9",
     "zod": "^3.22.4",
     "zustand": "^4.4.7"
