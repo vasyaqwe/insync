@@ -50,4 +50,8 @@ export const updateCardOrderSchema = z.object({
       .optional(),
 })
 
-export type ExtendedCard = Card & { list: { boardId: string } }
+export type ExtendedCard = Card & {
+   id?: string
+   optimisticId?: string
+   list: { boardId: string }
+}

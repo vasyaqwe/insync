@@ -254,7 +254,7 @@ function List({ list, index, isLoading: isDragLoading }: ListProps) {
                         >
                            {list.cards.map((card, cardIndex) => (
                               <Card
-                                 key={card.id}
+                                 key={card.optimisticId ?? card.id}
                                  list={list}
                                  card={card}
                                  index={cardIndex}

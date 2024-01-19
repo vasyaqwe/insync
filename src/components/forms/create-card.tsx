@@ -9,7 +9,11 @@ import {
 } from "@/components/ui/popover"
 import { useFormValidation } from "@/hooks/use-form-validation"
 import { cn } from "@/lib/utils"
-import { NAME_CHARS_LIMIT, createCardSchema } from "@/lib/validations/card"
+import {
+   type ExtendedCard,
+   NAME_CHARS_LIMIT,
+   createCardSchema,
+} from "@/lib/validations/card"
 import { api } from "@/trpc/react"
 import { Plus } from "lucide-react"
 import { useTranslations } from "next-intl"
@@ -57,14 +61,15 @@ export function CreateCard({
                                 ...oldList.cards,
                                 {
                                    ...formData,
-                                   id: "optimistic",
+                                   optimisticId: "optimistic",
                                    createdAt: new Date(),
                                    updatedAt: new Date(),
+                                   list: { boardId },
                                    order: oldList.cards.length + 1,
                                    listId,
                                    description: "",
                                    organizationId,
-                                },
+                                } as ExtendedCard,
                              ],
                           }
                         : oldList
@@ -74,13 +79,31 @@ export function CreateCard({
 
          return { previousLists }
       },
+      onSuccess: (id) => {
+         utils.list.getAll.setData(
+            { boardId },
+            (oldQueryData) =>
+               oldQueryData?.map((oldList) =>
+                  oldList.id === listId
+                     ? {
+                          ...oldList,
+                          cards: oldList.cards.map((card, idx) =>
+                             idx === oldList.cards.length - 1
+                                ? { ...card, id }
+                                : card
+                          ),
+                       }
+                     : oldList
+               )
+         )
+      },
       onError: (_err, _data, context) => {
          utils.list.getAll.setData({ boardId }, context?.previousLists)
          toast.dismiss()
          return toast.error(t("create-error"))
       },
-      onSettled: () => {
-         void utils.list.getAll.invalidate()
+      onSettled: (_, err) => {
+         if (err) void utils.list.getAll.invalidate()
       },
    })
 

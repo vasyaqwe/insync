@@ -130,6 +130,8 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                   onOpenChange={setDetailsDialogOpen}
                >
                   <li
+                     id={card.id}
+                     role="button"
                      onClick={() => setDetailsDialogOpen(true)}
                      className={cn(
                         "group mt-2 w-full !cursor-pointer rounded-lg bg-border/30 text-start backdrop-blur-sm transition-opacity hover:opacity-80",
