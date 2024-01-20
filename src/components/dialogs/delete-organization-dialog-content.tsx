@@ -17,6 +17,7 @@ import { useOrganizationHelpersStore } from "@/stores/use-organization-helpers-s
 import { api } from "@/trpc/react"
 import { type Organization } from "@prisma/client"
 import { useTranslations } from "next-intl"
+import { useTransition } from "react"
 import { toast } from "sonner"
 
 export default function DeleteOrganizationDialogContent({
@@ -27,35 +28,39 @@ export default function DeleteOrganizationDialogContent({
    const t = useTranslations("organization-settings")
    const tCommon = useTranslations("common")
    const router = useRouter()
+   const [isPending, startTransition] = useTransition()
    const { removeExpandedOrganizations } = useOrganizationHelpersStore()
 
    const { mutate: onDeleteFiles } = api.uploadthing.deleteFiles.useMutation()
 
-   const { isPending, mutate: onDelete } = api.organization.delete.useMutation({
-      onSuccess: ({
-         firstOrganizationId,
-         deletedOrganizationId,
-         editorContents,
-      }) => {
-         router.push(`/dashboard/${firstOrganizationId}`)
-         router.refresh()
-         toast.success(t("delete-success-toast"))
-         removeExpandedOrganizations(deletedOrganizationId)
-
-         const filesToDelete = editorContents.flatMap((d) =>
-            getUploadthingFileIdsFromHTML(d)
-         )
-
-         if (filesToDelete && filesToDelete.length > 0) {
-            onDeleteFiles({
-               fileIds: filesToDelete,
+   const { isPending: isMutationPending, mutate: onDelete } =
+      api.organization.delete.useMutation({
+         onSuccess: ({
+            firstOrganizationId,
+            deletedOrganizationId,
+            editorContents,
+         }) => {
+            startTransition(() => {
+               router.push(`/dashboard/${firstOrganizationId}`)
             })
-         }
-      },
-      onError: () => {
-         toast.error(t("delete-error-toast"))
-      },
-   })
+            router.refresh()
+            toast.success(t("delete-success-toast"))
+            removeExpandedOrganizations(deletedOrganizationId)
+
+            const filesToDelete = editorContents.flatMap((d) =>
+               getUploadthingFileIdsFromHTML(d)
+            )
+
+            if (filesToDelete && filesToDelete.length > 0) {
+               onDeleteFiles({
+                  fileIds: filesToDelete,
+               })
+            }
+         },
+         onError: () => {
+            toast.error(t("delete-error-toast"))
+         },
+      })
 
    const innerWidth = typeof window === "undefined" ? 0 : window.innerWidth
 
@@ -85,13 +90,13 @@ export default function DeleteOrganizationDialogContent({
                </AlertDialogCancel>
             )}
             <Button
-               disabled={isPending}
+               disabled={isPending || isMutationPending}
                onClick={() => onDelete({ organizationId: organization.id })}
                className="w-fit"
                variant={"destructive"}
             >
                {t("delete-title")}
-               {isPending && <Loading />}
+               {(isPending || isMutationPending) && <Loading />}
             </Button>
          </AlertDialogFooter>
       </AlertDialogContent>

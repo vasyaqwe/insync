@@ -15,6 +15,7 @@ import { useOrganizationHelpersStore } from "@/stores/use-organization-helpers-s
 import { api } from "@/trpc/react"
 import { type Organization } from "@prisma/client"
 import { useTranslations } from "next-intl"
+import { useTransition } from "react"
 import { toast } from "sonner"
 
 export default function LeaveOrganizationDialogContent({
@@ -25,25 +26,29 @@ export default function LeaveOrganizationDialogContent({
    const t = useTranslations("organization-settings")
    const tCommon = useTranslations("common")
    const router = useRouter()
+   const [isPending, startTransition] = useTransition()
    const { removeExpandedOrganizations } = useOrganizationHelpersStore()
 
-   const { isPending, mutate: onLeave } = api.organization.leave.useMutation({
-      onSuccess: ({
-         leftOrganizationName,
-         leftOrganizationId,
-         firstOrganizationId,
-      }) => {
-         router.push(`/dashboard/${firstOrganizationId}`)
-         router.refresh()
-         toast.success(
-            t.rich("leave-success-toast", { name: leftOrganizationName })
-         )
-         removeExpandedOrganizations(leftOrganizationId)
-      },
-      onError: () => {
-         toast.error(t("leave-error-toast"))
-      },
-   })
+   const { isPending: isMutationPending, mutate: onLeave } =
+      api.organization.leave.useMutation({
+         onSuccess: ({
+            leftOrganizationName,
+            leftOrganizationId,
+            firstOrganizationId,
+         }) => {
+            startTransition(() => {
+               router.push(`/dashboard/${firstOrganizationId}`)
+            })
+            router.refresh()
+            toast.success(
+               t.rich("leave-success-toast", { name: leftOrganizationName })
+            )
+            removeExpandedOrganizations(leftOrganizationId)
+         },
+         onError: () => {
+            toast.error(t("leave-error-toast"))
+         },
+      })
 
    return (
       <AlertDialogContent>
@@ -70,12 +75,12 @@ export default function LeaveOrganizationDialogContent({
             </AlertDialogCancel>
             <Button
                variant={"secondary"}
-               disabled={isPending}
+               disabled={isPending || isMutationPending}
                onClick={() => onLeave({ organizationId: organization.id })}
                className="w-fit"
             >
                {t("leave-title")}
-               {isPending && <Loading />}
+               {(isPending || isMutationPending) && <Loading />}
             </Button>
          </AlertDialogFooter>
       </AlertDialogContent>
