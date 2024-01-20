@@ -25,6 +25,7 @@ import { UserAvatar } from "@/components/ui/user-avatar"
 import { useTranslations } from "next-intl"
 import { MOBILE_BREAKPOINT } from "@/config"
 import { useUser } from "@clerk/nextjs"
+import { keepPreviousData } from "@tanstack/react-query"
 
 type InviteCommandProps = {
    existingUserEmails?: string[]
@@ -52,7 +53,10 @@ export function InviteCommand({
 
    const { refetch, isFetching, data } = api.user.search.useQuery(
       { query },
-      { enabled: false, keepPreviousData: query.length > 0 }
+      {
+         enabled: false,
+         placeholderData: query.length > 0 ? keepPreviousData : undefined,
+      }
    )
 
    const searchResults =

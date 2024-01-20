@@ -53,7 +53,7 @@ export default function CreateOrganizationDialog() {
       setFormData((prev) => ({ ...prev, [name]: value }))
    }
 
-   const { mutate: onSubmit, isLoading } = api.organization.create.useMutation({
+   const { mutate: onSubmit, isPending } = api.organization.create.useMutation({
       onSuccess: (createdOrgId) => {
          closeDialog("createOrganization")
          setFormData({ name: "" })
@@ -151,9 +151,9 @@ export default function CreateOrganizationDialog() {
                         ))}
                      </div>
                   )}
-                  <Button disabled={isLoading}>
+                  <Button disabled={isPending}>
                      {t("create")}
-                     {isLoading && <Loading />}
+                     {isPending && <Loading />}
                   </Button>
                </div>
             </form>

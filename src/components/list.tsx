@@ -254,7 +254,7 @@ function List({ list, index, isLoading: isDragLoading }: ListProps) {
                         >
                            {list.cards.map((card, cardIndex) => (
                               <Card
-                                 key={card.optimisticId ?? card.id}
+                                 key={card.id}
                                  list={list}
                                  card={card}
                                  index={cardIndex}
@@ -268,8 +268,6 @@ function List({ list, index, isLoading: isDragLoading }: ListProps) {
                   <CreateCard
                      className="mt-2"
                      listId={list.id}
-                     boardId={list.boardId}
-                     organizationId={list.organizationId}
                   />
                </li>
             </UICard>
@@ -290,21 +288,15 @@ function reorder<T>(list: T[], startIndex: number, endIndex: number) {
 }
 
 export function ListsWrapper({
-   initialLists,
    boardId,
    className,
    ...props
-}: { initialLists: ExtendedList[]; boardId: string } & ComponentProps<"ol">) {
+}: { boardId: string } & ComponentProps<"ol">) {
    const t = useTranslations("lists")
    const tCards = useTranslations("cards")
    const utils = api.useUtils()
-   const { data: lists } = api.list.getAll.useQuery(
-      { boardId },
-      {
-         initialData: initialLists,
-         refetchOnMount: false,
-      }
-   )
+
+   const { data: lists } = api.list.getAll.useQuery({ boardId })
    const [orderedData, setOrderedData] = useState(lists ?? [])
 
    const router = useRouter()
@@ -313,7 +305,7 @@ export function ListsWrapper({
       lists && setOrderedData(lists)
    }, [lists])
 
-   const { mutate: onUpdateListOrder, isLoading: isUpdateListOrderLoading } =
+   const { mutate: onUpdateListOrder, isPending: isUpdateListOrderLoading } =
       api.list.updateOrder.useMutation({
          onSuccess: () => {
             router.refresh()
@@ -323,7 +315,7 @@ export function ListsWrapper({
          },
       })
 
-   const { mutate: onUpdateCardOrder, isLoading: isUpdateCardOrderLoading } =
+   const { mutate: onUpdateCardOrder, isPending: isUpdateCardOrderLoading } =
       api.card.updateOrder.useMutation({
          onSuccess: () => {
             router.refresh()

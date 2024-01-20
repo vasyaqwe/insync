@@ -31,7 +31,7 @@ export default function DeleteOrganizationDialogContent({
 
    const { mutate: onDeleteFiles } = api.uploadthing.deleteFiles.useMutation()
 
-   const { isLoading, mutate: onDelete } = api.organization.delete.useMutation({
+   const { isPending, mutate: onDelete } = api.organization.delete.useMutation({
       onSuccess: ({
          firstOrganizationId,
          deletedOrganizationId,
@@ -85,13 +85,13 @@ export default function DeleteOrganizationDialogContent({
                </AlertDialogCancel>
             )}
             <Button
-               disabled={isLoading}
+               disabled={isPending}
                onClick={() => onDelete({ organizationId: organization.id })}
                className="w-fit"
                variant={"destructive"}
             >
                {t("delete-title")}
-               {isLoading && <Loading />}
+               {isPending && <Loading />}
             </Button>
          </AlertDialogFooter>
       </AlertDialogContent>

@@ -33,7 +33,11 @@ export function BoardHeader({ user }: { user: User }) {
       {
          organizationId: isHydrated ? lastVisitedOrganizationId : "",
       },
-      { refetchOnWindowFocus: false, enabled: isHydrated }
+      {
+         refetchOnWindowFocus: false,
+         refetchInterval: Infinity,
+         enabled: isHydrated,
+      }
    )
 
    return (

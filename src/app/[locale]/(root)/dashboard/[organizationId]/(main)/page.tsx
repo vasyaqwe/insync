@@ -1,6 +1,7 @@
 import { BoardsList } from "@/components/boards-list"
 import { pick } from "@/lib/utils"
-import { api } from "@/trpc/server"
+import { createSSRHelper } from "@/server/api/ssr"
+import { HydrationBoundary, dehydrate } from "@tanstack/react-query"
 import { NextIntlClientProvider } from "next-intl"
 import { getMessages, getTranslations } from "next-intl/server"
 
@@ -12,7 +13,9 @@ export default async function Page({
    const t = await getTranslations("boards")
    const messages = (await getMessages()) as Messages
 
-   const boards = await api.board.getAll.query({ organizationId })
+   const helpers = await createSSRHelper()
+
+   await helpers.board.getAll.prefetch({ organizationId })
 
    return (
       <div>
@@ -23,10 +26,9 @@ export default async function Page({
             <NextIntlClientProvider
                messages={pick(messages, ["boards", "common"])}
             >
-               <BoardsList
-                  initialBoards={boards}
-                  organizationId={organizationId}
-               />
+               <HydrationBoundary state={dehydrate(helpers.queryClient)}>
+                  <BoardsList organizationId={organizationId} />
+               </HydrationBoundary>
             </NextIntlClientProvider>
          </div>
       </div>

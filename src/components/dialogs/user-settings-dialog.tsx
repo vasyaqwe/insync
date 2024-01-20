@@ -52,7 +52,7 @@ export default function UserSettingsDialog() {
       }))
    )
 
-   const { mutate: onUpdate, isLoading } = api.user.update.useMutation({
+   const { mutate: onUpdate, isPending } = api.user.update.useMutation({
       onMutate: async () => {
          try {
             const base64 = await convertImageToBase64(formData.imageUrl)
@@ -245,9 +245,9 @@ export default function UserSettingsDialog() {
 
                <Button
                   className="mt-9 w-full"
-                  disabled={isLoading || isUploading}
+                  disabled={isPending || isUploading}
                >
-                  {isLoading ? <Loading /> : tCommon("save")}
+                  {isPending ? <Loading /> : tCommon("save")}
                </Button>
             </form>
          </DialogContent>

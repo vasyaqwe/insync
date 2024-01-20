@@ -35,20 +35,21 @@ export function CreateBoard({
       organizationId,
    })
 
-   const { mutate: onSubmit, isLoading } = api.board.create.useMutation({
-      onSuccess: (createdBoardId) => {
-         startTransition(() => {
-            router.push(`/dashboard/board/${createdBoardId}`)
-         })
-         void utils.board.getAll.invalidate()
-         setTimeout(() => {
-            toast.success(t("create-success"))
-         }, 500)
-      },
-      onError: () => {
-         return toast.error(t("create-error"))
-      },
-   })
+   const { mutate: onSubmit, isPending: isMutationPending } =
+      api.board.create.useMutation({
+         onSuccess: (createdBoardId) => {
+            startTransition(() => {
+               router.push(`/dashboard/board/${createdBoardId}`)
+            })
+            void utils.board.getAll.invalidate()
+            setTimeout(() => {
+               toast.success(t("create-success"))
+            }, 500)
+         },
+         onError: () => {
+            return toast.error(t("create-error"))
+         },
+      })
 
    const { safeOnSubmit, errors } = useFormValidation({
       onSubmit: () => onSubmit(formData),
@@ -90,10 +91,14 @@ export function CreateBoard({
                   }}
                />
                <Button
-                  disabled={isLoading || isPending}
+                  disabled={isMutationPending || isPending}
                   className="mt-3 w-full"
                >
-                  {isLoading || isPending ? <Loading /> : tCommon("create")}
+                  {isMutationPending || isPending ? (
+                     <Loading />
+                  ) : (
+                     tCommon("create")
+                  )}
                </Button>
             </form>
          </PopoverContent>

@@ -21,7 +21,7 @@ function InvitationActions({
    const router = useRouter()
    const { setExpandedOrganizations } = useOrganizationHelpersStore()
 
-   const { isLoading, mutate: onAccept } = api.organization.join.useMutation({
+   const { isPending, mutate: onAccept } = api.organization.join.useMutation({
       onSuccess: () => {
          router.push(`/dashboard/${organizationId}`)
          setExpandedOrganizations(organizationId)
@@ -36,12 +36,12 @@ function InvitationActions({
    return (
       <>
          <Button
-            disabled={isLoading}
+            disabled={isPending}
             onClick={() => onAccept({ invitationId, organizationId, token })}
             size={"lg"}
          >
             {t("accept")}
-            {isLoading && <Loading />}
+            {isPending && <Loading />}
          </Button>
       </>
    )

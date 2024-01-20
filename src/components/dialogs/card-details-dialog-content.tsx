@@ -97,7 +97,7 @@ export default function CardDetailsDialogContent({
       },
    })
 
-   const { mutate: onCreateComment, isLoading: isCreateCommentLoading } =
+   const { mutate: onCreateComment, isPending: isCreateCommentLoading } =
       api.card.createComment.useMutation({
          onSuccess: async () => {
             if (fileIdsToDeleteFromStorage.length > 0) {
@@ -116,7 +116,7 @@ export default function CardDetailsDialogContent({
          },
       })
 
-   const { mutate: onDeleteComment, isLoading: isDeleteCommentLoading } =
+   const { mutate: onDeleteComment, isPending: isDeleteCommentLoading } =
       api.card.deleteComment.useMutation({
          onSuccess: ({ content }) => {
             toast.success(t.rich("delete-comment-success"))

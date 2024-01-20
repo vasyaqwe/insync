@@ -9,25 +9,20 @@ import {
 } from "@/components/ui/popover"
 import { useFormValidation } from "@/hooks/use-form-validation"
 import { cn } from "@/lib/utils"
-import {
-   type ExtendedCard,
-   NAME_CHARS_LIMIT,
-   createCardSchema,
-} from "@/lib/validations/card"
+import { NAME_CHARS_LIMIT, createCardSchema } from "@/lib/validations/card"
 import { api } from "@/trpc/react"
 import { Plus } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { useState } from "react"
 import { toast } from "sonner"
 import useMeasure from "react-use-measure"
+import { Loading } from "@/components/ui/loading"
 
 export function CreateCard({
    listId,
    className,
-   boardId,
-   organizationId,
    ...props
-}: { listId: string; boardId: string; organizationId: string } & ButtonProps) {
+}: { listId: string } & ButtonProps) {
    const t = useTranslations("cards")
    const tCommon = useTranslations("common")
    const utils = api.useUtils()
@@ -37,73 +32,18 @@ export function CreateCard({
       listId,
    })
 
-   const { mutate: onSubmit } = api.card.create.useMutation({
-      onMutate: async () => {
-         await utils.list.getAll.cancel()
-         const previousLists = utils.list.getAll.getData({
-            boardId,
-         })
-
+   const { mutate: onSubmit, isPending } = api.card.create.useMutation({
+      onSuccess: async () => {
          toast.success(t("create-success"))
          //close popover
          document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }))
-
-         //wait for popover exit animation to finish
-         setTimeout(() => {
-            utils.list.getAll.setData(
-               { boardId },
-               (oldQueryData) =>
-                  oldQueryData?.map((oldList) =>
-                     oldList.id === listId
-                        ? {
-                             ...oldList,
-                             cards: [
-                                ...oldList.cards,
-                                {
-                                   ...formData,
-                                   optimisticId: "optimistic",
-                                   createdAt: new Date(),
-                                   updatedAt: new Date(),
-                                   list: { boardId },
-                                   order: oldList.cards.length + 1,
-                                   listId,
-                                   description: "",
-                                   organizationId,
-                                } as ExtendedCard,
-                             ],
-                          }
-                        : oldList
-                  )
-            )
-         }, 100)
-
-         return { previousLists }
       },
-      onSuccess: (id) => {
-         utils.list.getAll.setData(
-            { boardId },
-            (oldQueryData) =>
-               oldQueryData?.map((oldList) =>
-                  oldList.id === listId
-                     ? {
-                          ...oldList,
-                          cards: oldList.cards.map((card, idx) =>
-                             idx === oldList.cards.length - 1
-                                ? { ...card, id }
-                                : card
-                          ),
-                       }
-                     : oldList
-               )
-         )
-      },
-      onError: (_err, _data, context) => {
-         utils.list.getAll.setData({ boardId }, context?.previousLists)
-         toast.dismiss()
+
+      onError: () => {
          return toast.error(t("create-error"))
       },
-      onSettled: (_, err) => {
-         if (err) void utils.list.getAll.invalidate()
+      onSettled: () => {
+         void utils.list.getAll.invalidate()
       },
    })
 
@@ -154,10 +94,11 @@ export function CreateCard({
                   }}
                />
                <Button
+                  disabled={isPending}
                   size={"sm"}
                   className="mt-3 w-full"
                >
-                  {tCommon("create")}
+                  {isPending ? <Loading /> : tCommon("create")}
                </Button>
             </form>
          </PopoverContent>

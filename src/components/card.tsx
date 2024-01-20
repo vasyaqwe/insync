@@ -130,7 +130,6 @@ export function Card({ card, index, list, isDragLoading }: CardProps) {
                   onOpenChange={setDetailsDialogOpen}
                >
                   <li
-                     id={card.id}
                      role="button"
                      onClick={() => setDetailsDialogOpen(true)}
                      className={cn(

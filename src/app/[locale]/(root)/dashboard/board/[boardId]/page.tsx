@@ -8,6 +8,8 @@ import { KanbanSquare } from "lucide-react"
 import { NextIntlClientProvider } from "next-intl"
 import { getMessages } from "next-intl/server"
 import { notFound } from "next/navigation"
+import { createSSRHelper } from "@/server/api/ssr"
+import { HydrationBoundary, dehydrate } from "@tanstack/react-query"
 
 type Params = {
    params: { boardId: string }
@@ -39,25 +41,6 @@ export default async function Page({ params: { boardId } }: Params) {
          id: true,
          name: true,
          organizationId: true,
-         lists: {
-            include: {
-               cards: {
-                  include: {
-                     list: {
-                        select: {
-                           boardId: true,
-                        },
-                     },
-                  },
-                  orderBy: {
-                     order: "asc",
-                  },
-               },
-            },
-            orderBy: {
-               order: "asc",
-            },
-         },
          organization: {
             select: {
                members: {
@@ -72,6 +55,10 @@ export default async function Page({ params: { boardId } }: Params) {
       notFound()
 
    const messages = (await getMessages()) as Messages
+
+   const helpers = await createSSRHelper()
+
+   await helpers.list.getAll.prefetch({ boardId })
 
    return (
       <div className="grid h-full grid-cols-full-width-split-screen py-10 lg:py-12">
@@ -92,11 +79,12 @@ export default async function Page({ params: { boardId } }: Params) {
                      "editor",
                   ])}
                >
-                  <ListsWrapper
-                     className="mt-6"
-                     initialLists={board.lists}
-                     boardId={board.id}
-                  />
+                  <HydrationBoundary state={dehydrate(helpers.queryClient)}>
+                     <ListsWrapper
+                        className="mt-6"
+                        boardId={board.id}
+                     />
+                  </HydrationBoundary>
                   <CreateList
                      boardId={boardId}
                      organizationId={board.organizationId}

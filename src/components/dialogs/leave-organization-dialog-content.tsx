@@ -27,7 +27,7 @@ export default function LeaveOrganizationDialogContent({
    const router = useRouter()
    const { removeExpandedOrganizations } = useOrganizationHelpersStore()
 
-   const { isLoading, mutate: onLeave } = api.organization.leave.useMutation({
+   const { isPending, mutate: onLeave } = api.organization.leave.useMutation({
       onSuccess: ({
          leftOrganizationName,
          leftOrganizationId,
@@ -70,12 +70,12 @@ export default function LeaveOrganizationDialogContent({
             </AlertDialogCancel>
             <Button
                variant={"secondary"}
-               disabled={isLoading}
+               disabled={isPending}
                onClick={() => onLeave({ organizationId: organization.id })}
                className="w-fit"
             >
                {t("leave-title")}
-               {isLoading && <Loading />}
+               {isPending && <Loading />}
             </Button>
          </AlertDialogFooter>
       </AlertDialogContent>

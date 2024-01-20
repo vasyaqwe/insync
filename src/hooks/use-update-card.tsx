@@ -25,7 +25,7 @@ export function useUpdateCard({
       description: card.description ?? "",
    })
 
-   const { mutate: onUpdate, isLoading: isUpdateLoading } =
+   const { mutate: onUpdate, isPending: isUpdateLoading } =
       api.card.update.useMutation({
          onMutate: async ({ name, description }) => {
             await utils.board.getAll.cancel()

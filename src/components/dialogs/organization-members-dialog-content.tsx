@@ -50,7 +50,7 @@ export default function OrganizationMembersDialogContent({
    const [membersToRemove, setMembersToRemove] = useState<CommandItemUser[]>([])
    const [tab, setTab] = useState<"invite" | "members">("members")
 
-   const { mutate: onSendInvites, isLoading: isSendInvitesLoading } =
+   const { mutate: onSendInvites, isPending: isSendInvitesLoading } =
       api.organization.invite.useMutation({
          onSuccess: () => {
             setOpen(false)
@@ -61,7 +61,7 @@ export default function OrganizationMembersDialogContent({
          },
       })
 
-   const { mutate: onRemoveMembers, isLoading: isRemoveMembersLoading } =
+   const { mutate: onRemoveMembers, isPending: isRemoveMembersLoading } =
       api.organization.removeMembers.useMutation({
          onSuccess: () => {
             setOpen(false)
