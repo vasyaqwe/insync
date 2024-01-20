@@ -331,7 +331,7 @@ export const organizationRouter = createTRPCRouter({
                },
             })
 
-            return "OK"
+            return organizationId
          }
       ),
 })

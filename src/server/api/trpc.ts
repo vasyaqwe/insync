@@ -6,13 +6,14 @@
  * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
  * need to use are documented accordingly near the end.
  */
-import { TRPCError, initTRPC } from "@trpc/server"
+import { TRPCError, type inferRouterInputs, initTRPC } from "@trpc/server"
 import superjson from "superjson"
 import { ZodError } from "zod"
 
 import { db } from "@/server/db"
 import { email } from "@/server/email"
 import { auth, clerkClient } from "@clerk/nextjs"
+import { type AppRouter } from "@/server/api/root"
 
 /**
  * 1. CONTEXT
@@ -27,6 +28,7 @@ import { auth, clerkClient } from "@clerk/nextjs"
  * @see https://trpc.io/docs/server/context
  */
 export type TRPCContext = Awaited<ReturnType<typeof createTRPCContext>>
+export type RouterInput = inferRouterInputs<AppRouter>
 
 export const createTRPCContext = async (opts: { headers: Headers }) => {
    const session = auth()

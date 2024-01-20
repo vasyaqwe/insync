@@ -3,14 +3,14 @@
 import { Button } from "@/components/ui/button"
 import { Loading } from "@/components/ui/loading"
 import { type AcceptOrganizationInvitationSchema } from "@/lib/validations/organization"
-import { useRouter } from "@/navigation"
-import { api } from "@/trpc/react"
 import { SignIn, SignUp, useAuth } from "@clerk/nextjs"
 import { useTranslations } from "next-intl"
 import { toast } from "sonner"
 import { useSearchParams } from "next/navigation"
 import { ClerkWrapper } from "@/components/clerk-helpers"
 import { useOrganizationHelpersStore } from "@/stores/use-organization-helpers-store"
+import { useAction } from "@/hooks/use-action"
+import { acceptInvitation } from "@/lib/actions/organization"
 
 function InvitationActions({
    invitationId,
@@ -18,14 +18,11 @@ function InvitationActions({
    token,
 }: AcceptOrganizationInvitationSchema) {
    const t = useTranslations("invite")
-   const router = useRouter()
    const { setExpandedOrganizations } = useOrganizationHelpersStore()
 
-   const { isPending, mutate: onAccept } = api.organization.join.useMutation({
+   const { isPending, execute: onAccept } = useAction(acceptInvitation, {
       onSuccess: () => {
-         router.push(`/dashboard/${organizationId}`)
          setExpandedOrganizations(organizationId)
-         router.refresh()
          toast.success(t("success-toast"))
       },
       onError: () => {
