@@ -15,10 +15,7 @@ const createContext = async (req: NextRequest) => {
    })
 }
 
-export const config = {
-   runtime: "edge",
-   region: "fra1",
-}
+export const runtime = "edge"
 
 const handler = (req: NextRequest) =>
    fetchRequestHandler({
