@@ -15,7 +15,7 @@ import {
    privateProcedure,
 } from "@/server/api/trpc"
 import { TRPCError } from "@trpc/server"
-import crypto from "node:crypto"
+// import crypto from "node:crypto"
 
 export const organizationRouter = createTRPCRouter({
    get: privateProcedure
@@ -60,7 +60,7 @@ export const organizationRouter = createTRPCRouter({
                                  invitedUser.id === GUEST_USER_ID
                                     ? null
                                     : invitedUser.id,
-                              token: crypto.randomBytes(16).toString("hex"),
+                              token: "",
                               organizationId: createdOrganization.id,
                            },
                         })
@@ -91,7 +91,7 @@ export const organizationRouter = createTRPCRouter({
             input: { invitedUsers, organizationId, organizationName },
          }) => {
             const invitationPromises = invitedUsers.map(async (invitedUser) => {
-               const token = crypto.randomBytes(16).toString("hex")
+               const token = ""
 
                return ctx.db.organizationInvitation
                   .upsert({
@@ -347,7 +347,7 @@ async function sendInviteEmail({
    organizationName: string
    token: string
 }) {
-   const res = await ctx.email.emails.send({
+   await ctx.email.emails.send({
       from: "insync. <vasylpolishchuk@vasyldev.cc>",
       to: invitedUserEmail,
       subject: `Invitation to join ${organizationName}`,
@@ -357,7 +357,6 @@ async function sendInviteEmail({
          token,
       }),
    })
-   console.log(res)
 }
 
 function generateRandomGradientColor() {

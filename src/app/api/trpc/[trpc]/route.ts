@@ -15,6 +15,11 @@ const createContext = async (req: NextRequest) => {
    })
 }
 
+export const config = {
+   runtime: "edge",
+   region: "fra1",
+}
+
 const handler = (req: NextRequest) =>
    fetchRequestHandler({
       endpoint: "/api/trpc",
