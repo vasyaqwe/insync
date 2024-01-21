@@ -37,8 +37,8 @@ const DialogOverlay = React.forwardRef<
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
 
 const DialogContent = React.forwardRef<
-   React.ElementRef<typeof Drawer.Content>,
-   React.ComponentPropsWithoutRef<typeof Drawer.Content> & {
+   React.ElementRef<typeof DialogPrimitive.DialogContent>,
+   React.ComponentPropsWithoutRef<typeof DialogPrimitive.DialogContent> & {
       closeButtonClassName?: string
    }
 >(({ className, children, closeButtonClassName, ...props }, ref) =>

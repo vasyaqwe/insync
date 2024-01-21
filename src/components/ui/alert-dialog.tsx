@@ -37,8 +37,10 @@ const AlertDialogOverlay = React.forwardRef<
 AlertDialogOverlay.displayName = AlertDialogPrimitive.Overlay.displayName
 
 const AlertDialogContent = React.forwardRef<
-   React.ElementRef<typeof Drawer.Content>,
-   React.ComponentPropsWithoutRef<typeof Drawer.Content>
+   React.ElementRef<typeof AlertDialogPrimitive.AlertDialogContent>,
+   React.ComponentPropsWithoutRef<
+      typeof AlertDialogPrimitive.AlertDialogContent
+   >
 >(({ className, children, ...props }, ref) =>
    innerWidth < MOBILE_BREAKPOINT ? (
       <Drawer.Portal>
