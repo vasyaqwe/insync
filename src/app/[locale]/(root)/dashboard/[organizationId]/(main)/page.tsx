@@ -1,4 +1,4 @@
-import { BoardsList } from "@/components/boards-list"
+import { BoardsList } from "@/components/lists/boards-list"
 import { pick } from "@/lib/utils"
 import { createSSRHelper } from "@/server/api/ssr"
 import { HydrationBoundary, dehydrate } from "@tanstack/react-query"

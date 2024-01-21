@@ -4,6 +4,7 @@ import { createTRPCRouter } from "@/server/api/trpc"
 import { boardRouter } from "@/server/api/routers/board"
 import { listRouter } from "@/server/api/routers/list"
 import { cardRouter } from "@/server/api/routers/card"
+import { auditLogRouter } from "@/server/api/routers/audit-log"
 import { uploadthingRouter } from "@/server/api/routers/uploadthing"
 
 /**
@@ -17,6 +18,7 @@ export const appRouter = createTRPCRouter({
    board: boardRouter,
    list: listRouter,
    card: cardRouter,
+   auditLog: auditLogRouter,
    uploadthing: uploadthingRouter,
 })
 

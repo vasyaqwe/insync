@@ -102,7 +102,7 @@ export function Board({ board }: BoardProps) {
                   oldBoard.id === boardId ? { ...oldBoard, name } : oldBoard
                )
          )
-         toast.success(t.rich("update-success", { name }))
+         toast.success(t.rich("update-success", { name: board.name }))
          setDialogOpen(false)
 
          return { previousBoards }
