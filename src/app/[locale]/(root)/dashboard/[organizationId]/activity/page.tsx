@@ -5,6 +5,8 @@ import { UserAvatar } from "@/components/ui/user-avatar"
 import { DateDisplay } from "@/components/date-display"
 import { actionLookup, entityTypeLookup } from "@/config"
 
+export const dynamic = "force-dynamic"
+
 export default async function Page({
    params: { organizationId },
 }: {

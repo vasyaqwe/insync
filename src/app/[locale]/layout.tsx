@@ -6,7 +6,6 @@ import { getMessages, unstable_setRequestLocale } from "next-intl/server"
 import { type Locale, locales } from "@/navigation"
 import { metadataConfig } from "@/config"
 import { cn, pick } from "@/lib/utils"
-import { Inter } from "next/font/google"
 import { TRPCReactProvider } from "@/trpc/react"
 import { cookies } from "next/headers"
 import { NextIntlClientProvider } from "next-intl"
@@ -15,8 +14,6 @@ import { type ReactNode } from "react"
 import { Toaster } from "@/components/ui/toaster"
 import { type Viewport } from "next"
 import { ClerkProvider } from "@/components/clerk-helpers"
-
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter-latin" })
 
 export const metadata = metadataConfig
 
@@ -46,11 +43,7 @@ export default async function RootLayout({
          <html
             suppressHydrationWarning
             lang={locale}
-            className={cn(
-               locale === "uk" ? "font-primary-uk" : "font-primary-en",
-               GeistSans.variable,
-               inter.variable
-            )}
+            className={cn("font-primary-en", GeistSans.variable)}
          >
             <body
                className={`grainy-bg flex min-h-svh flex-col bg-background text-foreground`}
